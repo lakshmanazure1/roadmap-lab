@@ -1,0 +1,103 @@
+name: Build APK
+
+# Runs on every push. On a version tag (v1.0.0, v1.0.1, …) it also publishes a GitHub Release
+# with the signed APK attached, ready to download on your phone.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Run the logic tests (planner, progress, reviews, streak, backup)
+        run: ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Get the signing key from GitHub Secrets
+        id: key
+        env:
+          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+        run: |
+          if [ -n "$SIGNING_KEY_BASE64" ]; then
+            echo "$SIGNING_KEY_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No signing key yet, so this is only a check build. See SETUP.md, part 2."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the signed APK
+        if: steps.key.outputs.signed == 'true'
+        env:
+          SIGNING_STORE_FILE: ${{ runner.temp }}/release.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_KEY_ALIAS: roadmaplab
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Build a check APK (no signing key yet)
+        if: steps.key.outputs.signed != 'true'
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Name the APK
+        id: apk
+        run: |
+          VERSION=$(grep '^VERSION_NAME=' version.properties | cut -d= -f2)
+          mkdir -p out
+          if [ "${{ steps.key.outputs.signed }}" = "true" ]; then
+            cp app/build/outputs/apk/release/app-release.apk "out/RoadmapLab-v$VERSION.apk"
+          else
+            cp app/build/outputs/apk/debug/app-debug.apk "out/RoadmapLab-v$VERSION-CHECK-ONLY-do-not-install.apk"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RoadmapLab-apk
+          path: out/*.apk
+
+      - name: Keep the database schema (for safe future migrations)
+        uses: actions/upload-artifact@v4
+        with:
+          name: room-schemas
+          path: app/schemas
+          if-no-files-found: ignore
+
+      - name: Publish the GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.apk.outputs.version }}
+        run: |
+          if [ "${{ steps.key.outputs.signed }}" != "true" ]; then
+            echo "::error::Releases must be signed. Add the signing key first (SETUP.md, part 2)."; exit 1
+          fi
+          if [ "$GITHUB_REF_NAME" != "v$VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match version.properties ($VERSION)."; exit 1
+          fi
+          APK="out/RoadmapLab-v$VERSION.apk"
+          NOTES="Roadmap Lab $GITHUB_REF_NAME. On your phone: tap the APK below to download, open it, and tap Install (or Update). Your data stays."
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$APK" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$APK" --title "Roadmap Lab $GITHUB_REF_NAME" --notes "$NOTES"
+          fi

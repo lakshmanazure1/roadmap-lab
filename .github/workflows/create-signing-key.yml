@@ -1,0 +1,56 @@
+name: Create signing key (run once)
+
+# Makes the key that signs every APK. Run it ONE time. Updates only install over the old app
+# when they are signed with the same key, so keep the downloaded copy safe in your private Drive.
+on:
+  workflow_dispatch:
+
+jobs:
+  key:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Safety checks
+        env:
+          EXISTING: ${{ secrets.SIGNING_KEY_BASE64 }}
+          PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          if [ -n "$EXISTING" ]; then
+            echo "::error::A signing key already exists. Keep using it — a new key would stop updates from installing."
+            exit 1
+          fi
+          if [ ${#PASSWORD} -lt 8 ]; then
+            echo "::error::First add the secret SIGNING_PASSWORD (at least 8 characters). See SETUP.md, part 2."
+            exit 1
+          fi
+
+      - name: Make the key
+        env:
+          PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          mkdir signing-key
+          keytool -genkeypair -keystore signing-key/roadmaplab-release.jks -storetype PKCS12 \
+            -alias roadmaplab -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$PASSWORD" -keypass "$PASSWORD" \
+            -dname "CN=Roadmap Lab, O=Personal, C=IN"
+          base64 -w 0 signing-key/roadmaplab-release.jks > signing-key/SIGNING_KEY_BASE64.txt
+          {
+            echo "Roadmap Lab signing key — keep this folder in your PRIVATE Google Drive."
+            echo ""
+            echo "roadmaplab-release.jks    the key itself"
+            echo "SIGNING_KEY_BASE64.txt    the same key as text: paste ALL of it into the GitHub secret SIGNING_KEY_BASE64"
+            echo "Key alias: roadmaplab"
+            echo "Password: the SIGNING_PASSWORD you chose (write it down in the same private folder)."
+            echo ""
+            echo "If this key is lost, new versions can't install over the old app."
+          } > signing-key/README.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signing-key
+          path: signing-key/
+          retention-days: 1

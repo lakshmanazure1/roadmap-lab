@@ -1,0 +1,158 @@
+package com.lakshman.roadmaplab.domain
+
+// Plain Kotlin models used by the logic and the screens. Days are epoch days (LocalDate.toEpochDay()).
+
+enum class Mode(val key: String, val label: String, val capacityMinutes: Int) {
+    INDIA("india", "India", 120),
+    DRC("drc", "DRC", 60),
+    HEAVY("heavy", "Heavy week", 15);
+
+    companion object {
+        fun of(key: String?): Mode = entries.firstOrNull { it.key == key } ?: DRC
+    }
+}
+
+enum class TaskStatus(val key: String, val label: String) {
+    DONE("done", "Done"),
+    PARTLY("partly", "Partly done"),
+    SKIPPED("skipped", "Skipped");
+
+    companion object {
+        fun of(key: String?): TaskStatus? = entries.firstOrNull { it.key == key }
+    }
+}
+
+data class Phase(
+    val id: String,
+    val track: String,
+    val title: String,
+    val startDay: Long,
+    val endDay: Long,
+    val order: Int,
+)
+
+data class PlanTask(
+    val id: String,
+    val phaseId: String,
+    val track: String,
+    val plannedDay: Long,
+    val title: String,
+    val learn: String,
+    val apply: String,
+    val doneWhen: String,
+    val minFull: Int,
+    val minDrc: Int,
+    val minMinimum: Int,
+    val unlocks: List<String>,
+    val core: Boolean,
+    val assumedDone: Boolean,
+    val order: Int,
+) {
+    fun minutes(mode: Mode): Int = when (mode) {
+        Mode.INDIA -> minFull
+        Mode.DRC -> minDrc
+        Mode.HEAVY -> minMinimum
+    }
+}
+
+data class Milestone(val id: String, val title: String, val day: Long, val track: String)
+
+data class TaskLog(
+    val id: Long,
+    val taskId: String,
+    val day: Long,
+    val status: TaskStatus,
+    val minutes: Int,
+    val note: String,
+    val createdAt: Long,
+    val usedMinimum: Boolean,
+)
+
+data class DayLog(
+    val day: Long,
+    val mood: Int? = null,
+    val energy: Int? = null,
+    val sleepHours: Float? = null,
+    val ifThen: String = "",
+    val note: String = "",
+    val evModule: String = "",
+    val evProblem: String = "",
+    val evAction: String = "",
+    val evResult: String = "",
+    val evLearning: String = "",
+    val eveningDone: Boolean = false,
+    val logNumber: Int? = null,
+    val finishedAt: Long? = null,
+) {
+    val hasEvidence: Boolean
+        get() = listOf(evModule, evProblem, evAction, evResult, evLearning).any { it.isNotBlank() }
+
+    /** Writing a note or evidence line, or finishing the evening log, counts as an action for the streak. */
+    val counts: Boolean get() = eveningDone || note.isNotBlank() || hasEvidence
+}
+
+enum class CardType { MCQ, FLASHCARD }
+
+data class Card(
+    val id: String,
+    val topic: String,
+    val type: CardType,
+    val prompt: String,
+    val options: List<String>,
+    val answer: String,
+    val explanation: String,
+    val unlockedBy: String?,
+)
+
+/** Leitner state of one unlocked card. box 0 = new, 1..6 = learning boxes. */
+data class CardState(
+    val cardId: String,
+    val box: Int,
+    val mcCorrect: Int,
+    val dueDay: Long,
+    val lapses: Int,
+    val reviews: Int,
+    val lastReviewDay: Long?,
+    val unlockedDay: Long,
+)
+
+enum class Rating(val label: String) { AGAIN("Again"), HARD("Hard"), GOOD("Good"), EASY("Easy") }
+
+data class ReviewLog(
+    val cardId: String,
+    val day: Long,
+    val rating: Rating,
+    val correct: Boolean,
+    val asMcq: Boolean,
+    val createdAt: Long,
+)
+
+data class AppSettings(
+    val onboarded: Boolean = false,
+    val mode: Mode = Mode.DRC,
+    val reducedPlan: Boolean = false,
+    val reminderOn: Boolean = false,
+    val reminderHour: Int = 21,
+    val reminderMinute: Int = 0,
+    /** "dark" (default), "light" or "system". */
+    val theme: String = "dark",
+    val firstUseDay: Long = 0,
+    val lastBackupDay: Long = 0,
+    val restartDismissedDay: Long = 0,
+    val lowMoodHiddenUntil: Long = 0,
+    val showEvidenceLog: Boolean = true,
+)
+
+data class DayPlanEntry(val day: Long, val taskId: String, val position: Int)
+
+/** Everything the plan is made of, as loaded from roadmap.json. */
+data class Roadmap(
+    val version: String,
+    val title: String,
+    val timelineStart: Long,
+    val timelineEnd: Long,
+    val tracks: List<String>,
+    val phases: List<Phase>,
+    val milestones: List<Milestone>,
+    val tasks: List<PlanTask>,
+)

@@ -1,0 +1,15 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/app/build/
+/captures/
+.kotlin/
+# Never commit signing keys
+*.jks
+*.keystore
+*.p12
+signing-key*/
+__pycache__/

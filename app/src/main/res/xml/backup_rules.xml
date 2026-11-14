@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android auto backup (Android 11 and below): keep the database and settings. -->
+<full-backup-content>
+    <include domain="database" path="." />
+    <include domain="file" path="datastore/" />
+</full-backup-content>

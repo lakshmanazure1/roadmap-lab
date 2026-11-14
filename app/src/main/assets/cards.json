@@ -1,0 +1,2492 @@
+{
+ "app": "roadmaplab",
+ "kind": "cards",
+ "version": "2026-11-14",
+ "cards": [
+  {
+   "id": "PY-001",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What does this print?\nx = 5\nx = x + 2\nprint(x)",
+   "options": [
+    "7",
+    "5",
+    "x + 2",
+    "52"
+   ],
+   "answer": "7",
+   "explanation": "x is reassigned: 5 + 2 = 7.",
+   "unlockedBy": "A-PY-01"
+  },
+  {
+   "id": "PY-002",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which line is a comment in Python?",
+   "options": [
+    "# check PAN",
+    "// check PAN",
+    "-- check PAN",
+    "<!-- check PAN -->"
+   ],
+   "answer": "# check PAN",
+   "explanation": "Python comments start with #. // is JavaScript, -- is SQL.",
+   "unlockedBy": "A-PY-01"
+  },
+  {
+   "id": "PY-003",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "type(\"500\") returns…",
+   "options": [
+    "<class 'str'>",
+    "<class 'int'>",
+    "<class 'float'>",
+    "<class 'number'>"
+   ],
+   "answer": "<class 'str'>",
+   "explanation": "Anything in quotes is a string, even if it looks like a number.",
+   "unlockedBy": "A-PY-01"
+  },
+  {
+   "id": "PY-004",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What does int(\"42\") + 8 give?",
+   "options": [
+    "50",
+    "\"428\"",
+    "An error",
+    "\"42 8\""
+   ],
+   "answer": "50",
+   "explanation": "int() turns the text \"42\" into the number 42, so 42 + 8 = 50.",
+   "unlockedBy": "A-PY-01"
+  },
+  {
+   "id": "PY-005",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "name = \"Ravi\"\nprint(f\"Vendor: {name}\")\nWhat is printed?",
+   "options": [
+    "Vendor: Ravi",
+    "Vendor: {name}",
+    "Vendor: name",
+    "f\"Vendor: Ravi\""
+   ],
+   "answer": "Vendor: Ravi",
+   "explanation": "The f before the quotes fills {name} with its value.",
+   "unlockedBy": "A-PY-02"
+  },
+  {
+   "id": "PY-006",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "\"  ABC123  \".strip() gives…",
+   "options": [
+    "\"ABC123\"",
+    "\"  ABC123\"",
+    "\"ABC123  \"",
+    "\"abc123\""
+   ],
+   "answer": "\"ABC123\"",
+   "explanation": "strip() removes spaces at both ends. lstrip() and rstrip() remove one side only.",
+   "unlockedBy": "A-PY-02"
+  },
+  {
+   "id": "PY-007",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "pan = \"abcde1234f\"\nWhich gives \"ABCDE1234F\"?",
+   "options": [
+    "pan.upper()",
+    "pan.capitalize()",
+    "upper(pan)",
+    "pan.title()"
+   ],
+   "answer": "pan.upper()",
+   "explanation": "upper() makes every letter capital. capitalize() changes only the first letter.",
+   "unlockedBy": "A-PY-02"
+  },
+  {
+   "id": "PY-008",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "code = \"27ABCDE1234F1Z5\"\nWhat is code[0:2]?",
+   "options": [
+    "\"27\"",
+    "\"2\"",
+    "\"27A\"",
+    "\"7A\""
+   ],
+   "answer": "\"27\"",
+   "explanation": "[0:2] takes positions 0 and 1 and stops before 2. Here that's the GST state code.",
+   "unlockedBy": "A-PY-02"
+  },
+  {
+   "id": "PY-009",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What is list(range(3))?",
+   "options": [
+    "[0, 1, 2]",
+    "[1, 2, 3]",
+    "[0, 1, 2, 3]",
+    "[3]"
+   ],
+   "answer": "[0, 1, 2]",
+   "explanation": "range(3) starts at 0 and stops before 3.",
+   "unlockedBy": "A-PY-03"
+  },
+  {
+   "id": "PY-010",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "vendors = [\"A\", \"B\", \"C\"]\nWhat is vendors[-1]?",
+   "options": [
+    "\"C\"",
+    "\"A\"",
+    "An error",
+    "\"B\""
+   ],
+   "answer": "\"C\"",
+   "explanation": "-1 means the last item; -2 the one before it.",
+   "unlockedBy": "A-PY-03"
+  },
+  {
+   "id": "PY-011",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "errors = []\nerrors.append(\"PAN missing\")\nWhat is len(errors)?",
+   "options": [
+    "1",
+    "0",
+    "11",
+    "An error"
+   ],
+   "answer": "1",
+   "explanation": "append() adds one item to the end of the list.",
+   "unlockedBy": "A-PY-03"
+  },
+  {
+   "id": "PY-012",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "How do you loop over every vendor in a list called vendors?",
+   "options": [
+    "for v in vendors:",
+    "for v = vendors:",
+    "for (v in vendors)",
+    "loop vendors as v:"
+   ],
+   "answer": "for v in vendors:",
+   "explanation": "for item in a_list: runs the indented block once per item.",
+   "unlockedBy": "A-PY-03"
+  },
+  {
+   "id": "PY-013",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which line checks whether status is \"Active\"?",
+   "options": [
+    "if status == \"Active\":",
+    "if status = \"Active\":",
+    "if status === \"Active\":",
+    "if status equals \"Active\":"
+   ],
+   "answer": "if status == \"Active\":",
+   "explanation": "== compares. A single = assigns and is a syntax error inside if. === is JavaScript.",
+   "unlockedBy": "A-PY-04"
+  },
+  {
+   "id": "PY-014",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "x = 0\nif x > 0: print(\"pos\")\nelif x == 0: print(\"zero\")\nelse: print(\"neg\")\nWhat is printed?",
+   "options": [
+    "zero",
+    "pos",
+    "neg",
+    "Nothing"
+   ],
+   "answer": "zero",
+   "explanation": "Python checks each condition in order and runs only the first one that is True.",
+   "unlockedBy": "A-PY-04"
+  },
+  {
+   "id": "PY-015",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What is True and False?",
+   "options": [
+    "False",
+    "True",
+    "None",
+    "An error"
+   ],
+   "answer": "False",
+   "explanation": "and is True only when both sides are True. or needs just one.",
+   "unlockedBy": "A-PY-04"
+  },
+  {
+   "id": "PY-016",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which operator means 'not equal' in Python 3?",
+   "options": [
+    "!=",
+    "<>",
+    "=!",
+    "=/="
+   ],
+   "answer": "!=",
+   "explanation": "Python 3 uses !=. The old <> was removed.",
+   "unlockedBy": "A-PY-04"
+  },
+  {
+   "id": "PY-017",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "def add(a, b):\n    print(a + b)\nresult = add(2, 3)\nWhat is result?",
+   "options": [
+    "None",
+    "5",
+    "\"5\"",
+    "An error"
+   ],
+   "answer": "None",
+   "explanation": "The function prints 5 but returns nothing, so result is None. Use return to send a value back.",
+   "unlockedBy": "A-PY-05"
+  },
+  {
+   "id": "PY-018",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "def greet(name=\"there\"):\n    return \"Hi \" + name\nWhat does greet() return?",
+   "options": [
+    "\"Hi there\"",
+    "\"Hi \"",
+    "An error",
+    "\"Hi name\""
+   ],
+   "answer": "\"Hi there\"",
+   "explanation": "name has a default value, used when you don't pass one.",
+   "unlockedBy": "A-PY-05"
+  },
+  {
+   "id": "PY-019",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which keyword sends a value back from a function?",
+   "options": [
+    "return",
+    "print",
+    "send",
+    "output"
+   ],
+   "answer": "return",
+   "explanation": "return ends the function and hands the value to the caller. print only shows it on screen.",
+   "unlockedBy": "A-PY-05"
+  },
+  {
+   "id": "PY-020",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why write one small function per check (check_pan, check_gstin…)?",
+   "options": [
+    "Each one can be tested and fixed on its own",
+    "Python runs small functions faster",
+    "Python requires one function per check",
+    "It hides errors from the report"
+   ],
+   "answer": "Each one can be tested and fixed on its own",
+   "explanation": "Small functions are easier to read, test and reuse.",
+   "unlockedBy": "A-PY-05"
+  },
+  {
+   "id": "PY-021",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "vendor = {\"name\": \"Ravi\", \"city\": \"Pune\"}\nWhat is vendor[\"city\"]?",
+   "options": [
+    "\"Pune\"",
+    "\"city\"",
+    "1",
+    "An error"
+   ],
+   "answer": "\"Pune\"",
+   "explanation": "A dictionary looks up a value by its key.",
+   "unlockedBy": "A-PY-06"
+  },
+  {
+   "id": "PY-022",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "vendor has no \"phone\" key. What does vendor.get(\"phone\") return?",
+   "options": [
+    "None",
+    "A KeyError",
+    "\"\"",
+    "0"
+   ],
+   "answer": "None",
+   "explanation": "get() returns None (or a default you give) instead of raising KeyError like vendor[\"phone\"].",
+   "unlockedBy": "A-PY-06"
+  },
+  {
+   "id": "PY-023",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which reads an Excel file into a pandas DataFrame?",
+   "options": [
+    "pd.read_excel(\"vendors.xlsx\")",
+    "pd.read_csv(\"vendors.xlsx\")",
+    "pd.open(\"vendors.xlsx\")",
+    "excel.read(\"vendors.xlsx\")"
+   ],
+   "answer": "pd.read_excel(\"vendors.xlsx\")",
+   "explanation": "read_excel is for .xlsx files (it uses openpyxl). read_csv is for .csv files.",
+   "unlockedBy": "A-PY-06"
+  },
+  {
+   "id": "PY-024",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What does df[\"PAN\"].isna().sum() tell you?",
+   "options": [
+    "How many PAN cells are empty",
+    "How many PANs are valid",
+    "The total of all PAN numbers",
+    "Whether the column exists"
+   ],
+   "answer": "How many PAN cells are empty",
+   "explanation": "isna() marks empty cells True; sum() counts the Trues.",
+   "unlockedBy": "A-PY-06"
+  },
+  {
+   "id": "PY-025",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "re.fullmatch(r\"[A-Z]{5}[0-9]{4}[A-Z]\", pan) checks that pan is…",
+   "options": [
+    "5 capital letters, 4 digits, 1 capital letter — nothing more",
+    "at least 5 letters somewhere",
+    "only the first 5 characters",
+    "4 letters, 5 digits, 1 letter"
+   ],
+   "answer": "5 capital letters, 4 digits, 1 capital letter — nothing more",
+   "explanation": "fullmatch must match the whole text; {5} means exactly five.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "PY-026",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why use re.fullmatch rather than re.match for a PAN?",
+   "options": [
+    "re.match only checks the start, so \"ABCDE1234FXYZ\" would pass",
+    "re.match is slower",
+    "re.fullmatch ignores case",
+    "re.match doesn't support {5}"
+   ],
+   "answer": "re.match only checks the start, so \"ABCDE1234FXYZ\" would pass",
+   "explanation": "Use fullmatch (or ^...$ anchors) when the whole value must fit the pattern.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "PY-027",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why write regex patterns as r\"...\"?",
+   "options": [
+    "So backslashes like \\d reach the regex unchanged",
+    "r makes the pattern case-insensitive",
+    "r means 'regex required'",
+    "It makes matching faster"
+   ],
+   "answer": "So backslashes like \\d reach the regex unchanged",
+   "explanation": "A raw string keeps backslashes exactly as typed.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "PY-028",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "In a regex, what does [A-Z] match?",
+   "options": [
+    "One capital letter",
+    "Only the letters A and Z",
+    "Any number of capital letters",
+    "One letter in any case"
+   ],
+   "answer": "One capital letter",
+   "explanation": "[A-Z] is one character from A to Z. Add {5} or + to repeat it.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "PY-029",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What does df.duplicated(subset=[\"PAN\"], keep=False) mark?",
+   "options": [
+    "Every row whose PAN appears more than once",
+    "Only the second and later copies",
+    "Rows with an empty PAN",
+    "Only the first copy"
+   ],
+   "answer": "Every row whose PAN appears more than once",
+   "explanation": "keep=False flags all copies. The default keep=\"first\" leaves the first one unflagged.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "PY-030",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which saves a DataFrame to Excel without the extra index column?",
+   "options": [
+    "df.to_excel(\"errors.xlsx\", index=False)",
+    "df.save(\"errors.xlsx\")",
+    "df.to_excel(\"errors.xlsx\", header=False)",
+    "df.write_excel(\"errors.xlsx\")"
+   ],
+   "answer": "df.to_excel(\"errors.xlsx\", index=False)",
+   "explanation": "index=False drops the 0, 1, 2… column. header=False would drop your column names instead.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "PY-031",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What's the simplest fast way to check whether a PAN was already seen?",
+   "options": [
+    "Keep seen PANs in a set and test: pan in seen",
+    "Loop through the whole list every time",
+    "Sort the list after every row",
+    "Join all PANs into one long string"
+   ],
+   "answer": "Keep seen PANs in a set and test: pan in seen",
+   "explanation": "Checking membership in a set is fast, even with thousands of rows.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "PY-032",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "for i, row in df.iterrows():\nWhat is row?",
+   "options": [
+    "One row, which you can read by column name: row[\"PAN\"]",
+    "The row number",
+    "A list of all rows",
+    "The column names"
+   ],
+   "answer": "One row, which you can read by column name: row[\"PAN\"]",
+   "explanation": "iterrows() gives (index, row) pairs; i is the index.",
+   "unlockedBy": "A-PY-09"
+  },
+  {
+   "id": "PY-033",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "An empty Excel cell read by pandas usually becomes…",
+   "options": [
+    "NaN",
+    "\"\" (an empty string)",
+    "0",
+    "The text \"None\""
+   ],
+   "answer": "NaN",
+   "explanation": "pandas uses NaN (a float) for missing values, so check with pd.isna().",
+   "unlockedBy": "A-PY-09"
+  },
+  {
+   "id": "PY-034",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why does value == float(\"nan\") never find missing cells?",
+   "options": [
+    "NaN is not equal to anything, not even NaN",
+    "NaN is a string",
+    "== can't compare floats",
+    "It works, just slowly"
+   ],
+   "answer": "NaN is not equal to anything, not even NaN",
+   "explanation": "Use pd.isna(value) to test for missing values.",
+   "unlockedBy": "A-PY-09"
+  },
+  {
+   "id": "PY-035",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "value = row[\"Email\"]  # the cell is empty\nvalue.strip() raises…",
+   "options": [
+    "AttributeError: 'float' object has no attribute 'strip'",
+    "ValueError",
+    "Nothing; it returns \"\"",
+    "KeyError"
+   ],
+   "answer": "AttributeError: 'float' object has no attribute 'strip'",
+   "explanation": "Empty cells are NaN, which is a float. Check pd.isna(value) before using string methods.",
+   "unlockedBy": "A-PY-09"
+  },
+  {
+   "id": "PY-036",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "In a regex, what do ^ and $ mean?",
+   "options": [
+    "Start and end of the text",
+    "Any letter",
+    "Optional parts",
+    "Ignore case"
+   ],
+   "answer": "Start and end of the text",
+   "explanation": "With re.match or re.search, ^…$ forces a full match. re.fullmatch does it for you.",
+   "unlockedBy": "A-PY-10"
+  },
+  {
+   "id": "PY-037",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "What does \\d{10} match?",
+   "options": [
+    "Exactly 10 digits",
+    "10 or more digits",
+    "Up to 10 digits",
+    "The number 10"
+   ],
+   "answer": "Exactly 10 digits",
+   "explanation": "\\d is one digit; {10} repeats it exactly ten times.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "PY-038",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "In the regex (\\+91)?, what does the ? do?",
+   "options": [
+    "Makes +91 optional (0 or 1 time)",
+    "Matches any one character",
+    "Means one or more",
+    "Matches a question mark"
+   ],
+   "answer": "Makes +91 optional (0 or 1 time)",
+   "explanation": "? after a character or group means 'optional'. + means 'one or more'.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "PY-039",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which simple email pattern rejects \"ravi@@mail.com\" and \"ravi.mail.com\"?",
+   "options": [
+    "r\"[^@\\s]+@[^@\\s]+\\.[^@\\s]+\"",
+    "r\".*@.*\"",
+    "r\"\\w+\"",
+    "r\"@\""
+   ],
+   "answer": "r\"[^@\\s]+@[^@\\s]+\\.[^@\\s]+\"",
+   "explanation": "One @, text before it, a dot in the domain, no spaces. Keep email checks simple and report, don't guess.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "PY-040",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "try:\n    amount = float(cell)\nexcept ValueError:\n    errors.append(\"Bad amount\")\nIf cell is \"12a\", what happens?",
+   "options": [
+    "\"Bad amount\" is added and the run continues",
+    "The program crashes",
+    "amount becomes 12",
+    "amount becomes 0"
+   ],
+   "answer": "\"Bad amount\" is added and the run continues",
+   "explanation": "float(\"12a\") raises ValueError; the except block handles it.",
+   "unlockedBy": "A-PY-12"
+  },
+  {
+   "id": "PY-041",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why catch a specific error (except ValueError:) instead of a bare except:?",
+   "options": [
+    "A bare except also hides bugs you didn't expect",
+    "Bare except isn't allowed in Python",
+    "Specific excepts run faster",
+    "There's no difference"
+   ],
+   "answer": "A bare except also hides bugs you didn't expect",
+   "explanation": "Catch only the errors you know how to handle; let real bugs show.",
+   "unlockedBy": "A-PY-12"
+  },
+  {
+   "id": "PY-042",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "When does a finally: block run?",
+   "options": [
+    "Always, whether or not an error happened",
+    "Only when there was an error",
+    "Only when there was no error",
+    "Never; it's a comment"
+   ],
+   "answer": "Always, whether or not an error happened",
+   "explanation": "finally is for clean-up that must always happen, like closing a file.",
+   "unlockedBy": "A-PY-12"
+  },
+  {
+   "id": "PY-043",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "assert count == 3, \"Expected 3 PAN errors\"\nWhat happens if count is 2?",
+   "options": [
+    "AssertionError with that message",
+    "Nothing",
+    "count becomes 3",
+    "Only a warning"
+   ],
+   "answer": "AssertionError with that message",
+   "explanation": "assert is a quick test: it stops the run when the condition is false.",
+   "unlockedBy": "A-PY-13"
+  },
+  {
+   "id": "PY-044",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Why test the validator on a second fake file?",
+   "options": [
+    "To catch checks that only worked because of the first file's quirks",
+    "Python needs two files",
+    "To double the speed",
+    "To make a backup"
+   ],
+   "answer": "To catch checks that only worked because of the first file's quirks",
+   "explanation": "A fresh file with new planted errors shows whether the checks really work.",
+   "unlockedBy": "A-PY-13"
+  },
+  {
+   "id": "PY-045",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "How do you start a Streamlit app saved as app.py?",
+   "options": [
+    "streamlit run app.py",
+    "python app.py run",
+    "pip run app.py",
+    "start app.py"
+   ],
+   "answer": "streamlit run app.py",
+   "explanation": "streamlit run starts a local web page in your browser.",
+   "unlockedBy": "A-ST-1"
+  },
+  {
+   "id": "PY-046",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which Streamlit call lets the user upload an Excel file?",
+   "options": [
+    "st.file_uploader(\"Vendor file\", type=[\"xlsx\"])",
+    "st.upload()",
+    "st.read_excel()",
+    "st.open_file()"
+   ],
+   "answer": "st.file_uploader(\"Vendor file\", type=[\"xlsx\"])",
+   "explanation": "file_uploader returns the uploaded file, which pandas can read directly.",
+   "unlockedBy": "A-ST-1"
+  },
+  {
+   "id": "PY-047",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "Which call gives the user the error report to download?",
+   "options": [
+    "st.download_button(...)",
+    "st.save()",
+    "st.export()",
+    "st.button(\"Download\")"
+   ],
+   "answer": "st.download_button(...)",
+   "explanation": "download_button sends bytes (for example an Excel file built in memory) to the browser.",
+   "unlockedBy": "A-ST-2"
+  },
+  {
+   "id": "PY-048",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "In openpyxl, which adds a dropdown list to template cells?",
+   "options": [
+    "DataValidation(type=\"list\", formula1='\"A,B,C\"')",
+    "Dropdown(\"A,B,C\")",
+    "ws.add_list(\"A,B,C\")",
+    "ConditionalFormatting(\"A,B,C\")"
+   ],
+   "answer": "DataValidation(type=\"list\", formula1='\"A,B,C\"')",
+   "explanation": "Create a DataValidation, add it to the sheet, then add the cell range to it.",
+   "unlockedBy": "A-XL-1"
+  },
+  {
+   "id": "PY-049",
+   "topic": "Python",
+   "type": "mcq",
+   "prompt": "requests.get(url).status_code == 200 means…",
+   "options": [
+    "The request succeeded",
+    "The page was not found",
+    "The server crashed",
+    "You aren't logged in"
+   ],
+   "answer": "The request succeeded",
+   "explanation": "200 = OK, 404 = not found, 401/403 = not allowed, 500 = server error.",
+   "unlockedBy": "A-API-1"
+  },
+  {
+   "id": "SQL-01",
+   "topic": "SQL",
+   "type": "mcq",
+   "prompt": "SELECT name FROM vendors WHERE state = 'MH';\nWhat does it return?",
+   "options": [
+    "Names of vendors whose state is MH",
+    "All columns of MH vendors",
+    "The number of MH vendors",
+    "All vendors"
+   ],
+   "answer": "Names of vendors whose state is MH",
+   "explanation": "SELECT picks columns; WHERE picks rows.",
+   "unlockedBy": "A-SQL-1"
+  },
+  {
+   "id": "SQL-02",
+   "topic": "SQL",
+   "type": "mcq",
+   "prompt": "Which keyword filters rows before any grouping?",
+   "options": [
+    "WHERE",
+    "HAVING",
+    "ORDER BY",
+    "GROUP"
+   ],
+   "answer": "WHERE",
+   "explanation": "WHERE filters rows; HAVING filters groups after GROUP BY.",
+   "unlockedBy": "A-SQL-1"
+  },
+  {
+   "id": "SQL-03",
+   "topic": "SQL",
+   "type": "mcq",
+   "prompt": "SELECT state, COUNT(*) FROM vendors GROUP BY state;\nWhat does it give?",
+   "options": [
+    "One row per state with its vendor count",
+    "The total number of vendors",
+    "Every vendor with its state",
+    "An error: COUNT needs a column"
+   ],
+   "answer": "One row per state with its vendor count",
+   "explanation": "GROUP BY makes one group per state; COUNT(*) counts rows in each.",
+   "unlockedBy": "A-SQL-2"
+  },
+  {
+   "id": "SQL-04",
+   "topic": "SQL",
+   "type": "mcq",
+   "prompt": "An INNER JOIN of invoices and vendors on vendor_id returns…",
+   "options": [
+    "Only invoices whose vendor_id exists in vendors",
+    "All invoices, even without a vendor",
+    "All vendors, even without invoices",
+    "Every possible pair"
+   ],
+   "answer": "Only invoices whose vendor_id exists in vendors",
+   "explanation": "A LEFT JOIN from invoices keeps unmatched invoices — handy for finding unknown vendors.",
+   "unlockedBy": "A-SQL-3"
+  },
+  {
+   "id": "SQL-05",
+   "topic": "SQL",
+   "type": "mcq",
+   "prompt": "Which query finds PANs used by more than one vendor?",
+   "options": [
+    "SELECT pan FROM vendors GROUP BY pan HAVING COUNT(*) > 1;",
+    "SELECT pan FROM vendors WHERE COUNT(*) > 1;",
+    "SELECT DISTINCT pan FROM vendors;",
+    "SELECT pan FROM vendors ORDER BY pan;"
+   ],
+   "answer": "SELECT pan FROM vendors GROUP BY pan HAVING COUNT(*) > 1;",
+   "explanation": "WHERE can't use COUNT. HAVING filters the groups made by GROUP BY.",
+   "unlockedBy": "A-SQL-4"
+  },
+  {
+   "id": "AC-01",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "The accounting equation is…",
+   "options": [
+    "Assets = Liabilities + Capital",
+    "Assets = Liabilities − Capital",
+    "Capital = Assets + Liabilities",
+    "Assets + Liabilities = Capital"
+   ],
+   "answer": "Assets = Liabilities + Capital",
+   "explanation": "Everything the business owns is funded by outsiders (liabilities) or the owner (capital).",
+   "unlockedBy": "B-NP-W1"
+  },
+  {
+   "id": "AC-02",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi records his business separately from his personal money. Which concept is this?",
+   "options": [
+    "Business entity concept",
+    "Going concern concept",
+    "Money measurement concept",
+    "Matching concept"
+   ],
+   "answer": "Business entity concept",
+   "explanation": "The business is treated as separate from its owner, so Ravi's capital is a liability of the business.",
+   "unlockedBy": "B-NP-W1"
+  },
+  {
+   "id": "AC-03",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Every transaction affects at least two accounts. Which concept is this?",
+   "options": [
+    "Dual aspect concept",
+    "Accrual concept",
+    "Prudence",
+    "Consistency"
+   ],
+   "answer": "Dual aspect concept",
+   "explanation": "That is why every journal entry has a debit and a credit.",
+   "unlockedBy": "B-NP-W1"
+  },
+  {
+   "id": "AC-04",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "What is the normal balance of an asset account?",
+   "options": [
+    "Debit",
+    "Credit",
+    "Zero",
+    "It changes every month"
+   ],
+   "answer": "Debit",
+   "explanation": "Assets and expenses normally have debit balances; liabilities, capital and income have credit balances.",
+   "unlockedBy": "B-NP-W1"
+  },
+  {
+   "id": "AC-05",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Which account normally has a credit balance?",
+   "options": [
+    "Capital",
+    "Cash",
+    "Rent expense",
+    "Drawings"
+   ],
+   "answer": "Capital",
+   "explanation": "Capital is owed to the owner. Drawings reduce it and have a debit balance.",
+   "unlockedBy": "B-NP-W1"
+  },
+  {
+   "id": "AC-06",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Golden rule for a personal account (for example the creditor Mohan)?",
+   "options": [
+    "Debit the receiver, credit the giver",
+    "Debit what comes in, credit what goes out",
+    "Debit all expenses and losses, credit all incomes and gains",
+    "Debit the giver, credit the receiver"
+   ],
+   "answer": "Debit the receiver, credit the giver",
+   "explanation": "Personal accounts are people and firms: whoever receives is debited.",
+   "unlockedBy": "B-NP-2A"
+  },
+  {
+   "id": "AC-07",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Golden rule for a real account (cash, furniture, goods)?",
+   "options": [
+    "Debit what comes in, credit what goes out",
+    "Debit the receiver, credit the giver",
+    "Debit all expenses and losses, credit all incomes and gains",
+    "Credit what comes in, debit what goes out"
+   ],
+   "answer": "Debit what comes in, credit what goes out",
+   "explanation": "Real accounts are things the business owns.",
+   "unlockedBy": "B-NP-2A"
+  },
+  {
+   "id": "AC-08",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Golden rule for a nominal account (rent, salary, commission)?",
+   "options": [
+    "Debit all expenses and losses, credit all incomes and gains",
+    "Debit what comes in, credit what goes out",
+    "Debit the receiver, credit the giver",
+    "Credit all expenses, debit all incomes"
+   ],
+   "answer": "Debit all expenses and losses, credit all incomes and gains",
+   "explanation": "Nominal accounts are expenses, losses, incomes and gains.",
+   "unlockedBy": "B-NP-2A"
+  },
+  {
+   "id": "AC-09",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Rent paid is which type of account?",
+   "options": [
+    "Nominal",
+    "Real",
+    "Personal",
+    "Contra"
+   ],
+   "answer": "Nominal",
+   "explanation": "Rent is an expense, so it's a nominal account.",
+   "unlockedBy": "B-NP-2A"
+  },
+  {
+   "id": "AC-10",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "In every journal entry, total debits must…",
+   "options": [
+    "Equal total credits",
+    "Be larger than credits",
+    "Equal zero",
+    "Match the bank balance"
+   ],
+   "answer": "Equal total credits",
+   "explanation": "If they don't match, the entry is wrong.",
+   "unlockedBy": "B-NP-2A"
+  },
+  {
+   "id": "AC-11",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi Traders pays rent of ₹5,000 in cash. Which account is debited?",
+   "options": [
+    "Rent account",
+    "Cash account",
+    "Ravi's capital account",
+    "The landlord's account"
+   ],
+   "answer": "Rent account",
+   "explanation": "Rent is an expense (nominal): debit it. Cash goes out (real): credit Cash.",
+   "unlockedBy": "B-NP-2.6b"
+  },
+  {
+   "id": "AC-12",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi Traders buys goods for ₹20,000 in cash. The entry is…",
+   "options": [
+    "Dr Purchases ₹20,000 / Cr Cash ₹20,000",
+    "Dr Cash ₹20,000 / Cr Purchases ₹20,000",
+    "Dr Goods ₹20,000 / Cr Sales ₹20,000",
+    "Dr Purchases ₹20,000 / Cr Capital ₹20,000"
+   ],
+   "answer": "Dr Purchases ₹20,000 / Cr Cash ₹20,000",
+   "explanation": "Goods bought for resale go to Purchases. Cash goes out, so credit Cash.",
+   "unlockedBy": "B-NP-2.6b"
+  },
+  {
+   "id": "AC-13",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi brings ₹1,00,000 in cash to start the business. The entry is…",
+   "options": [
+    "Dr Cash / Cr Capital",
+    "Dr Capital / Cr Cash",
+    "Dr Cash / Cr Sales",
+    "Dr Bank / Cr Cash"
+   ],
+   "answer": "Dr Cash / Cr Capital",
+   "explanation": "Cash comes in: debit Cash. The owner gives it: credit Capital.",
+   "unlockedBy": "B-NP-2.6b"
+  },
+  {
+   "id": "AC-14",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Buys goods on credit from Mohan for ₹15,000. Which account is credited?",
+   "options": [
+    "Mohan (creditor)",
+    "Cash",
+    "Purchases",
+    "Sales"
+   ],
+   "answer": "Mohan (creditor)",
+   "explanation": "Dr Purchases / Cr Mohan. No cash moves yet; Mohan is the giver.",
+   "unlockedBy": "B-NP-2.7b"
+  },
+  {
+   "id": "AC-15",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Sells goods to Sita on credit for ₹8,000. The entry is…",
+   "options": [
+    "Dr Sita / Cr Sales",
+    "Dr Sales / Cr Sita",
+    "Dr Cash / Cr Sales",
+    "Dr Sita / Cr Purchases"
+   ],
+   "answer": "Dr Sita / Cr Sales",
+   "explanation": "Sita receives the goods and now owes money: debit Sita.",
+   "unlockedBy": "B-NP-2.7b"
+  },
+  {
+   "id": "AC-16",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Sells goods for ₹12,000 in cash. The entry is…",
+   "options": [
+    "Dr Cash / Cr Sales",
+    "Dr Sales / Cr Cash",
+    "Dr Cash / Cr Purchases",
+    "Dr Cash / Cr Capital"
+   ],
+   "answer": "Dr Cash / Cr Sales",
+   "explanation": "Cash comes in; sales is income.",
+   "unlockedBy": "B-NP-2.7b"
+  },
+  {
+   "id": "AC-17",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Deposits ₹30,000 cash into the bank. What is this?",
+   "options": [
+    "A contra entry: Dr Bank / Cr Cash",
+    "Dr Cash / Cr Bank",
+    "Dr Bank / Cr Capital",
+    "No entry is needed"
+   ],
+   "answer": "A contra entry: Dr Bank / Cr Cash",
+   "explanation": "Both sides are cash and bank, so it's recorded on both sides of the cash book.",
+   "unlockedBy": "B-NP-2.8b"
+  },
+  {
+   "id": "AC-18",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi takes ₹2,000 cash for personal use. The entry is…",
+   "options": [
+    "Dr Drawings / Cr Cash",
+    "Dr Cash / Cr Drawings",
+    "Dr Salary / Cr Cash",
+    "Dr Expenses / Cr Cash"
+   ],
+   "answer": "Dr Drawings / Cr Cash",
+   "explanation": "Drawings reduce the owner's capital; they are not a business expense.",
+   "unlockedBy": "B-NP-2.8b"
+  },
+  {
+   "id": "AC-19",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Buys office furniture for ₹10,000 in cash. Which account is debited?",
+   "options": [
+    "Furniture",
+    "Purchases",
+    "Office expenses",
+    "Cash"
+   ],
+   "answer": "Furniture",
+   "explanation": "Purchases is only for goods you trade in. Furniture is an asset.",
+   "unlockedBy": "B-NP-2.8b"
+  },
+  {
+   "id": "AC-20",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Pays salaries of ₹10,000 by bank transfer. The entry is…",
+   "options": [
+    "Dr Salary / Cr Bank",
+    "Dr Bank / Cr Salary",
+    "Dr Salary / Cr Cash",
+    "Dr Employees / Cr Salary"
+   ],
+   "answer": "Dr Salary / Cr Bank",
+   "explanation": "Salary is an expense; the money leaves the bank.",
+   "unlockedBy": "B-NP-2.9b"
+  },
+  {
+   "id": "AC-21",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Buys a computer on credit from Dell for ₹40,000. The entry is…",
+   "options": [
+    "Dr Computer / Cr Dell",
+    "Dr Purchases / Cr Dell",
+    "Dr Computer / Cr Cash",
+    "Dr Dell / Cr Computer"
+   ],
+   "answer": "Dr Computer / Cr Dell",
+   "explanation": "The computer is an asset (not Purchases). Dell is the giver, so credit Dell.",
+   "unlockedBy": "B-NP-2.9b"
+  },
+  {
+   "id": "AC-22",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "₹500 interest is credited to the bank account. Which account is credited?",
+   "options": [
+    "Interest received (income)",
+    "Bank",
+    "Capital",
+    "Interest paid"
+   ],
+   "answer": "Interest received (income)",
+   "explanation": "Dr Bank / Cr Interest received.",
+   "unlockedBy": "B-NP-2.9b"
+  },
+  {
+   "id": "AC-23",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Pays Mohan ₹14,700 in full settlement of ₹15,000. The ₹300 is…",
+   "options": [
+    "Discount received — credited",
+    "Discount allowed — debited",
+    "Interest — debited",
+    "Ignored"
+   ],
+   "answer": "Discount received — credited",
+   "explanation": "Dr Mohan 15,000 / Cr Cash 14,700 / Cr Discount received 300.",
+   "unlockedBy": "B-NP-2.10b"
+  },
+  {
+   "id": "AC-24",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Sita pays ₹7,800 in full settlement of ₹8,000. The ₹200 is…",
+   "options": [
+    "Discount allowed — debited",
+    "Discount received — credited",
+    "Bad debt — credited",
+    "Sales — debited"
+   ],
+   "answer": "Discount allowed — debited",
+   "explanation": "Dr Cash 7,800 / Dr Discount allowed 200 / Cr Sita 8,000.",
+   "unlockedBy": "B-NP-2.10b"
+  },
+  {
+   "id": "AC-25",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "An entry with more than one debit or credit (like the discount entries) is…",
+   "options": [
+    "A compound entry",
+    "A contra entry",
+    "An opening entry",
+    "A rectifying entry"
+   ],
+   "answer": "A compound entry",
+   "explanation": "Compound entries combine related lines; debits still equal credits.",
+   "unlockedBy": "B-NP-2.10b"
+  },
+  {
+   "id": "AC-26",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Returns goods worth ₹1,000 to Mohan. The entry is…",
+   "options": [
+    "Dr Mohan / Cr Purchase returns",
+    "Dr Purchase returns / Cr Mohan",
+    "Dr Mohan / Cr Sales",
+    "Dr Cash / Cr Purchases"
+   ],
+   "answer": "Dr Mohan / Cr Purchase returns",
+   "explanation": "Mohan receives the goods back, so debit Mohan.",
+   "unlockedBy": "B-NP-2.11b"
+  },
+  {
+   "id": "AC-27",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Sita returns goods worth ₹500. The entry is…",
+   "options": [
+    "Dr Sales returns / Cr Sita",
+    "Dr Sita / Cr Sales returns",
+    "Dr Purchases / Cr Sita",
+    "Dr Sales / Cr Cash"
+   ],
+   "answer": "Dr Sales returns / Cr Sita",
+   "explanation": "Sita gives the goods back, so credit Sita.",
+   "unlockedBy": "B-NP-2.11b"
+  },
+  {
+   "id": "AC-28",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi takes goods worth ₹1,500 home for personal use. The entry is…",
+   "options": [
+    "Dr Drawings / Cr Purchases",
+    "Dr Drawings / Cr Sales",
+    "Dr Purchases / Cr Drawings",
+    "Dr Expenses / Cr Purchases"
+   ],
+   "answer": "Dr Drawings / Cr Purchases",
+   "explanation": "Goods leave at cost, so credit Purchases, not Sales.",
+   "unlockedBy": "B-NP-2.11b"
+  },
+  {
+   "id": "AC-29",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Goods worth ₹2,000 are given away as free samples. The entry is…",
+   "options": [
+    "Dr Advertisement / Cr Purchases",
+    "Dr Purchases / Cr Advertisement",
+    "Dr Sales / Cr Purchases",
+    "Dr Drawings / Cr Purchases"
+   ],
+   "answer": "Dr Advertisement / Cr Purchases",
+   "explanation": "Free samples are an advertising expense.",
+   "unlockedBy": "B-NP-2.12b"
+  },
+  {
+   "id": "AC-30",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Goods worth ₹3,000 are destroyed by fire (no insurance). The entry is…",
+   "options": [
+    "Dr Loss by fire / Cr Purchases",
+    "Dr Purchases / Cr Loss by fire",
+    "Dr Cash / Cr Purchases",
+    "No entry"
+   ],
+   "answer": "Dr Loss by fire / Cr Purchases",
+   "explanation": "A loss is debited; the goods leave, so credit Purchases.",
+   "unlockedBy": "B-NP-2.12b"
+  },
+  {
+   "id": "AC-31",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Sita can't pay ₹1,000 she owes and it won't be recovered. The entry is…",
+   "options": [
+    "Dr Bad debts / Cr Sita",
+    "Dr Sita / Cr Bad debts",
+    "Dr Sales / Cr Sita",
+    "Dr Bad debts / Cr Cash"
+   ],
+   "answer": "Dr Bad debts / Cr Sita",
+   "explanation": "Bad debts are a loss; Sita's balance is cleared.",
+   "unlockedBy": "B-NP-2.12b"
+  },
+  {
+   "id": "AC-32",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Takes a bank loan of ₹50,000 into the bank account. The entry is…",
+   "options": [
+    "Dr Bank / Cr Bank loan",
+    "Dr Bank loan / Cr Bank",
+    "Dr Bank / Cr Capital",
+    "Dr Cash / Cr Bank"
+   ],
+   "answer": "Dr Bank / Cr Bank loan",
+   "explanation": "The loan is a liability: credit it. Money comes into the bank.",
+   "unlockedBy": "B-NP-2.13b"
+  },
+  {
+   "id": "AC-33",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Pays the electricity bill of ₹1,200 in cash. The entry is…",
+   "options": [
+    "Dr Electricity expense / Cr Cash",
+    "Dr Cash / Cr Electricity expense",
+    "Dr Electricity board / Cr Cash",
+    "Dr Electricity expense / Cr Capital"
+   ],
+   "answer": "Dr Electricity expense / Cr Cash",
+   "explanation": "Expense debited; cash credited.",
+   "unlockedBy": "B-NP-2.13b"
+  },
+  {
+   "id": "AC-34",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "The entry that brings last year's closing balances into the new year is…",
+   "options": [
+    "An opening entry",
+    "A closing entry",
+    "A contra entry",
+    "An adjusting entry"
+   ],
+   "answer": "An opening entry",
+   "explanation": "Assets are debited, liabilities and capital credited.",
+   "unlockedBy": "B-NP-2.13b"
+  },
+  {
+   "id": "AC-35",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "After journalising, what comes next?",
+   "options": [
+    "Posting to the ledger",
+    "Preparing the balance sheet",
+    "The trial balance",
+    "Closing the books"
+   ],
+   "answer": "Posting to the ledger",
+   "explanation": "Journal → ledger → trial balance → final accounts.",
+   "unlockedBy": "B-NP-3.1"
+  },
+  {
+   "id": "AC-36",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "How is Dr Cash / Cr Capital posted in the Cash account?",
+   "options": [
+    "\"To Capital\" on the debit side of Cash",
+    "\"By Capital\" on the debit side of Cash",
+    "\"To Cash\" on the debit side of Capital",
+    "On the credit side of Cash"
+   ],
+   "answer": "\"To Capital\" on the debit side of Cash",
+   "explanation": "In the debited account write \"To\" + the other account; in the credited account, \"By\" + the other account.",
+   "unlockedBy": "B-NP-3.2"
+  },
+  {
+   "id": "AC-37",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "A ledger's debit side totals ₹50,000 and its credit side ₹42,000. Its balance is…",
+   "options": [
+    "₹8,000 debit balance",
+    "₹8,000 credit balance",
+    "₹92,000 debit balance",
+    "₹42,000 credit balance"
+   ],
+   "answer": "₹8,000 debit balance",
+   "explanation": "The bigger side wins. Write the difference as \"By balance c/d\" on the smaller side.",
+   "unlockedBy": "B-NP-3.3"
+  },
+  {
+   "id": "AC-38",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "What do 'balance c/d' and 'balance b/d' mean?",
+   "options": [
+    "Carried down (end of period) and brought down (start of next)",
+    "Credit due and debit due",
+    "Cash deposited and bank deposited",
+    "Cancelled and deleted"
+   ],
+   "answer": "Carried down (end of period) and brought down (start of next)",
+   "explanation": "The closing balance is carried down and becomes next period's opening balance.",
+   "unlockedBy": "B-NP-3.4"
+  },
+  {
+   "id": "AC-39",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "A trial balance lists…",
+   "options": [
+    "Every ledger balance, to check total debits equal total credits",
+    "Only cash and bank",
+    "The profit for the year",
+    "Only assets and liabilities"
+   ],
+   "answer": "Every ledger balance, to check total debits equal total credits",
+   "explanation": "It's an arithmetic check before final accounts.",
+   "unlockedBy": "B-NP-4.1"
+  },
+  {
+   "id": "AC-40",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Which error does a trial balance NOT reveal?",
+   "options": [
+    "A transaction left out completely",
+    "₹500 posted as ₹5,000 on one side only",
+    "The debit side added up wrongly",
+    "A ledger balance missed from the list"
+   ],
+   "answer": "A transaction left out completely",
+   "explanation": "Errors of omission, principle and compensating errors keep debits = credits.",
+   "unlockedBy": "B-NP-4.2"
+  },
+  {
+   "id": "AC-41",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Furniture bought but debited to Purchases is an error of…",
+   "options": [
+    "Principle",
+    "Omission",
+    "Casting (adding)",
+    "Posting to the wrong side"
+   ],
+   "answer": "Principle",
+   "explanation": "Capital and revenue items were mixed up; the trial balance still agrees.",
+   "unlockedBy": "B-NP-4.3"
+  },
+  {
+   "id": "AC-42",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "If the trial balance doesn't agree, the difference goes temporarily to a…",
+   "options": [
+    "Suspense account",
+    "Capital account",
+    "Drawings account",
+    "Bank account"
+   ],
+   "answer": "Suspense account",
+   "explanation": "It's cleared once the errors are found.",
+   "unlockedBy": "B-NP-4.3"
+  },
+  {
+   "id": "AC-43",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Gross profit is worked out in the…",
+   "options": [
+    "Trading account",
+    "Balance sheet",
+    "Cash book",
+    "Trial balance"
+   ],
+   "answer": "Trading account",
+   "explanation": "Gross profit = sales − cost of goods sold. Net profit comes from the P&L.",
+   "unlockedBy": "B-FA-1"
+  },
+  {
+   "id": "AC-44",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Closing stock (given outside the trial balance) appears…",
+   "options": [
+    "On the credit side of the trading account and as an asset in the balance sheet",
+    "Only in the balance sheet, as a liability",
+    "On the debit side of the P&L",
+    "Nowhere"
+   ],
+   "answer": "On the credit side of the trading account and as an asset in the balance sheet",
+   "explanation": "Two places, because it's an adjustment.",
+   "unlockedBy": "B-FA-2"
+  },
+  {
+   "id": "AC-45",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "March rent of ₹1,000 is unpaid on 31 March. The adjustment is…",
+   "options": [
+    "Dr Rent / Cr Outstanding rent (a liability)",
+    "Dr Outstanding rent / Cr Rent",
+    "Wait until it's paid",
+    "Dr Cash / Cr Rent"
+   ],
+   "answer": "Dr Rent / Cr Outstanding rent (a liability)",
+   "explanation": "Accrual and matching: March's expense belongs to March.",
+   "unlockedBy": "B-FA-7"
+  },
+  {
+   "id": "AC-46",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "₹1,200 insurance is paid on 1 January for 12 months. Books close on 31 March. How much is prepaid?",
+   "options": [
+    "₹900 (9 months)",
+    "₹300",
+    "₹1,200",
+    "₹0"
+   ],
+   "answer": "₹900 (9 months)",
+   "explanation": "Only January–March (₹300) is this year's expense; the rest is a prepaid asset.",
+   "unlockedBy": "B-FA-7"
+  },
+  {
+   "id": "AC-47",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Buying a delivery van for the business is…",
+   "options": [
+    "Capital expenditure",
+    "Revenue expenditure",
+    "A nominal expense",
+    "Drawings"
+   ],
+   "answer": "Capital expenditure",
+   "explanation": "It gives benefit for several years, so it's an asset.",
+   "unlockedBy": "B-FA-15"
+  },
+  {
+   "id": "AC-48",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "In purchase-to-pay, the 3-way match compares…",
+   "options": [
+    "Purchase order, goods receipt and invoice",
+    "Invoice, payment and bank statement",
+    "Quotation, PO and payment",
+    "Vendor master, PO and payment"
+   ],
+   "answer": "Purchase order, goods receipt and invoice",
+   "explanation": "Pay only for what was ordered and actually received.",
+   "unlockedBy": "B-FA-11"
+  },
+  {
+   "id": "AC-49",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Order-to-cash, in order:",
+   "options": [
+    "Sales order → delivery → invoice → payment received",
+    "Invoice → sales order → delivery → payment",
+    "Delivery → sales order → payment → invoice",
+    "Payment → invoice → delivery → sales order"
+   ],
+   "answer": "Sales order → delivery → invoice → payment received",
+   "explanation": "O2C mirrors P2P from the seller's side.",
+   "unlockedBy": "B-FA-13"
+  },
+  {
+   "id": "AC-50",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "In a bank reconciliation, a cheque you issued that the bank hasn't paid yet is…",
+   "options": [
+    "A cheque issued but not yet presented",
+    "A direct deposit",
+    "A bank charge",
+    "A dishonoured cheque"
+   ],
+   "answer": "A cheque issued but not yet presented",
+   "explanation": "It's in your cash book but not yet on the bank statement.",
+   "unlockedBy": "B-BRS-1"
+  },
+  {
+   "id": "AC-51",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "The bank deducted ₹200 charges you haven't recorded. The entry in your books is…",
+   "options": [
+    "Dr Bank charges / Cr Bank",
+    "Dr Bank / Cr Bank charges",
+    "No entry; the bank is wrong",
+    "Dr Cash / Cr Bank"
+   ],
+   "answer": "Dr Bank charges / Cr Bank",
+   "explanation": "Update the cash book for items only the bank knew about.",
+   "unlockedBy": "B-BRS-2"
+  },
+  {
+   "id": "AC-52",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Straight-line: machine ₹1,10,000, residual value ₹10,000, life 5 years. Yearly depreciation?",
+   "options": [
+    "₹20,000",
+    "₹22,000",
+    "₹10,000",
+    "₹25,000"
+   ],
+   "answer": "₹20,000",
+   "explanation": "(1,10,000 − 10,000) ÷ 5 = 20,000.",
+   "unlockedBy": "B-DEP-1"
+  },
+  {
+   "id": "AC-53",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Written-down value at 10% on an asset of ₹1,00,000. Depreciation in year 2?",
+   "options": [
+    "₹9,000",
+    "₹10,000",
+    "₹8,100",
+    "₹19,000"
+   ],
+   "answer": "₹9,000",
+   "explanation": "Year 1: 10,000, leaving 90,000. Year 2: 10% of 90,000 = 9,000.",
+   "unlockedBy": "B-DEP-2"
+  },
+  {
+   "id": "AC-54",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "A sale within the same state (Maharashtra to Maharashtra) carries…",
+   "options": [
+    "CGST + SGST",
+    "IGST only",
+    "CGST only",
+    "No GST"
+   ],
+   "answer": "CGST + SGST",
+   "explanation": "Inter-state sales carry IGST.",
+   "unlockedBy": "B-GST-1"
+  },
+  {
+   "id": "AC-55",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "Ravi Traders buys goods for ₹10,000 + 18% GST within its state. The GST lines are…",
+   "options": [
+    "Dr Input CGST ₹900 and Dr Input SGST ₹900",
+    "Dr Input IGST ₹1,800",
+    "Cr Output CGST ₹900 and Cr Output SGST ₹900",
+    "None: Dr Purchases ₹11,800"
+   ],
+   "answer": "Dr Input CGST ₹900 and Dr Input SGST ₹900",
+   "explanation": "Input tax is an asset you can claim back (input tax credit).",
+   "unlockedBy": "B-GST-2"
+  },
+  {
+   "id": "AC-56",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "On a ₹10,000 sale to another state with 18% IGST, which is credited?",
+   "options": [
+    "Output IGST ₹1,800",
+    "Input IGST ₹1,800",
+    "Output CGST ₹900 and SGST ₹900",
+    "Sales ₹11,800"
+   ],
+   "answer": "Output IGST ₹1,800",
+   "explanation": "Dr Customer 11,800 / Cr Sales 10,000 / Cr Output IGST 1,800.",
+   "unlockedBy": "B-GST-3"
+  },
+  {
+   "id": "AC-57",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "At month-end you record this month's electricity used but not yet billed. This is…",
+   "options": [
+    "An accrual",
+    "A prepayment",
+    "A reversal",
+    "A contra entry"
+   ],
+   "answer": "An accrual",
+   "explanation": "Expenses belong to the month they were used.",
+   "unlockedBy": "B-MEC-1"
+  },
+  {
+   "id": "AC-58",
+   "topic": "Accounting",
+   "type": "mcq",
+   "prompt": "'Cut-off' at month-end means…",
+   "options": [
+    "Each transaction is recorded in the period it belongs to",
+    "All entries stop at 5 pm",
+    "No entries in the last week",
+    "Only cash entries count"
+   ],
+   "answer": "Each transaction is recorded in the period it belongs to",
+   "explanation": "Goods received on the 31st belong to this month, even if the invoice comes later.",
+   "unlockedBy": "B-MEC-2"
+  },
+  {
+   "id": "ER-01",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Why flag a vendor with a blank PAN before go-live?",
+   "options": [
+    "Tax deductions and duplicate checks fail later without it",
+    "Blank PANs slow the ERP down",
+    "It's fine; add it after the first payment",
+    "Only the bank needs the PAN"
+   ],
+   "answer": "Tax deductions and duplicate checks fail later without it",
+   "explanation": "Fix master data at the source, before transactions depend on it.",
+   "unlockedBy": "A-PY-06"
+  },
+  {
+   "id": "ER-02",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "How many characters are in a PAN?",
+   "options": [
+    "10",
+    "15",
+    "11",
+    "12"
+   ],
+   "answer": "10",
+   "explanation": "Format AAAAA9999A: 5 letters, 4 digits, 1 letter.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "ER-03",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The 4th character of a PAN shows the holder type. What does 'C' mean?",
+   "options": [
+    "Company",
+    "Citizen",
+    "Cooperative",
+    "Central government"
+   ],
+   "answer": "Company",
+   "explanation": "P = individual, C = company, H = HUF, F = firm, T = trust, G = government.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "ER-04",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "A vendor who is an individual should have which 4th PAN character?",
+   "options": [
+    "P",
+    "I",
+    "C",
+    "A"
+   ],
+   "answer": "P",
+   "explanation": "P stands for person (individual).",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "ER-05",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Which PAN has a valid format?",
+   "options": [
+    "ABCPK1234D",
+    "ABCP1234KD",
+    "ABCPK12345",
+    "AB1PK1234D"
+   ],
+   "answer": "ABCPK1234D",
+   "explanation": "5 letters, then 4 digits, then 1 letter.",
+   "unlockedBy": "A-PY-07"
+  },
+  {
+   "id": "ER-06",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "How many characters are in a GSTIN?",
+   "options": [
+    "15",
+    "10",
+    "12",
+    "11"
+   ],
+   "answer": "15",
+   "explanation": "2-digit state code + 10-character PAN + entity number + 'Z' + check character.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-07",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The first two digits of a GSTIN are…",
+   "options": [
+    "The state code",
+    "The year of registration",
+    "A check digit",
+    "The branch number"
+   ],
+   "answer": "The state code",
+   "explanation": "For example 27 = Maharashtra, 29 = Karnataka, 36 = Telangana.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-08",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Characters 3 to 12 of a GSTIN are…",
+   "options": [
+    "The business's PAN",
+    "The bank account number",
+    "The state name",
+    "Random numbers"
+   ],
+   "answer": "The business's PAN",
+   "explanation": "So a GSTIN check can also confirm the PAN matches the vendor's PAN.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-09",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The 14th character of a GSTIN is usually…",
+   "options": [
+    "Z",
+    "The state code",
+    "0",
+    "The PAN's first letter"
+   ],
+   "answer": "Z",
+   "explanation": "It's 'Z' by default. The 13th is the entity number (1–9, then A–Z) for the same PAN in that state.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-10",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The last (15th) character of a GSTIN is…",
+   "options": [
+    "A check character calculated from the other 14",
+    "Always 5",
+    "The entity count",
+    "The state's letter"
+   ],
+   "answer": "A check character calculated from the other 14",
+   "explanation": "A wrong check character usually means a typo.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-11",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Two vendors in the master have the same PAN. What should the validator do?",
+   "options": [
+    "Flag them for review as a possible duplicate",
+    "Nothing; PANs are often shared",
+    "Delete the second vendor automatically",
+    "Only check their GST rates"
+   ],
+   "answer": "Flag them for review as a possible duplicate",
+   "explanation": "It may be a duplicate, or one business with branches in several states (different GSTINs). A person decides.",
+   "unlockedBy": "A-PY-08"
+  },
+  {
+   "id": "ER-12",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "How many characters are in an IFSC?",
+   "options": [
+    "11",
+    "10",
+    "9",
+    "15"
+   ],
+   "answer": "11",
+   "explanation": "4 letters (bank) + 0 + 6 letters or digits (branch).",
+   "unlockedBy": "A-PY-10"
+  },
+  {
+   "id": "ER-13",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The 5th character of an IFSC is always…",
+   "options": [
+    "0 (zero)",
+    "The letter O",
+    "A check digit",
+    "The state code"
+   ],
+   "answer": "0 (zero)",
+   "explanation": "It's reserved, and a common typo is the letter O instead of zero.",
+   "unlockedBy": "A-PY-10"
+  },
+  {
+   "id": "ER-14",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The first 4 characters of an IFSC are…",
+   "options": [
+    "The bank code, in letters",
+    "The branch code",
+    "The city PIN code",
+    "Digits only"
+   ],
+   "answer": "The bank code, in letters",
+   "explanation": "The last 6 characters identify the branch.",
+   "unlockedBy": "A-PY-10"
+  },
+  {
+   "id": "ER-15",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Which IFSC has a valid format?",
+   "options": [
+    "SBIN0001234",
+    "SBIN1001234",
+    "SBI00001234",
+    "SBIN000123"
+   ],
+   "answer": "SBIN0001234",
+   "explanation": "4 letters + 0 + 6 letters/digits = 11 characters.",
+   "unlockedBy": "A-PY-10"
+  },
+  {
+   "id": "ER-16",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "An Indian mobile number (without +91) has…",
+   "options": [
+    "10 digits, starting with 6, 7, 8 or 9",
+    "10 digits, any first digit",
+    "12 digits",
+    "8 digits plus an area code"
+   ],
+   "answer": "10 digits, starting with 6, 7, 8 or 9",
+   "explanation": "Strip spaces and an optional +91 or leading 0 before checking.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "ER-17",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Which value passes re.fullmatch(r\"(\\+91)?[6-9]\\d{9}\", value)?",
+   "options": [
+    "+919876543210",
+    "+91 98765 43210",
+    "5876543210",
+    "98765432"
+   ],
+   "answer": "+919876543210",
+   "explanation": "Spaces fail the pattern, so clean the value first if you want to accept them.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "ER-18",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Should the validator correct a bad email address by itself?",
+   "options": [
+    "No — report it so a person fixes it at the source",
+    "Yes, guess the right address",
+    "Yes, delete the email",
+    "Only for big vendors"
+   ],
+   "answer": "No — report it so a person fixes it at the source",
+   "explanation": "A checker that silently changes data can create new errors.",
+   "unlockedBy": "A-PY-11"
+  },
+  {
+   "id": "ER-19",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Procure-to-pay, in order:",
+   "options": [
+    "Vendor → purchase order → goods receipt → invoice → payment",
+    "Invoice → vendor → payment → purchase order",
+    "Purchase order → payment → invoice → goods receipt",
+    "Vendor → invoice → purchase order → payment"
+   ],
+   "answer": "Vendor → purchase order → goods receipt → invoice → payment",
+   "explanation": "Each step has its own checks; your validator covers the vendor step.",
+   "unlockedBy": "A-P2P-1"
+  },
+  {
+   "id": "ER-20",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "Which change should always need a person's approval?",
+   "options": [
+    "A change to a vendor's bank details",
+    "Fixing a typo in the city name",
+    "Changing the report font",
+    "Sorting the vendor list"
+   ],
+   "answer": "A change to a vendor's bank details",
+   "explanation": "Bank-detail changes are a classic route for payment fraud.",
+   "unlockedBy": "A-P2P-2"
+  },
+  {
+   "id": "ER-21",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "What's the biggest risk when an AI agent approves invoices?",
+   "options": [
+    "It can be confidently wrong, so a duplicate or wrong payment goes through",
+    "It types too fast",
+    "It uses too much paper",
+    "It can't read numbers at all"
+   ],
+   "answer": "It can be confidently wrong, so a duplicate or wrong payment goes through",
+   "explanation": "That's why agents need rules, tests and human sign-off for risky steps.",
+   "unlockedBy": "A-P2P-3"
+  },
+  {
+   "id": "ER-22",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "How do you measure an AI agent's accuracy before go-live?",
+   "options": [
+    "Run it on fake test cases with known right answers and count the correct results",
+    "Ask the AI how accurate it is",
+    "Try it on live payments first",
+    "Measure how fast it answers"
+   ],
+   "answer": "Run it on fake test cases with known right answers and count the correct results",
+   "explanation": "Same idea as your Q&A assistant's 20 test questions.",
+   "unlockedBy": "A-P2P-3"
+  },
+  {
+   "id": "ER-23",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "A vendor's address is in Telangana but its GSTIN starts with 27. Is that a problem?",
+   "options": [
+    "Yes: 27 is Maharashtra; Telangana is 36",
+    "No: the state code can be anything",
+    "Yes: Telangana is 29",
+    "No: only the PAN part matters"
+   ],
+   "answer": "Yes: 27 is Maharashtra; Telangana is 36",
+   "explanation": "The GSTIN's state code should match the state of that registration.",
+   "unlockedBy": "A-GST-1"
+  },
+  {
+   "id": "ER-24",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "GST state code 37 is…",
+   "options": [
+    "Andhra Pradesh",
+    "Telangana",
+    "Tamil Nadu",
+    "Karnataka"
+   ],
+   "answer": "Andhra Pradesh",
+   "explanation": "36 = Telangana, 33 = Tamil Nadu, 29 = Karnataka.",
+   "unlockedBy": "A-GST-1"
+  },
+  {
+   "id": "ER-25",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "An AI-suggested entry has debits of ₹11,800 and credits of ₹11,000. Your checker should…",
+   "options": [
+    "Flag it: debits must equal credits",
+    "Accept it: the AI is usually right",
+    "Round it",
+    "Delete the invoice"
+   ],
+   "answer": "Flag it: debits must equal credits",
+   "explanation": "Never post an unbalanced entry.",
+   "unlockedBy": "A-INV-3"
+  },
+  {
+   "id": "ER-26",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "An invoice shows 18% GST on ₹10,000 as ₹1,500. Your checker should…",
+   "options": [
+    "Flag a GST mismatch (expected ₹1,800)",
+    "Accept it",
+    "Change the rate to 15%",
+    "Ignore GST"
+   ],
+   "answer": "Flag a GST mismatch (expected ₹1,800)",
+   "explanation": "Recalculate tax from the base amount and rate.",
+   "unlockedBy": "A-INV-4"
+  },
+  {
+   "id": "ER-27",
+   "topic": "ERP rules",
+   "type": "mcq",
+   "prompt": "The vendor on an invoice isn't in the vendor master. Best action?",
+   "options": [
+    "Flag it and don't post until the vendor is verified and created",
+    "Create the vendor automatically",
+    "Post it to a similar vendor",
+    "Ignore the vendor field"
+   ],
+   "answer": "Flag it and don't post until the vendor is verified and created",
+   "explanation": "New vendors need a person's approval.",
+   "unlockedBy": "A-INV-4"
+  },
+  {
+   "id": "SAP-01",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "In SAP, the smallest unit with its own complete set of books is the…",
+   "options": [
+    "Company code",
+    "Plant",
+    "Controlling area",
+    "Client"
+   ],
+   "answer": "Company code",
+   "explanation": "Balance sheet and P&L are produced per company code.",
+   "unlockedBy": "B-SAP-01"
+  },
+  {
+   "id": "SAP-02",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "In S/4HANA, FI and CO line items live together in the Universal Journal table…",
+   "options": [
+    "ACDOCA",
+    "BKPF",
+    "BSEG",
+    "FAGLFLEXT"
+   ],
+   "answer": "ACDOCA",
+   "explanation": "BKPF/BSEG still exist for compatibility, but ACDOCA is the single source.",
+   "unlockedBy": "B-SAP-02"
+  },
+  {
+   "id": "SAP-03",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction maintains a G/L account master record centrally?",
+   "options": [
+    "FS00",
+    "FB50",
+    "F110",
+    "OB52"
+   ],
+   "answer": "FS00",
+   "explanation": "FB50 posts a G/L document; FS00 creates and changes the account itself.",
+   "unlockedBy": "B-SAP-GL-1"
+  },
+  {
+   "id": "SAP-04",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "A chart of accounts is…",
+   "options": [
+    "The list of G/L accounts that company codes use",
+    "A report of balances",
+    "The fiscal year calendar",
+    "A list of vendors"
+   ],
+   "answer": "The list of G/L accounts that company codes use",
+   "explanation": "Several company codes can share one chart of accounts.",
+   "unlockedBy": "B-SAP-GL-1"
+  },
+  {
+   "id": "SAP-05",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Fiscal year variant V3 is common in India because it…",
+   "options": [
+    "Runs April to March with 12 periods plus 4 special periods",
+    "Runs January to December",
+    "Has 13 periods",
+    "Follows calendar weeks"
+   ],
+   "answer": "Runs April to March with 12 periods plus 4 special periods",
+   "explanation": "K4 is the calendar-year version (January to December, plus 4 special periods).",
+   "unlockedBy": "B-SAP-FY-1"
+  },
+  {
+   "id": "SAP-06",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction opens and closes posting periods?",
+   "options": [
+    "OB52",
+    "FS00",
+    "OB29",
+    "F110"
+   ],
+   "answer": "OB52",
+   "explanation": "OB29 defines fiscal year variants; OB52 controls which periods are open.",
+   "unlockedBy": "B-SAP-PP-1"
+  },
+  {
+   "id": "SAP-07",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "In S/4HANA, vendors and customers are created with…",
+   "options": [
+    "Business Partner (transaction BP)",
+    "XK01 only",
+    "FS00",
+    "VD01 only"
+   ],
+   "answer": "Business Partner (transaction BP)",
+   "explanation": "Old vendor and customer transactions redirect to BP.",
+   "unlockedBy": "B-SAP-BP-1"
+  },
+  {
+   "id": "SAP-08",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Document type KR is normally a…",
+   "options": [
+    "Vendor invoice",
+    "Customer invoice",
+    "G/L posting",
+    "Customer payment"
+   ],
+   "answer": "Vendor invoice",
+   "explanation": "SA = G/L document, KZ = vendor payment, DR = customer invoice, DZ = customer payment.",
+   "unlockedBy": "B-SAP-DOC-1"
+  },
+  {
+   "id": "SAP-09",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Document type SA is…",
+   "options": [
+    "A G/L account document",
+    "A sales order",
+    "A vendor payment",
+    "An asset posting"
+   ],
+   "answer": "A G/L account document",
+   "explanation": "Used for general journal entries, e.g. with FB50.",
+   "unlockedBy": "B-SAP-DOC-1"
+  },
+  {
+   "id": "SAP-10",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Posting key 40 means…",
+   "options": [
+    "G/L account debit",
+    "G/L account credit",
+    "Vendor invoice",
+    "Customer payment"
+   ],
+   "answer": "G/L account debit",
+   "explanation": "50 is a G/L credit.",
+   "unlockedBy": "B-SAP-DOC-2"
+  },
+  {
+   "id": "SAP-11",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction enters a vendor invoice in FI?",
+   "options": [
+    "FB60",
+    "FB70",
+    "FB50",
+    "F-28"
+   ],
+   "answer": "FB60",
+   "explanation": "FB70 is the customer invoice; FB50 a G/L document.",
+   "unlockedBy": "B-SAP-AP-1"
+  },
+  {
+   "id": "SAP-12",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Posting key 31 is…",
+   "options": [
+    "A vendor credit, such as an invoice",
+    "A vendor debit, such as a payment",
+    "A G/L debit",
+    "A customer invoice"
+   ],
+   "answer": "A vendor credit, such as an invoice",
+   "explanation": "The vendor's account is credited because you now owe them.",
+   "unlockedBy": "B-SAP-AP-2"
+  },
+  {
+   "id": "SAP-13",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction enters a customer invoice in FI?",
+   "options": [
+    "FB70",
+    "FB60",
+    "F-53",
+    "FS00"
+   ],
+   "answer": "FB70",
+   "explanation": "F-28 posts an incoming customer payment.",
+   "unlockedBy": "B-SAP-AR-1"
+  },
+  {
+   "id": "SAP-14",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "The automatic payment program that pays many vendors in one run is…",
+   "options": [
+    "F110",
+    "F-53",
+    "FB60",
+    "OB52"
+   ],
+   "answer": "F110",
+   "explanation": "F-53 posts a single manual outgoing payment.",
+   "unlockedBy": "B-SAP-PAY-1"
+  },
+  {
+   "id": "SAP-15",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "A house bank in SAP is…",
+   "options": [
+    "A bank where your company code holds accounts",
+    "A vendor's bank",
+    "The central bank",
+    "A bank only for salaries"
+   ],
+   "answer": "A bank where your company code holds accounts",
+   "explanation": "Each house bank can have several bank accounts.",
+   "unlockedBy": "B-SAP-HB-1"
+  },
+  {
+   "id": "SAP-16",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction creates an asset master record?",
+   "options": [
+    "AS01",
+    "AFAB",
+    "FS00",
+    "F110"
+   ],
+   "answer": "AS01",
+   "explanation": "AFAB runs depreciation.",
+   "unlockedBy": "B-SAP-AA-1"
+  },
+  {
+   "id": "SAP-17",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Which transaction runs depreciation in asset accounting?",
+   "options": [
+    "AFAB",
+    "AS01",
+    "AW01N",
+    "F110"
+   ],
+   "answer": "AFAB",
+   "explanation": "AW01N is the Asset Explorer, for viewing an asset's values.",
+   "unlockedBy": "B-SAP-AA-2"
+  },
+  {
+   "id": "SAP-18",
+   "topic": "SAP",
+   "type": "mcq",
+   "prompt": "Per your roadmap's fact check, what score passes the C_TS4FI system-based exam?",
+   "options": [
+    "60%",
+    "70%",
+    "50%",
+    "80%"
+   ],
+   "answer": "60%",
+   "explanation": "One system-based activity, 3 hours, 60% to pass (SAP Learning; recheck the exam page).",
+   "unlockedBy": "B-EXAM-PACK"
+  },
+  {
+   "id": "CM-01",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "The Demo #1 flow, in order:",
+   "options": [
+    "Problem → live run → error report → time saved → PlantFlow → next steps",
+    "Code walkthrough → slides → questions",
+    "Time saved → code → problem → thanks",
+    "PlantFlow → next steps → problem → live run"
+   ],
+   "answer": "Problem → live run → error report → time saved → PlantFlow → next steps",
+   "explanation": "Lead with the problem the audience feels; show the tool working; end with numbers and next steps.",
+   "unlockedBy": "A-DEMO1-PREP"
+  },
+  {
+   "id": "CM-02",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "STAR stands for…",
+   "options": [
+    "Situation, Task, Action, Result",
+    "Strategy, Target, Action, Review",
+    "Skill, Task, Approach, Result",
+    "Situation, Tool, Analysis, Report"
+   ],
+   "answer": "Situation, Task, Action, Result",
+   "explanation": "Use it for interview stories from your evidence log.",
+   "unlockedBy": "C-REC-01"
+  },
+  {
+   "id": "CM-03",
+   "topic": "Communication",
+   "type": "flashcard",
+   "prompt": "Say it aloud in 30 seconds: what does your vendor validator do, and why does it matter?",
+   "options": [],
+   "answer": "It checks vendor master data — mandatory fields, PAN, GSTIN, IFSC, phone, email, duplicates — and lists every error in an Excel report, so bad data is fixed before go-live instead of causing payment or tax problems later. It saves hours of manual checking.",
+   "explanation": "Lead with the business problem, then what it checks, then the time saved.",
+   "unlockedBy": "C-REC-02"
+  },
+  {
+   "id": "CM-04",
+   "topic": "Communication",
+   "type": "flashcard",
+   "prompt": "Your manager asks 'How does it work?' about code you wrote. How do you answer?",
+   "options": [],
+   "answer": "Give the steps in plain words (read file → run each check → collect errors → write report), show one check line by line, and say what you'd improve next.",
+   "explanation": "Never run or show code you can't explain.",
+   "unlockedBy": "C-REC-03"
+  },
+  {
+   "id": "CM-05",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "A good first LinkedIn message to someone in SAP finance…",
+   "options": [
+    "Asks one specific question about their work",
+    "Asks them for a job straight away",
+    "Sends your CV with no note",
+    "Lists all your skills"
+   ],
+   "answer": "Asks one specific question about their work",
+   "explanation": "Ask about their work, not for a job. Referrals come later, from June 2027.",
+   "unlockedBy": "N-LI-01"
+  },
+  {
+   "id": "CM-06",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "A short user training works best when it…",
+   "options": [
+    "Shows one real task end to end, then lets them try it",
+    "Covers every menu in one hour",
+    "Is only slides",
+    "Skips questions to save time"
+   ],
+   "answer": "Shows one real task end to end, then lets them try it",
+   "explanation": "People remember what they do themselves.",
+   "unlockedBy": "C-TRAIN-01"
+  },
+  {
+   "id": "CM-07",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "When you explain a technical result to a non-technical manager, lead with…",
+   "options": [
+    "The business result (time saved, errors caught)",
+    "The code",
+    "The libraries you used",
+    "How hard it was"
+   ],
+   "answer": "The business result (time saved, errors caught)",
+   "explanation": "Then explain how, briefly, if they ask.",
+   "unlockedBy": "C-REC-04"
+  },
+  {
+   "id": "CM-08",
+   "topic": "Communication",
+   "type": "flashcard",
+   "prompt": "In 2 sentences: what did the AI get wrong in your invoice checker, and how did you catch it?",
+   "options": [],
+   "answer": "Give the error count by type (for example wrong GST rate, unbalanced entries, unknown vendor). Say your Python checks tested each AI entry against fixed rules — debits = credits, correct GST, vendor exists — so mistakes were caught before posting.",
+   "explanation": "Numbers plus the checking method show you can supervise AI, not just use it.",
+   "unlockedBy": "A-INV-6"
+  },
+  {
+   "id": "CM-09",
+   "topic": "Communication",
+   "type": "mcq",
+   "prompt": "In a STAR story, the Result should include…",
+   "options": [
+    "A number (time saved, errors found, users trained)",
+    "Only how you felt",
+    "Your team members' names",
+    "Nothing; results are optional"
+   ],
+   "answer": "A number (time saved, errors found, users trained)",
+   "explanation": "Numbers make your impact concrete. Leave out client names and confidential figures.",
+   "unlockedBy": "C-REC-05"
+  },
+  {
+   "id": "CM-10",
+   "topic": "Communication",
+   "type": "flashcard",
+   "prompt": "Answer aloud: 'Why should we hire you for a finance systems role?'",
+   "options": [],
+   "answer": "I combine real ERP configuration and go-lives abroad, accounting knowledge, and the skill to build and check AI tools — for example my vendor validator and AI invoice checker, which make ERP finance data correct.",
+   "explanation": "Your edge is the combination; most candidates have only one of these.",
+   "unlockedBy": "A-PORT"
+  }
+ ]
+}

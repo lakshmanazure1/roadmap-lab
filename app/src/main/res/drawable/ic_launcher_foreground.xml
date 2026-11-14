@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A rising measurement line on graph paper. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="#2A313C" android:strokeWidth="1"
+        android:pathData="M30,32H78M30,44H78M30,56H78M30,68H78M36,26V80M48,26V80M60,26V80M72,26V80" />
+    <path android:strokeColor="#2BD4BD" android:strokeWidth="4.5"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M31,72L43,63L54,66L65,50L75,40" />
+    <path android:fillColor="#2BD4BD"
+        android:pathData="M75,40m-4.5,0a4.5,4.5 0,1 1,9 0a4.5,4.5 0,1 1,-9 0" />
+</vector>
