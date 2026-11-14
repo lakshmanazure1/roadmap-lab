@@ -330,7 +330,7 @@ private fun RubricEntry(ui: UiState, spec: CheckSpec.Rubric, onSave: (List<Int>,
     val scores = remember { mutableStateListOf<Int>().apply { repeat(crit.size) { add(-1) } } }
     var note by remember { mutableStateOf("") }
     LazyColumn(contentPadding = PaddingValues(ScreenPadding), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Muted("Listen once, then score each criterion 0–2. Target ${spec.target}/10. ${ui.plan.meta.rubricNote}") }
+        item { Muted("Score each criterion 0–2 (out of 10). Target ${spec.target}/10. ${ui.plan.meta.rubricNote}") }
         crit.forEachIndexed { k, c ->
             item {
                 LabCard {

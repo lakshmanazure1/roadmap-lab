@@ -62,7 +62,7 @@ fun PlanScreen(ui: UiState, act: Actions, nav: Nav) {
         }
         item {
             LazyRow(contentPadding = PaddingValues(horizontal = ScreenPadding), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items((0..11).toList()) { w -> Chip(if (w == 0) "Lead-in" else "Week $w" + if (w == current) " ·" else "", week == w, { week = w }) }
+                items((0..11).toList()) { w -> Chip(if (w == 0) "Lead-in" else if (w == current) "Week $w (now)" else "Week $w", week == w, { week = w }) }
             }
         }
         item {

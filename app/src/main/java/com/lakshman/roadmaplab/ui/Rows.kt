@@ -68,17 +68,18 @@ fun EntryRow(ui: UiState, e: TodayEntry, onToggle: () -> Unit, onOpen: () -> Uni
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 2.dp)) {
                 AreaDot(e.area, 7.dp)
                 Spacer(Modifier.width(6.dp))
-                val meta = listOf(ui.areaShort(e.area), e.code, e.minutesLabel, if (showReason && !e.done) e.reason else "")
+                val reason = e.reason.takeIf { showReason && !e.done && it !in QUIET_REASONS && !it.startsWith("Reduced routine") }.orEmpty()
+                val meta = listOf(ui.areaShort(e.area), e.code, e.minutesLabel, reason)
                     .filter { it.isNotBlank() }.distinct().joinToString(" · ")
                 Text(meta, style = Type.small, color = p.text2, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
         Spacer(Modifier.width(8.dp))
         when {
-            level == Level.NEEDS_REVISION -> LevelTag(level)
+            level == Level.NEEDS_REVISION -> ShortLevel(level)
             e.priority && !e.done -> Tag("Priority", Tone.WARNING)
             e.inProgress -> Tag("Started", Tone.ACCENT)
-            level != null && level.number >= Level.PRACTISED.number -> LevelTag(level)
+            level != null && level.number >= Level.PRACTISED.number -> ShortLevel(level)
         }
     }
 }
@@ -103,9 +104,26 @@ fun TaskLine(ui: UiState, t: PlanTask, onOpen: () -> Unit, onToggle: (() -> Unit
                     style = Type.small, color = p.text2, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
-        if (t.isMilestone) Tag("★ Milestone", Tone.WARNING, Modifier.padding(start = 6.dp))
-        else if (level.number >= Level.PRACTISED.number || level == Level.NEEDS_REVISION) LevelTag(level, Modifier.padding(start = 6.dp))
+        if (level.number >= Level.PRACTISED.number || level == Level.NEEDS_REVISION) ShortLevel(level, Modifier.padding(start = 6.dp))
+        else if (t.isMilestone) Tag("★", Tone.WARNING, Modifier.padding(start = 6.dp))
     }
+}
+
+/** Reasons that are the normal case: not repeated on every row. */
+private val QUIET_REASONS = setOf("Planned for today", "Today", "At work today", "Done today", "Optional lead-in")
+
+/** Compact level label for lists ("Practised", "Assessed", "Revise"…). */
+@Composable
+fun ShortLevel(level: Level, modifier: Modifier = Modifier) {
+    val (text, tone) = when (level) {
+        Level.NEEDS_REVISION -> "Revise" to Tone.DANGER
+        Level.PRACTISED -> "Practised" to Tone.ACCENT
+        Level.ASSESSED -> "Assessed" to Tone.SUCCESS
+        Level.DEMONSTRATED -> "Demonstrated" to Tone.SUCCESS
+        Level.MASTERED -> "Mastered" to Tone.SUCCESS
+        else -> level.label to Tone.NEUTRAL
+    }
+    Tag(text, tone, modifier)
 }
 
 @Composable

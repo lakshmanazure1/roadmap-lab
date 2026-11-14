@@ -52,6 +52,18 @@ class TodayEngineTest {
     }
 
     @Test
+    fun aSkippedOldTaskNeverBlocksYouCarryOnFromWhereYouAre() {
+        // Tuesday's T009 done, Monday's T004 never ticked: Wednesday shows T014, and T004 is listed quietly as earlier.
+        val t = today(d("2026-11-18"), listOf(ev("T009", d("2026-11-17"))))
+        assertEquals(listOf("T014"), t.main.filter { it.area == "accounting" }.map { it.key })
+        assertEquals(listOf("T004"), t.holes.filter { it.area == "accounting" }.map { it.id })
+        // Already ahead: ticking the app steps you've done moves the next one on.
+        val sun = today(d("2026-12-06"), listOf(ev("T103", d("2026-11-29")), ev("T138", d("2026-11-29"))))
+        assertFalse(sun.entries.any { it.key == "T103" && it.section == Section.MAIN })
+        assertTrue(sun.entries.none { it.key == "T033" && it.section == Section.MAIN })
+    }
+
+    @Test
     fun aheadAndDoneTodayAreShownQuietly() {
         val mon = d("2026-11-16")
         val t = today(mon, listOf(ev("T004", mon)))

@@ -225,8 +225,10 @@ private fun LevelLadder(level: Level) {
         Text("Level", style = Type.section, color = p.text)
         Spacer(Modifier.padding(top = 6.dp))
         val steps = Level.entries.filter { it.number > 0 }
+        // With "needs revision", the work you did still counts up to completed (or practised).
+        val base = if (level == Level.NEEDS_REVISION) Level.COMPLETED.number else if (level == Level.SKIPPED) 0 else level.number
         for (l in steps) {
-            val reached = level.number >= l.number && level != Level.NEEDS_REVISION && level != Level.SKIPPED
+            val reached = base >= l.number
             val here = l == level
             Row(Modifier.padding(vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(10.dp).clip(CircleShape).background(if (reached) (if (here) p.accent else p.success) else p.surface2))

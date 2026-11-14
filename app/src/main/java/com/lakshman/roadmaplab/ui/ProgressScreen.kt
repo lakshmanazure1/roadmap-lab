@@ -103,7 +103,8 @@ fun ProgressScreen(ui: UiState, nav: Nav) {
                 Spacer(Modifier.padding(top = 12.dp))
                 Text("Weekly: study sessions done against planned", style = Type.smallStrong, color = p.text2)
                 WeekBars(ui.weeks.map { it.planned }, ui.weeks.map { it.completed }, ui.weeks.indexOfFirst { it.current },
-                    Modifier.padding(top = 8.dp), labels = ui.weeks.map { "W${it.week}" })
+                    Modifier.padding(top = 8.dp), labels = ui.weeks.map { "${it.week}" })
+                Muted("Weeks 1–11", style = Type.caption)
                 Spacer(Modifier.padding(top = 10.dp))
                 ui.months.forEach { m ->
                     Row(Modifier.padding(vertical = 2.dp)) {

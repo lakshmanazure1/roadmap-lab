@@ -82,7 +82,10 @@ object Analytics {
         val mine = plan.tasks.filter { it.area == id && it.kind != TaskKind.REST }
         fun p(t: PlanTask) = states[t.id]?.progress
         val due = mine.filter { TodayEngine.effectiveDay(it, reducedWeeks) <= today }
-        val next = mine.filter { p(it) != Progress.COMPLETED && p(it) != Progress.SKIPPED }
+        fun closed(i: String) = states[i]?.progress.let { it == Progress.COMPLETED || it == Progress.SKIPPED }
+        // Next: the next task in order after where you are (sequences), or the next one from today (day-bound tasks).
+        val next = plan.sequences.values.filter { it.firstOrNull()?.area == id }.mapNotNull { l -> TodayEngine.frontier(l, ::closed).first.firstOrNull() }
+            .plus(mine.filter { it.kind != TaskKind.SEQUENCE && !it.optional && !closed(it.id) && it.day >= today })
             .minWithOrNull(compareBy({ TodayEngine.effectiveDay(it, reducedWeeks) }, { it.order }))
         val scored = checks.filter { it.area == id && it.type in Mastery.SCORED_TYPES && it.max > 0 && it.itemId != null }
         val latest = scored.groupBy { it.itemId }.values.map { l -> l.maxBy { it.createdAt } }

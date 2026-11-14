@@ -59,6 +59,8 @@ data class TodayPlan(
     val minutesPlanned: Int,
     val target: Int,
     val focusKey: String?,
+    /** Earlier tasks in a sequence you moved past without ticking (shown quietly; a catch-up day picks them up). */
+    val holes: List<PlanTask> = emptyList(),
 ) {
     fun section(s: Section): List<TodayEntry> = entries.filter { it.section == s }
     val main: List<TodayEntry> get() = section(Section.MAIN)
@@ -98,6 +100,7 @@ object TodayEngine {
         val type = Consistency.dayType(day, plan, input.meta)
         val dow = Days.dow(day)
         val entries = ArrayList<TodayEntry>()
+        val holes = ArrayList<PlanTask>()
         val states = input.states
         fun progress(id: String) = states[id]?.progress ?: Progress.NOT_STARTED
         fun closed(id: String) = progress(id).let { it == Progress.COMPLETED || it == Progress.SKIPPED }
@@ -131,13 +134,15 @@ object TodayEngine {
             else -> {
                 val catchup = type == DayType.CATCHUP
                 for ((seq, list) in plan.sequences) {
-                    val undone = list.filter { !closed(it.id) }
+                    val (ahead, earlier) = frontier(list) { closed(it) }
+                    holes += earlier.filter { planned(it) <= day }
+                    val undone = if (catchup) earlier + ahead else ahead
                     if (undone.isEmpty()) continue
                     val slots = plan.slotDays[seq] ?: emptySet()
                     val next = undone.first()
                     val due = planned(next) <= day && (dow in slots || planned(next) == day || catchup)
                     if (due) {
-                        val picks = if (catchup) undone.take(2).filter { planned(it) <= day } else listOf(next)
+                        val picks = if (catchup) undone.filter { planned(it) <= day }.take(2) else listOf(next)
                         for ((k, t) in picks.withIndex()) {
                             val reason = when {
                                 planned(t) == day -> "Planned for today"
@@ -192,7 +197,19 @@ object TodayEngine {
             minutesPlanned = main.sumOf { it.minutes },
             target = input.targets.of(type),
             focusKey = focus,
+            holes = if (type == DayType.CATCHUP) emptyList() else holes.filter { h -> sorted.none { it.key == h.id } },
         )
+    }
+
+    /**
+     * Where you are in a sequence: the tasks after the last one you ticked (done or let go), and the
+     * earlier ones you moved past without ticking. "Already ahead? Tick what you've done and carry on from there."
+     */
+    fun frontier(list: List<PlanTask>, closed: (String) -> Boolean): Pair<List<PlanTask>, List<PlanTask>> {
+        val last = list.indexOfLast { closed(it.id) }
+        val ahead = list.drop(last + 1)
+        val earlier = if (last <= 0) emptyList() else list.take(last).filter { !closed(it.id) }
+        return ahead to earlier
     }
 
     /** Dated steps that wait until done (STAR stories, money checks, family steps, trainings, weekly reviews). */
@@ -223,7 +240,7 @@ object TodayEngine {
                     }
                 }
                 a.area == "python" -> {
-                    val next = plan.sequences["python"]?.firstOrNull { input.states[it.id]?.progress.let { p -> p != Progress.COMPLETED && p != Progress.SKIPPED } }
+                    val next = plan.sequences["python"]?.let { l -> frontier(l) { id -> input.states[id]?.progress.let { p -> p == Progress.COMPLETED || p == Progress.SKIPPED } }.first.firstOrNull() }
                     if (next != null && effectiveDay(next, input.reducedWeeks) <= day) {
                         entries += taskEntry(next, input, day, Section.MAIN, "Reduced routine: 15-min revision + finish only this step")
                     }
@@ -239,7 +256,7 @@ object TodayEngine {
         }
         // Everything else waits, in order.
         for ((seq, list) in plan.sequences) {
-            val next = list.firstOrNull { input.states[it.id]?.progress.let { p -> p != Progress.COMPLETED && p != Progress.SKIPPED } } ?: continue
+            val next = frontier(list) { id -> input.states[id]?.progress.let { p -> p == Progress.COMPLETED || p == Progress.SKIPPED } }.first.firstOrNull() ?: continue
             if (entries.any { it.key == next.id }) continue
             if (effectiveDay(next, input.reducedWeeks) <= day && seq != "python") {
                 entries += taskEntry(next, input, day, Section.PAUSED, "Waits for the end of the reduced week")

@@ -94,6 +94,10 @@ fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
                 trailing = if (t.minutesPlanned > 0) "${t.minutesPlanned} min planned" else null) }
             item { EntryCard(ui, main, act, ::open) }
         }
+        if (t.holes.isNotEmpty()) item {
+            Muted("Earlier, not ticked: ${t.holes.take(5).joinToString(" · ") { it.id }}${if (t.holes.size > 5) " …" else ""}. " +
+                "Tick them in Plan if you did them, or pick them up on a catch-up day. Don't double up.")
+        }
         val health = t.section(Section.HEALTH)
         if (health.isNotEmpty() || (ui.plan.inPlan(ui.today) && t.type != DayType.REST)) {
             item { SectionTitle("Health · family · money", trailing = "not counted as study") }
@@ -117,8 +121,8 @@ fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
         }
         item {
             Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SecondaryButton("Review the day", { dayReview = true }, Modifier.weight(1f), icon = Icons.Outlined.EventNote)
-                SecondaryButton("Day options", { dayOptions = true }, Modifier.weight(1f), icon = Icons.Outlined.Tune)
+                SecondaryButton("Review day", { dayReview = true }, Modifier.weight(1f), icon = Icons.Outlined.EventNote)
+                SecondaryButton("Options", { dayOptions = true }, Modifier.weight(1f), icon = Icons.Outlined.Tune)
             }
         }
     }
@@ -181,7 +185,9 @@ private fun TodayCard(ui: UiState) {
             Column(Modifier.weight(1f)) {
                 val headline = when {
                     t.type == DayType.REST -> "Rest day"
-                    t.type == DayType.NONE -> if (ui.today < ui.plan.start) "Before the plan" else "Outside the plan"
+                    t.type == DayType.NONE && ui.today < ui.plan.leadIn -> "The plan starts ${Days.relative(ui.plan.leadIn, ui.today)}"
+                    t.type == DayType.NONE && ui.today == ui.plan.leadIn -> "Optional lead-in today"
+                    t.type == DayType.NONE -> "Outside the plan"
                     t.qualified -> "Today's minimum is met"
                     else -> "${(t.target - t.minutesDone).coerceAtLeast(0)} min to today's minimum"
                 }

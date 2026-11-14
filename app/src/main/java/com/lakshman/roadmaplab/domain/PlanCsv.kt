@@ -139,9 +139,9 @@ object PlanCsv {
                 val minutes = Regex("""in (\d+) min|\((\d+) min\)""").find(all)?.groupValues?.drop(1)?.firstOrNull { it.isNotBlank() }?.toInt() ?: 0
                 val score = scoreFrom(dw)
                 when {
-                    testCount != null -> out += CheckSpec.Quiz("Take it in the app: $testCount transactions", "journal", testCount,
+                    testCount != null -> out += CheckSpec.Quiz("In-app test: $testCount transactions", "journal", testCount,
                         target = score?.target ?: 0, timedMinutes = minutes)
-                    quizCount != null -> out += CheckSpec.Quiz("Take the cold quiz in the app", "accounting", quizCount,
+                    quizCount != null -> out += CheckSpec.Quiz("Cold quiz in the app", "accounting", quizCount,
                         target = score?.takeIf { it.max == quizCount }?.target ?: 0, timedMinutes = minutes)
                 }
                 if (score != null) out += score else if (dw.isNotBlank() && dw != "Done" && !dw.startsWith("Score written")) {
