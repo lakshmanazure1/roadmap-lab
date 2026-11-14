@@ -36,25 +36,6 @@ import com.lakshman.roadmaplab.ui.components.Muted
 import com.lakshman.roadmaplab.ui.components.Panel
 import com.lakshman.roadmaplab.ui.theme.LocalLab
 
-/** One row on the path: a phase banner, a task node or a milestone. */
-private sealed interface PathItem {
-    val key: String
-
-    data class Banner(val title: String, val track: String) : PathItem {
-        override val key get() = "banner-$title"
-    }
-
-    data class Node(val task: PlanTask, val state: NodeState, val index: Int) : PathItem {
-        override val key get() = "node-${task.id}"
-    }
-
-    data class Trophy(val milestone: Milestone, val index: Int) : PathItem {
-        override val key get() = "ms-${milestone.id}"
-    }
-}
-
-private enum class NodeState { DONE, TODAY, TODAY_DONE, NEXT }
-
 /** Duolingo-style zigzag: horizontal offsets in dp. */
 private val ZIGZAG = listOf(0, 56, 84, 56, 0, -56, -84, -56)
 
@@ -105,8 +86,8 @@ fun PathScreen(
                     }
                 }
             }
-            items.forEach { pi ->
-                item(key = pi.key) {
+            items.forEachIndexed { idx, pi ->
+                item(key = "$idx-${pi.key}") {
                     when (pi) {
                         is PathItem.Banner -> PhaseBanner(pi.title, pi.track)
                         is PathItem.Node -> TaskNode(pi, onOpenTask)
@@ -147,45 +128,6 @@ fun PathScreen(
             }
         }
     }
-}
-
-private fun buildPath(ui: UiState): List<PathItem> {
-    val r = ui.s.roadmap ?: return emptyList()
-    val reduced = ui.s.settings.reducedPlan
-    val todayIds = ui.s.dayPlans[ui.today].orEmpty().toSet()
-    val active = r.tasks.filter { Planner.isActive(it, reduced) }.sortedWith(compareBy({ it.plannedDay }, { it.order }))
-    val done = active.filter { ui.latest[it.id]?.status == TaskStatus.DONE && it.id !in todayIds }
-        .sortedBy { ui.latest[it.id]?.createdAt ?: 0 }
-    val today = active.filter { it.id in todayIds }
-    val upcoming = active.filter { ui.latest[it.id]?.status != TaskStatus.DONE && it.id !in todayIds }.take(10)
-    val shown = done.takeLast(3) + today + upcoming
-
-    val phases = r.phases.associateBy { it.id }
-    val out = ArrayList<PathItem>()
-    var lastPhase: String? = null
-    var i = 0
-    val lastDay = shown.maxOfOrNull { it.plannedDay } ?: ui.today
-    val milestones = r.milestones.filter { it.day >= ui.today && it.day <= lastDay + 1 }.toMutableList()
-    for (t in shown) {
-        while (milestones.isNotEmpty() && milestones.first().day < t.plannedDay && t.id !in todayIds && ui.latest[t.id]?.status != TaskStatus.DONE) {
-            out.add(PathItem.Trophy(milestones.removeAt(0), i++))
-        }
-        if (t.phaseId != lastPhase) {
-            val p = phases[t.phaseId]
-            if (p != null) out.add(PathItem.Banner(p.title, p.track))
-            lastPhase = t.phaseId
-        }
-        val todayStatus = ui.todayTasks.firstOrNull { it.task.id == t.id }?.todayStatus
-        val state = when {
-            t.id in todayIds && todayStatus != null && todayStatus != TaskStatus.SKIPPED -> NodeState.TODAY_DONE
-            t.id in todayIds -> NodeState.TODAY
-            ui.latest[t.id]?.status == TaskStatus.DONE -> NodeState.DONE
-            else -> NodeState.NEXT
-        }
-        out.add(PathItem.Node(t, state, i++))
-    }
-    milestones.forEach { out.add(PathItem.Trophy(it, i++)) }
-    return out
 }
 
 @Composable
