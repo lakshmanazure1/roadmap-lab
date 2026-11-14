@@ -121,7 +121,7 @@ private fun Stat(label: String, value: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CardView(card: Card, state: CardState, index: Int, total: Int, onRated: (Rating, Boolean) -> Unit) {
+fun CardView(card: Card, state: CardState, index: Int, total: Int, onRated: (Rating, Boolean) -> Unit) {
     val lab = LocalLab.current
     val asMcq = remember { Leitner.askAsMcq(card, state) }
     val codeLike = card.topic == "Python" || card.topic == "SQL"

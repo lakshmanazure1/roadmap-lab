@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.Icon
@@ -42,14 +40,15 @@ sealed interface Screen {
     data class TaskDetail(val taskId: String) : Screen
     data class DayDetail(val day: Long) : Screen
     data object Settings : Screen
+    data object Session : Screen
+    data object Practice : Screen
 }
 
 private class Tab(val label: String, val icon: ImageVector, val selected: ImageVector)
 
 private val TABS = listOf(
-    Tab("Today", Icons.Outlined.Today, Icons.Filled.Today),
-    Tab("Review", Icons.Outlined.School, Icons.Filled.School),
-    Tab("Plan", Icons.Outlined.Timeline, Icons.Filled.Timeline),
+    Tab("Path", Icons.Outlined.Today, Icons.Filled.Today),
+    Tab("Progress", Icons.Outlined.Timeline, Icons.Filled.Timeline),
     Tab("Journal", Icons.Outlined.Book, Icons.Filled.Book),
 )
 
@@ -92,6 +91,10 @@ private fun MainFlow(ui: UiState, vm: LabViewModel) {
         is Screen.TaskDetail -> TaskScreen(ui, vm, top.taskId, onBack = { back() })
         is Screen.DayDetail -> DayScreen(ui, vm, top.day, onBack = { back() })
         Screen.Settings -> SettingsScreen(ui, vm, onBack = { back() }, onBackup = backup)
+        Screen.Session -> SessionScreen(ui, vm, onClose = { back() })
+        Screen.Practice -> Scaffold(containerColor = Color.Transparent, topBar = {
+            com.lakshman.roadmaplab.ui.components.BackBar("Practice", onBack = { back() })
+        }) { p -> ReviewScreen(ui, vm, p) }
         Screen.Tabs -> Scaffold(
             containerColor = Color.Transparent,
             bottomBar = {
@@ -114,15 +117,15 @@ private fun MainFlow(ui: UiState, vm: LabViewModel) {
             },
         ) { padding ->
             when (tab) {
-                0 -> TodayScreen(
+                0 -> PathScreen(
                     ui, vm, padding, todayList,
+                    onStart = { open(Screen.Session) },
                     onOpenTask = { open(Screen.TaskDetail(it)) },
                     onOpenSettings = { open(Screen.Settings) },
-                    onReview = { tab = 1 },
+                    onPractice = { open(Screen.Practice) },
                     onBackup = backup,
                 )
-                1 -> ReviewScreen(ui, vm, padding)
-                2 -> PlanScreen(ui, vm, padding, planList, expandedPhases, onOpenTask = { open(Screen.TaskDetail(it)) })
+                1 -> PlanScreen(ui, vm, padding, planList, expandedPhases, onOpenTask = { open(Screen.TaskDetail(it)) })
                 else -> JournalScreen(ui, padding, journalList, onOpenDay = { open(Screen.DayDetail(it)) })
             }
         }

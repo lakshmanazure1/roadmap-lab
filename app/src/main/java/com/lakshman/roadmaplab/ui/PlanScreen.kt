@@ -45,7 +45,7 @@ fun PlanScreen(
     ) {
         item {
             Column {
-                Text("Plan", style = MaterialTheme.typography.headlineSmall)
+                Text("Progress", style = MaterialTheme.typography.headlineSmall)
                 Muted(r.title)
                 if (ui.s.settings.reducedPlan) {
                     Text("Reduced plan is on: optional tasks are set aside.", style = MaterialTheme.typography.bodySmall, color = lab.accent)

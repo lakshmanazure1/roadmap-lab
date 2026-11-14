@@ -55,11 +55,11 @@ fun OnboardingScreen(ui: UiState, vm: LabViewModel) {
                     Text("Roadmap Lab", style = MaterialTheme.typography.headlineMedium, color = lab.text)
                     Text("Your career roadmap as a 3-minute daily routine.", style = MaterialTheme.typography.titleMedium, color = lab.muted)
                     Panel(grid = true) {
-                        Label("Morning · about 1 minute")
-                        Muted("Today's line and where you are. Mood and energy. Up to 3 tasks. One if-then plan.")
+                        Label("One button a day")
+                        Muted("Tap START TODAY. The app walks you through your tasks, about 5 quick questions and one line of notes — one screen at a time.")
                         Spacer(Modifier.height(10.dp))
-                        Label("Evening · 2–3 minutes")
-                        Muted("Mark tasks done, partly or skipped. About 5 review questions. One line of notes and the evidence log.")
+                        Label("Your roadmap as a path")
+                        Muted("See what's done, what's today and what's next, all the way to your milestones.")
                     }
                     Panel {
                         Label("Built on learning science")
