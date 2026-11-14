@@ -22,7 +22,7 @@ enum class TaskStatus(val key: String, val label: String) {
     }
 }
 
-data class Phase(
+data class LegacyPhase(
     val id: String,
     val track: String,
     val title: String,
@@ -31,7 +31,7 @@ data class Phase(
     val order: Int,
 )
 
-data class PlanTask(
+data class LegacyTask(
     val id: String,
     val phaseId: String,
     val track: String,
@@ -55,7 +55,7 @@ data class PlanTask(
     }
 }
 
-data class Milestone(val id: String, val title: String, val day: Long, val track: String)
+data class LegacyMilestone(val id: String, val title: String, val day: Long, val track: String)
 
 data class TaskLog(
     val id: Long,
@@ -146,13 +146,13 @@ data class AppSettings(
 data class DayPlanEntry(val day: Long, val taskId: String, val position: Int)
 
 /** Everything the plan is made of, as loaded from roadmap.json. */
-data class Roadmap(
+data class LegacyRoadmap(
     val version: String,
     val title: String,
     val timelineStart: Long,
     val timelineEnd: Long,
     val tracks: List<String>,
-    val phases: List<Phase>,
-    val milestones: List<Milestone>,
-    val tasks: List<PlanTask>,
+    val phases: List<LegacyPhase>,
+    val milestones: List<LegacyMilestone>,
+    val tasks: List<LegacyTask>,
 )

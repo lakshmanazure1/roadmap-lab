@@ -1,0 +1,2447 @@
+{
+ "app": "roadmap-lab",
+ "kind": "plan-meta",
+ "version": "drc-2026-11-14",
+ "title": "Eight-Area Career Development Roadmap: DRC Edition",
+ "subtitle": "16 November 2026 – 31 January 2027 · follow the order, not the dates",
+ "csvName": "Eight_Area_Schedule_15Nov2026-31Jan2027.csv",
+ "taskCount": 380,
+ "start": "2026-11-16",
+ "leadIn": "2026-11-15",
+ "end": "2027-01-31",
+ "timeZone": "Africa/Kinshasa",
+ "bottomLine": "One plan, eight areas, all moving every week, for about 8.5 hours of study a week plus exercise: 45 minutes on weekday evenings, about 2 hours on Saturday and about 2¾ hours on Sunday. Busy go-live week? Switch to the reduced routine (about 20 minutes a day). Follow the order, not the dates. A missed day moves the next task one slot later; nothing is lost.",
+ "areas": [
+  {
+   "id": "python",
+   "name": "Python and AI",
+   "short": "Python / AI",
+   "objective": "Go-live Data Kit: validator + coded RAG assistant",
+   "byEnd": "Demo #1 and Demo #2 sent; 16/20 then 20/25 test scores",
+   "budget": "Sat 120 · Sun 90 min (210 a week)",
+   "assessed": "Write and explain a function without AI; the validator finds exactly the planted errors. RAG: explain chunking, retrieval and source attribution aloud; test score on fixed questions",
+   "notEnough": "Code that runs but you can't explain; one good-looking answer",
+   "success": "Demo #1 and Demo #2 sent; validator finds every planted error in both files; RAG 16/20, then 20/25",
+   "targetLevel": "5–6",
+   "stretch": "Streamlit screen working",
+   "rules": [
+    "Every session starts with revision (15 min Sat, 10 min Sun): rewrite last session's main code from memory, then compare.",
+    "Predict the output before you run anything. Type the code yourself. Stuck for 15 minutes? Ask for a hint, not the solution.",
+    "Fake data only. Save code to your private GitHub repo and to Drive after each session."
+   ]
+  },
+  {
+   "id": "accounting",
+   "name": "Accounting",
+   "short": "Accounting",
+   "objective": "Strong fundamentals for SAP Finance",
+   "byEnd": "Journal and ledger, tested cold: 10/12 on test #2",
+   "budget": "5 × 30 min on weekdays (150 a week)",
+   "assessed": "Cold transactions with no answers in view; cumulative tests",
+   "notEnough": "Watching the lecture",
+   "success": "1.2 to 3.8 done; test #2 10/12 cold",
+   "targetLevel": "5",
+   "stretch": "12/12, and you can explain each entry",
+   "rules": [
+    "Watching a lecture is not mastery. Every lecture is followed by work you do before seeing the answer.",
+    "Every Monday starts with a cold 10-card quiz on the previous week. Mistakes become new flashcards.",
+    "Ravi Traders is your fictional business for all practice. Use made-up amounts.",
+    "Lecture numbers match the IIT Mandi course list. If your course run numbers differ, follow the same topic order."
+   ]
+  },
+  {
+   "id": "french",
+   "name": "French",
+   "short": "French",
+   "objective": "Comfortable workplace French",
+   "byEnd": "100 work words; weekly quizzes; 1-minute introduction",
+   "budget": "5 × 10 min on weekdays (50 a week)",
+   "assessed": "Quiz both directions; sentences you build; a 1-minute recording",
+   "notEnough": "Duolingo streak alone",
+   "success": "100 words; 3 review quizzes 16/20; introduction 6/10",
+   "targetLevel": "5",
+   "stretch": "A 5-minute work chat in French",
+   "rules": [
+    "Mon: words 1–5, one sentence each · Tue: words 6–10, listen 3 min · Wed: read the 5 model sentences, translate back · Thu: say them aloud 3 times, record 1 min · Fri: use 2 words at work; 10-word quiz both directions.",
+    "Holiday weeks 6 and 7 have 4 days: Wednesday combines reading, speaking and recording; Thursday is the quiz."
+   ]
+  },
+  {
+   "id": "comms",
+   "name": "Communication",
+   "short": "Comms",
+   "objective": "Clear, confident professional communication",
+   "byEnd": "Habits most days; recordings 7/10; 2 user trainings",
+   "budget": "Inside work · Sunday recording 10 min",
+   "assessed": "Rubric score; listener can repeat the point",
+   "notEnough": "Feeling that it went well",
+   "success": "Habits on most days; recordings 7/10; 2 trainings delivered",
+   "targetLevel": "5–6",
+   "stretch": "Speaking early feels normal",
+   "rules": [
+    "Mon: speak early · Tue: “So to confirm…” · Wed: same-day written summary · Thu: explain one process twice · Fri: one concise update (done · next · blocker).",
+    "Recordings, demos and trainings are scored with the 5-criterion rubric (0–2 each, out of 10). Targets: 6/10 in November–December, 7/10 in January. Listen once and write one thing to change next time."
+   ]
+  },
+  {
+   "id": "linkedin",
+   "name": "LinkedIn",
+   "short": "LinkedIn",
+   "objective": "Relevant professional network",
+   "byEnd": "Profile updated; 9 thoughtful conversations started",
+   "budget": "Sunday 15 min",
+   "assessed": "Conversations started and useful (2+ messages each)",
+   "notEnough": "Number of connections",
+   "success": "Profile updated; 9 conversations started",
+   "targetLevel": "5",
+   "stretch": "3 useful conversations",
+   "rules": [
+    "One person a week. Ask about their work, never for a job, and never send mass requests.",
+    "A conversation counts as started when you've sent a personal note with one real question; it counts as useful when you've exchanged at least two messages.",
+    "If LinkedIn won't let you add a note, connect without one and message after they accept.",
+    "Note template (about 240 characters): Hi [Name], I work on ERP implementations (right now a go-live in DR Congo) and I'm moving towards SAP finance. Your work on [X] caught my eye. Could I ask you one question about [their topic]? Thanks, Nani"
+   ]
+  },
+  {
+   "id": "evidence",
+   "name": "Evidence log",
+   "short": "Evidence",
+   "objective": "Verifiable evidence of growth",
+   "byEnd": "A line most working days; 3 STAR stories",
+   "budget": "5 min a day (35 a week)",
+   "assessed": "Lines with a real result; STAR stories written",
+   "notEnough": "Lines that say only “worked on X”",
+   "success": "Lines on 80% of working days; 3 STAR stories",
+   "targetLevel": "5",
+   "stretch": "Manager uses one of your stories",
+   "rules": [
+    "One line at the end of each working day, even on bad days. Say “the client”, never a name; use rough numbers; nothing confidential, and only what you're allowed to use.",
+    "Each Sunday, star the best line of the week (★). Three STAR stories, each from that month's starred lines: #1 Mon 30 Nov · #2 Thu 31 Dec · #3 Fri 29 Jan. Situation (1 line) · Task (1) · Action (2–3) · Result (1, with a number), under 150 words."
+   ]
+  },
+  {
+   "id": "app",
+   "name": "Tracker app",
+   "short": "App",
+   "objective": "A reliable app for all 8 areas",
+   "byEnd": "v1.0.1 on your phone with this plan imported; restore tested",
+   "budget": "Sunday 30 min",
+   "assessed": "Features tested on the phone; data survives restart, update and restore",
+   "notEnough": "A successful build",
+   "success": "v1.0.1 installed; this plan imported; restore drill passed",
+   "targetLevel": "5",
+   "stretch": "Used every day since 11 Jan",
+   "rules": [
+    "30 minutes a step, on Sundays. If a step isn't finished at 40 minutes, stop and continue next Sunday: the order matters, not the date. The app never takes time from accounting or Python.",
+    "Safety: private repo; no company or client data in the app; the signing key lives only in GitHub Secrets and your private Drive."
+   ]
+  },
+  {
+   "id": "life",
+   "name": "Health, family and money",
+   "short": "Health · family · money",
+   "objective": "Sustainable progress in DRC",
+   "byEnd": "Sleep and exercise most days; 3 money checks; family steps",
+   "budget": "Exercise 3 × 25 · alone time 2 × 15 · Sat 60 off · call 25",
+   "assessed": "Counts: sleep nights, exercise sessions, calls, money checks",
+   "notEnough": "Perfection (not expected)",
+   "success": "Sleep 7 h on most nights; exercise 2–3 times most weeks; 3 money checks; dated family steps",
+   "targetLevel": "4",
+   "stretch": "No week without a family call",
+   "rules": [
+    "Every day: 7 hours of sleep with a fixed lights-out time; bottled or treated water; malaria prevention exactly as your doctor prescribed (net and repellent too). Measured as nights with 7 h (target 5 of 7).",
+    "Mon · Wed · Fri: 20–30 min exercise (target 3 sessions; 2 is fine). Tue · Thu: 10–20 min good alone time. Saturday: 60 minutes fully off. Sunday: call home; note the week's spending total in the review.",
+    "After a very long day: next evening, only the log line, then sleep. Nothing else is owed.",
+    "Never trade sleep, health or family for a streak. If you feel low most days for 2 weeks or more: tell someone you trust and see a doctor (in DRC, through your company's medical contact). In India, Tele-MANAS is free and open 24×7: 14416 or 1-800-891-4416. It's an Indian number, so it may not connect from a Congolese SIM."
+   ]
+  },
+  {
+   "id": "review",
+   "name": "Weekly review",
+   "short": "Review",
+   "objective": "Honest weekly checkpoint",
+   "byEnd": "11 checkpoint tables filled",
+   "budget": "Sunday 15 min",
+   "assessed": "Every area has an actual result written, not just ticks",
+   "notEnough": "Ticks without results",
+   "success": "",
+   "targetLevel": "",
+   "stretch": "",
+   "rules": [
+    "Be honest in the review. A ticked task with a weak result is written as weak. Two weeks in a row below target in one area means the plan changes (fewer new topics, more practice), not that you try harder on less sleep."
+   ]
+  }
+ ],
+ "rubric": {
+  "criteria": [
+   {
+    "name": "Clarity",
+    "levels": [
+     "Main point unclear",
+     "Main point appears late",
+     "Main point in the first 15 seconds"
+    ]
+   },
+   {
+    "name": "Structure",
+    "levels": [
+     "Jumps around",
+     "Partly ordered",
+     "Problem → action → result, in order"
+    ]
+   },
+   {
+    "name": "Confidence",
+    "levels": [
+     "Many fillers or apologies",
+     "Some fillers",
+     "Steady pace; 3 fillers a minute or fewer; no apologising"
+    ]
+   },
+   {
+    "name": "Accuracy",
+    "levels": [
+     "A technical error",
+     "Small slip",
+     "Every fact checked against your notes"
+    ]
+   },
+   {
+    "name": "Audience",
+    "levels": [
+     "Jargon, no example",
+     "One example",
+     "A non-expert could repeat it; one concrete example"
+    ]
+   }
+  ],
+  "note": "Listen once and write one thing to change next time."
+ },
+ "levels": [
+  {
+   "level": 1,
+   "name": "Not started",
+   "meaning": "Nothing done yet"
+  },
+  {
+   "level": 2,
+   "name": "In progress",
+   "meaning": "Started, not finished"
+  },
+  {
+   "level": 3,
+   "name": "Completed",
+   "meaning": "Watched / built once, possibly with help"
+  },
+  {
+   "level": 4,
+   "name": "Practised independently",
+   "meaning": "Done again without help or answers"
+  },
+  {
+   "level": 5,
+   "name": "Assessed",
+   "meaning": "Passed a timed or marked check"
+  },
+  {
+   "level": 6,
+   "name": "Demonstrated independently",
+   "meaning": "Shown or explained to someone else, unaided"
+  },
+  {
+   "level": 7,
+   "name": "Mastered",
+   "meaning": "Consistent over time, after a gap"
+  }
+ ],
+ "french": [
+  {
+   "week": 1,
+   "theme": "Greetings and basics",
+   "words": [
+    {
+     "fr": "bonjour",
+     "en": "hello"
+    },
+    {
+     "fr": "merci",
+     "en": "thank you"
+    },
+    {
+     "fr": "s'il vous plaît",
+     "en": "please"
+    },
+    {
+     "fr": "excusez-moi",
+     "en": "excuse me, sorry"
+    },
+    {
+     "fr": "je m'appelle",
+     "en": "my name is"
+    },
+    {
+     "fr": "enchanté",
+     "en": "nice to meet you"
+    },
+    {
+     "fr": "oui",
+     "en": "yes"
+    },
+    {
+     "fr": "non",
+     "en": "no"
+    },
+    {
+     "fr": "d'accord",
+     "en": "OK, agreed"
+    },
+    {
+     "fr": "à demain",
+     "en": "see you tomorrow"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Bonjour, je m'appelle Nani. Enchanté.",
+     "en": "Hello, I'm Nani. Nice to meet you."
+    },
+    {
+     "fr": "Excusez-moi, vous pouvez répéter, s'il vous plaît ?",
+     "en": "Sorry, can you repeat, please?"
+    },
+    {
+     "fr": "Je ne comprends pas. Plus lentement, s'il vous plaît.",
+     "en": "I don't understand. More slowly, please."
+    },
+    {
+     "fr": "D'accord, merci beaucoup.",
+     "en": "OK, thank you very much."
+    },
+    {
+     "fr": "Bonne journée, à demain !",
+     "en": "Have a good day, see you tomorrow!"
+    }
+   ]
+  },
+  {
+   "week": 2,
+   "theme": "Meetings and time",
+   "words": [
+    {
+     "fr": "une réunion",
+     "en": "a meeting"
+    },
+    {
+     "fr": "aujourd'hui",
+     "en": "today"
+    },
+    {
+     "fr": "demain",
+     "en": "tomorrow"
+    },
+    {
+     "fr": "le matin",
+     "en": "the morning"
+    },
+    {
+     "fr": "l'après-midi",
+     "en": "the afternoon"
+    },
+    {
+     "fr": "une heure",
+     "en": "an hour, one o'clock"
+    },
+    {
+     "fr": "lundi",
+     "en": "Monday"
+    },
+    {
+     "fr": "vendredi",
+     "en": "Friday"
+    },
+    {
+     "fr": "la semaine",
+     "en": "the week"
+    },
+    {
+     "fr": "commencer",
+     "en": "to start"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "La réunion est à dix heures.",
+     "en": "The meeting is at ten."
+    },
+    {
+     "fr": "On commence à neuf heures ?",
+     "en": "Shall we start at nine?"
+    },
+    {
+     "fr": "On se voit demain matin.",
+     "en": "See you tomorrow morning."
+    },
+    {
+     "fr": "Vendredi, je présente une démo.",
+     "en": "On Friday I'm presenting a demo."
+    },
+    {
+     "fr": "Cette semaine, on finit les tests.",
+     "en": "This week we finish the tests."
+    }
+   ]
+  },
+  {
+   "week": 3,
+   "theme": "The system",
+   "words": [
+    {
+     "fr": "le système",
+     "en": "the system"
+    },
+    {
+     "fr": "l'écran",
+     "en": "the screen"
+    },
+    {
+     "fr": "l'utilisateur",
+     "en": "the user"
+    },
+    {
+     "fr": "le champ obligatoire",
+     "en": "the mandatory field"
+    },
+    {
+     "fr": "remplir",
+     "en": "to fill in"
+    },
+    {
+     "fr": "enregistrer",
+     "en": "to save"
+    },
+    {
+     "fr": "modifier",
+     "en": "to change, edit"
+    },
+    {
+     "fr": "supprimer",
+     "en": "to delete"
+    },
+    {
+     "fr": "importer",
+     "en": "to import"
+    },
+    {
+     "fr": "le mot de passe",
+     "en": "the password"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Ouvrez cet écran, s'il vous plaît.",
+     "en": "Please open this screen."
+    },
+    {
+     "fr": "Ce champ est obligatoire.",
+     "en": "This field is mandatory."
+    },
+    {
+     "fr": "Remplissez ce champ, puis cliquez sur « Enregistrer ».",
+     "en": "Fill in this field, then click “Save”."
+    },
+    {
+     "fr": "On importe le fichier Excel.",
+     "en": "We're importing the Excel file."
+    },
+    {
+     "fr": "Je ne peux pas me connecter : le mot de passe est incorrect.",
+     "en": "I can't log in: the password is wrong."
+    }
+   ]
+  },
+  {
+   "week": 4,
+   "theme": "Purchasing",
+   "words": [
+    {
+     "fr": "un fournisseur",
+     "en": "a vendor, supplier"
+    },
+    {
+     "fr": "un achat",
+     "en": "a purchase"
+    },
+    {
+     "fr": "un bon de commande",
+     "en": "a purchase order"
+    },
+    {
+     "fr": "la quantité",
+     "en": "the quantity"
+    },
+    {
+     "fr": "le prix",
+     "en": "the price"
+    },
+    {
+     "fr": "la réception",
+     "en": "the goods receipt"
+    },
+    {
+     "fr": "la marchandise",
+     "en": "the goods"
+    },
+    {
+     "fr": "l'entrepôt",
+     "en": "the warehouse"
+    },
+    {
+     "fr": "une facture",
+     "en": "an invoice"
+    },
+    {
+     "fr": "approuver",
+     "en": "to approve"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Le fournisseur est créé ?",
+     "en": "Is the vendor created?"
+    },
+    {
+     "fr": "Le bon de commande est validé.",
+     "en": "The purchase order is approved."
+    },
+    {
+     "fr": "La marchandise est arrivée à l'entrepôt.",
+     "en": "The goods have reached the warehouse."
+    },
+    {
+     "fr": "Le montant de la facture est correct.",
+     "en": "The invoice amount is correct."
+    },
+    {
+     "fr": "La facture est en attente d'approbation.",
+     "en": "The invoice is waiting for approval."
+    }
+   ]
+  },
+  {
+   "week": 5,
+   "theme": "Sales",
+   "words": [
+    {
+     "fr": "un client",
+     "en": "a customer"
+    },
+    {
+     "fr": "un devis",
+     "en": "a quote"
+    },
+    {
+     "fr": "une commande",
+     "en": "an order"
+    },
+    {
+     "fr": "la livraison",
+     "en": "the delivery"
+    },
+    {
+     "fr": "prévue",
+     "en": "planned"
+    },
+    {
+     "fr": "une remise",
+     "en": "a discount"
+    },
+    {
+     "fr": "le total",
+     "en": "the total"
+    },
+    {
+     "fr": "en retard",
+     "en": "late"
+    },
+    {
+     "fr": "le paiement",
+     "en": "the payment"
+    },
+    {
+     "fr": "payé",
+     "en": "paid"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Le client a accepté le devis.",
+     "en": "The customer accepted the quote."
+    },
+    {
+     "fr": "La livraison est prévue jeudi.",
+     "en": "Delivery is planned for Thursday."
+    },
+    {
+     "fr": "Il y a une remise de dix pour cent.",
+     "en": "There's a 10% discount."
+    },
+    {
+     "fr": "La livraison est en retard.",
+     "en": "The delivery is late."
+    },
+    {
+     "fr": "Le client a payé la facture.",
+     "en": "The customer has paid the invoice."
+    }
+   ]
+  },
+  {
+   "week": 6,
+   "theme": "Accounting",
+   "words": [
+    {
+     "fr": "une écriture",
+     "en": "an accounting entry"
+    },
+    {
+     "fr": "le débit",
+     "en": "the debit"
+    },
+    {
+     "fr": "le crédit",
+     "en": "the credit"
+    },
+    {
+     "fr": "le grand livre",
+     "en": "the general ledger"
+    },
+    {
+     "fr": "un compte",
+     "en": "an account"
+    },
+    {
+     "fr": "le solde",
+     "en": "the balance"
+    },
+    {
+     "fr": "la balance",
+     "en": "the trial balance"
+    },
+    {
+     "fr": "équilibrée",
+     "en": "balanced, agrees"
+    },
+    {
+     "fr": "le bilan",
+     "en": "the balance sheet"
+    },
+    {
+     "fr": "la TVA",
+     "en": "VAT, sales tax"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "On passe une écriture comptable.",
+     "en": "We post an accounting entry."
+    },
+    {
+     "fr": "Ce montant va au débit du compte.",
+     "en": "This amount goes on the debit side of the account."
+    },
+    {
+     "fr": "Le solde du compte est correct.",
+     "en": "The account balance is correct."
+    },
+    {
+     "fr": "La balance est équilibrée.",
+     "en": "The trial balance agrees."
+    },
+    {
+     "fr": "Le montant de la TVA est correct.",
+     "en": "The VAT amount is correct."
+    }
+   ]
+  },
+  {
+   "week": 7,
+   "theme": "Support and problems",
+   "words": [
+    {
+     "fr": "un problème",
+     "en": "a problem"
+    },
+    {
+     "fr": "un message d'erreur",
+     "en": "an error message"
+    },
+    {
+     "fr": "bloqué",
+     "en": "stuck, blocked"
+    },
+    {
+     "fr": "une capture d'écran",
+     "en": "a screenshot"
+    },
+    {
+     "fr": "envoyer",
+     "en": "to send"
+    },
+    {
+     "fr": "vérifier",
+     "en": "to check"
+    },
+    {
+     "fr": "corrigé",
+     "en": "fixed, corrected"
+    },
+    {
+     "fr": "résolu",
+     "en": "solved"
+    },
+    {
+     "fr": "urgent",
+     "en": "urgent"
+    },
+    {
+     "fr": "un ticket",
+     "en": "a (support) ticket"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "J'ai un message d'erreur.",
+     "en": "I have an error message."
+    },
+    {
+     "fr": "L'utilisateur est bloqué.",
+     "en": "The user is stuck."
+    },
+    {
+     "fr": "Envoyez-moi une capture d'écran, s'il vous plaît.",
+     "en": "Please send me a screenshot."
+    },
+    {
+     "fr": "C'est corrigé. Vous pouvez vérifier ?",
+     "en": "It's fixed. Can you check?"
+    },
+    {
+     "fr": "Le problème est résolu.",
+     "en": "The problem is solved."
+    }
+   ]
+  },
+  {
+   "week": 8,
+   "theme": "Training users",
+   "words": [
+    {
+     "fr": "une formation",
+     "en": "a training"
+    },
+    {
+     "fr": "une étape",
+     "en": "a step"
+    },
+    {
+     "fr": "d'abord",
+     "en": "first"
+    },
+    {
+     "fr": "ensuite",
+     "en": "next, then"
+    },
+    {
+     "fr": "enfin",
+     "en": "finally"
+    },
+    {
+     "fr": "un exemple",
+     "en": "an example"
+    },
+    {
+     "fr": "montrer",
+     "en": "to show"
+    },
+    {
+     "fr": "essayer",
+     "en": "to try"
+    },
+    {
+     "fr": "cliquer",
+     "en": "to click"
+    },
+    {
+     "fr": "une question",
+     "en": "a question"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "D'abord, on ouvre le module Achats.",
+     "en": "First, we open the Purchasing module."
+    },
+    {
+     "fr": "Ensuite, on choisit le fournisseur.",
+     "en": "Next, we choose the vendor."
+    },
+    {
+     "fr": "Je vous montre un exemple.",
+     "en": "I'll show you an example."
+    },
+    {
+     "fr": "Maintenant, essayez, s'il vous plaît.",
+     "en": "Now you try, please."
+    },
+    {
+     "fr": "Vous avez des questions ?",
+     "en": "Do you have any questions?"
+    }
+   ]
+  },
+  {
+   "week": 9,
+   "theme": "Numbers and money",
+   "words": [
+    {
+     "fr": "dix",
+     "en": "ten"
+    },
+    {
+     "fr": "vingt",
+     "en": "twenty"
+    },
+    {
+     "fr": "cinquante",
+     "en": "fifty"
+    },
+    {
+     "fr": "cent",
+     "en": "a hundred"
+    },
+    {
+     "fr": "mille",
+     "en": "a thousand"
+    },
+    {
+     "fr": "soixante-dix",
+     "en": "seventy"
+    },
+    {
+     "fr": "quatre-vingts",
+     "en": "eighty"
+    },
+    {
+     "fr": "quatre-vingt-dix",
+     "en": "ninety"
+    },
+    {
+     "fr": "le franc congolais",
+     "en": "the Congolese franc"
+    },
+    {
+     "fr": "le taux de change",
+     "en": "the exchange rate"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Il y a cinquante lignes dans le fichier.",
+     "en": "There are fifty rows in the file."
+    },
+    {
+     "fr": "Le total est de mille cinq cents dollars.",
+     "en": "The total is 1,500 dollars."
+    },
+    {
+     "fr": "Soixante-dix, quatre-vingts, quatre-vingt-dix.",
+     "en": "Seventy, eighty, ninety."
+    },
+    {
+     "fr": "Le prix est en francs congolais ou en dollars ?",
+     "en": "Is the price in Congolese francs or dollars?"
+    },
+    {
+     "fr": "Quel est le taux de change aujourd'hui ?",
+     "en": "What's the exchange rate today?"
+    }
+   ]
+  },
+  {
+   "week": 10,
+   "theme": "Go-live and data",
+   "words": [
+    {
+     "fr": "le démarrage",
+     "en": "the go-live"
+    },
+    {
+     "fr": "la mise en production",
+     "en": "the move to production"
+    },
+    {
+     "fr": "les données de base",
+     "en": "master data"
+    },
+    {
+     "fr": "un modèle",
+     "en": "a template"
+    },
+    {
+     "fr": "une colonne",
+     "en": "a column"
+    },
+    {
+     "fr": "un doublon",
+     "en": "a duplicate"
+    },
+    {
+     "fr": "le solde d'ouverture",
+     "en": "the opening balance"
+    },
+    {
+     "fr": "un écart",
+     "en": "a difference, gap"
+    },
+    {
+     "fr": "le plan de bascule",
+     "en": "the cutover plan"
+    },
+    {
+     "fr": "une sauvegarde",
+     "en": "a backup"
+    }
+   ],
+   "sentences": [
+    {
+     "fr": "Le démarrage est prévu lundi.",
+     "en": "Go-live is planned for Monday."
+    },
+    {
+     "fr": "Remplissez le modèle, colonne par colonne.",
+     "en": "Fill in the template, column by column."
+    },
+    {
+     "fr": "Ce fournisseur est un doublon.",
+     "en": "This vendor is a duplicate."
+    },
+    {
+     "fr": "Il y a un écart dans le solde d'ouverture.",
+     "en": "There's a difference in the opening balance."
+    },
+    {
+     "fr": "Le plan de bascule est prêt.",
+     "en": "The cutover plan is ready."
+    }
+   ]
+  },
+  {
+   "week": 11,
+   "theme": "Review and your introduction",
+   "words": [],
+   "sentences": [
+    {
+     "fr": "Je m'appelle Nani.",
+     "en": "I'm Nani."
+    },
+    {
+     "fr": "Je travaille sur le démarrage du système.",
+     "en": "I work on the system go-live."
+    },
+    {
+     "fr": "Je vérifie les données et je forme les utilisateurs.",
+     "en": "I check the data and train the users."
+    },
+    {
+     "fr": "Je parle un peu français.",
+     "en": "I speak a little French."
+    },
+    {
+     "fr": "J'apprends chaque semaine.",
+     "en": "I'm learning every week."
+    }
+   ]
+  }
+ ],
+ "checkpoints": {
+  "1": {
+   "python": "GSTIN shape + PAN-inside; all 10 errors found; error_report.xlsx works (22 Nov milestone)",
+   "accounting": "1.2–1.6; 5 equation transactions balance; 10 flashcards",
+   "french": "Week 1 words; Friday quiz 8/10",
+   "comms": "4 of 5 work habits; recording 6/10",
+   "linkedin": "Headline and About updated",
+   "evidence": "5+ lines with real results",
+   "app": "Step 1: name, brief PDF, GitHub account",
+   "life": "Sleep 7 h on 5+ nights; exercise 2–3 times; call home"
+  },
+  "2": {
+   "python": "run_all() + timing; guide; 5–8 notes; manager update sent (29 Nov)",
+   "accounting": "Quiz 8/10; 1.7–1.12; Ravi Traders balance sheet balances",
+   "french": "Week 2 words; November check 16/20",
+   "comms": "4 of 5 habits; manager recording 6/10",
+   "linkedin": "Message 1 of 9",
+   "evidence": "5+ lines with real results",
+   "app": "Build prompt covers all 8 areas",
+   "life": "Sleep/exercise/call; family talk (29 Nov) if decided"
+  },
+  "3": {
+   "python": "RAG 1–2: chunks with sources; right top 3 for 5/5 questions",
+   "accounting": "November check 16/20; 2.0–2.5; D/C rules from memory, 0 errors",
+   "french": "Week 3 words; quiz 8/10",
+   "comms": "4 of 5 habits; recording 6/10",
+   "linkedin": "Skills section; message 2 of 9",
+   "evidence": "5+ lines; STAR #1 (30 Nov)",
+   "app": "Step 2: green build",
+   "life": "Sleep/exercise/call; money check #1 (30 Nov)"
+  },
+  "4": {
+   "python": "RAG 3–4: TF-IDF at least as good as keywords; answers name the source",
+   "accounting": "2.6–2.7; 3 entries a day; Friday check 4/5",
+   "french": "Week 4 words; quiz 8/10",
+   "comms": "Training #1 (10 Dec); recording 6/10",
+   "linkedin": "Message 3 of 9",
+   "evidence": "5+ lines with real results",
+   "app": "Step 3: signed app on your phone",
+   "life": "Sleep/exercise/call; family question (13 Dec)"
+  },
+  "5": {
+   "python": "20-question test; 16/20 (20 Dec); validator and assistant connected",
+   "accounting": "2.8–2.9; test #1 8/10 (18 Dec)",
+   "french": "Week 5 words; quiz 8/10",
+   "comms": "4 of 5 habits; recording 6/10",
+   "linkedin": "Message 4 of 9",
+   "evidence": "5+ lines with real results",
+   "app": "Step 4: Today screen keeps ticks",
+   "life": "Sleep/exercise/call"
+  },
+  "6": {
+   "python": "Retrieval explained without notes; Demo #1 video sent (27 Dec)",
+   "accounting": "2.10–2.11 solved before answers; corrected",
+   "french": "Week 6 words; quiz 8/10",
+   "comms": "Demo #1 video 6/10 or better",
+   "linkedin": "Message 5 of 9",
+   "evidence": "4+ lines (holiday week)",
+   "app": "3 bugs or wishes noted",
+   "life": "Rest on 25 Dec; call home"
+  },
+  "7": {
+   "python": "v2 file + answer key; duplicate, IFSC, mobile checks",
+   "accounting": "2.12–2.13; rules card updated",
+   "french": "December check 16/20 (31 Dec)",
+   "comms": "3 of 4 habits; STAR recording 7/10",
+   "linkedin": "Projects section; message 6 of 9",
+   "evidence": "4+ lines; STAR #2 (31 Dec)",
+   "app": "Step 5: Review, Plan, Journal work",
+   "life": "Rest on 1 Jan; money check #2 (31 Dec)"
+  },
+  "8": {
+   "python": "Email check; no crashes; original file still exactly 10 errors",
+   "accounting": "Self-test 8/10 (4 Jan); 3.0–3.2 posted",
+   "french": "Week 8 words; quiz 8/10",
+   "comms": "4 of 5 habits; recording 7/10",
+   "linkedin": "Message 7 of 9",
+   "evidence": "5+ lines with real results",
+   "app": "Step 6: v1.0.0; restore works",
+   "life": "Sleep/exercise/call; matrimony profile (10 Jan)"
+  },
+  "9": {
+   "python": "5 SQL counts predicted; GROUP BY matches pandas",
+   "accounting": "3.3–3.5; Ravi Traders journal → ledger balanced",
+   "french": "Week 9 words; quiz 8/10",
+   "comms": "Training #2 (14 Jan); recording 7/10",
+   "linkedin": "Message 8 of 9",
+   "evidence": "5+ lines, now in the app",
+   "app": "Step 7: CSV imported; v1.0.1 keeps data",
+   "life": "Sleep/exercise/call"
+  },
+  "10": {
+   "python": "3 new notes; 20/25; simple screen or text menu",
+   "accounting": "3.6–3.8 solved first, then checked",
+   "french": "Week 10 words; quiz 8/10",
+   "comms": "4 of 5 habits; recording 7/10",
+   "linkedin": "Message 9 of 9",
+   "evidence": "5+ lines with real results",
+   "app": "Step 8: checklist 11/11 or gaps listed",
+   "life": "Sleep/exercise/call"
+  },
+  "11": {
+   "python": "Demo #2 sent (31 Jan); function written without AI",
+   "accounting": "Test #2 10/12 (January check)",
+   "french": "3 review quizzes 16/20; introduction 6/10",
+   "comms": "Demo #2 video 7/10",
+   "linkedin": "Follow-ups answered",
+   "evidence": "5+ lines; STAR #3 (29 Jan)",
+   "app": "Steps 9–10: restore drill; v2 list",
+   "life": "Money check #3 (29 Jan); sleep/exercise/call"
+  }
+ },
+ "weekFocus": {
+  "1": "Finish the validator",
+  "2": "Manager update",
+  "3": "RAG: chunks and keyword search",
+  "4": "RAG: better retrieval and sources",
+  "5": "RAG testing, 16/20",
+  "6": "Demo #1 (holiday week)",
+  "7": "Validator v2 (holiday week)",
+  "8": "Error handling and regression",
+  "9": "SQL",
+  "10": "Extend the assistant",
+  "11": "Demo #2"
+ },
+ "reduced": [
+  {
+   "id": "red-evidence",
+   "area": "evidence",
+   "action": "One line every day: busy weeks produce the best evidence",
+   "time": "5 min/day",
+   "minutes": 5,
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "id": "red-accounting",
+   "area": "accounting",
+   "action": "Flashcards only, no new lecture",
+   "time": "15 min/day",
+   "minutes": 15,
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "id": "red-french",
+   "area": "french",
+   "action": "2 words used at work; Friday 10-word quiz",
+   "time": "10 min/week",
+   "minutes": 0,
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "id": "red-comms",
+   "area": "comms",
+   "action": "“So to confirm…” once a day (it saves you time)",
+   "time": "at work",
+   "minutes": 0,
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "id": "red-python",
+   "area": "python",
+   "action": "Saturday: 15-min revision + finish only the current step. Sunday off",
+   "time": "60 min",
+   "minutes": 60,
+   "days": [
+    6
+   ]
+  },
+  {
+   "id": "red-app",
+   "area": "app",
+   "action": "Pause building; just tick tasks",
+   "time": "1 min/day",
+   "minutes": 0,
+   "days": []
+  },
+  {
+   "id": "red-linkedin",
+   "area": "linkedin",
+   "action": "Reply to messages only",
+   "time": "5 min",
+   "minutes": 5,
+   "days": [
+    7
+   ]
+  },
+  {
+   "id": "red-life",
+   "area": "life",
+   "action": "Sleep first; two 10-min walks; Sunday call home",
+   "time": "—",
+   "minutes": 0,
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "id": "red-review",
+   "area": "review",
+   "action": "10 min Sunday: which week to repeat",
+   "time": "10 min",
+   "minutes": 10,
+   "days": [
+    7
+   ]
+  }
+ ],
+ "recovery": [
+  "Missed a day? Don't double up. Do the next task in order tomorrow.",
+  "Missed a week? Repeat the Monday quiz first, then continue where you stopped.",
+  "Two reduced weeks in a row? Shift every later date by one week. The sequence stays; only dates move.",
+  "Missing a week is fine. Don't let it become a month."
+ ],
+ "rules": [
+  "Fictional data only for all practice.",
+  "Never put client names, PAN, GSTIN, bank details, invoices or confidential internal information into external AI tools or personal repositories, unless the company expressly approves it.",
+  "Type and understand code; don't copy AI output blindly. Predict the output before running it.",
+  "Stuck for 15 minutes? Ask for a hint, not a complete solution.",
+  "Keep the plan manageable during go-live periods: use the reduced routine without guilt.",
+  "Recover after missed days by continuing in order, not by doubling up.",
+  "Protect health, sleep and family responsibilities. No streak is worth losing them.",
+  "No new subjects unless this plan is reviewed first.",
+  "Keep the original objectives unless there's a clear, written reason to change one.",
+  "Private GitHub repos; app signing key only in GitHub Secrets and your private Drive."
+ ],
+ "monthly": {
+  "python": [
+   "Sat 28 Nov: validate_pan() from memory, no AI",
+   "Sat 26 Dec: explain retrieval and sources, no notes",
+   "Sun 31 Jan: one check function from a blank file, no AI"
+  ],
+  "accounting": [
+   "Mon 30 Nov: 20-card quiz, 16/20",
+   "Fri 18 Dec test #1 8/10; Mon 4 Jan self-test 8/10",
+   "Thu 28 Jan: test #2, 10/12"
+  ],
+  "french": [
+   "Fri 27 Nov: 20 words, 16/20",
+   "Thu 31 Dec: 20 words, 16/20",
+   "25–27 Jan: three quizzes 16/20; Fri 29 Jan intro 6/10"
+  ],
+  "comms": [
+   "Sun 29 Nov manager recording 6/10",
+   "Demo #1 video 6/10; training #1",
+   "Demo #2 video 7/10; training #2"
+  ],
+  "linkedin": [
+   "Profile done; 1 message",
+   "6 messages by 3 Jan",
+   "9 messages; replies followed up"
+  ],
+  "evidence": [
+   "STAR #1",
+   "STAR #2",
+   "STAR #3; 80% of working days logged"
+  ],
+  "app": [
+   "Step 1; prompt ready",
+   "Steps 2–4",
+   "Steps 5–10; restore drill passed"
+  ],
+  "life": [
+   "Money check #1",
+   "Money check #2",
+   "Money check #3"
+  ]
+ },
+ "weekRoutine": [
+  [
+   "Mon",
+   "Exercise 20–30 min",
+   "Speak early (question or point)",
+   "Accounting 30 · French 10 · Log 5",
+   "45 min"
+  ],
+  [
+   "Tue",
+   "—",
+   "“So to confirm…”",
+   "Accounting 30 · French 10 · Log 5 · alone time 15",
+   "45 min"
+  ],
+  [
+   "Wed",
+   "Exercise 20–30 min",
+   "Same-day written summary",
+   "Accounting 30 · French 10 · Log 5",
+   "45 min"
+  ],
+  [
+   "Thu",
+   "—",
+   "Explain one thing twice",
+   "Accounting 30 · French 10 · Log 5 · alone time 15",
+   "45 min"
+  ],
+  [
+   "Fri",
+   "Exercise 20–30 min",
+   "3-sentence update · 2 French words",
+   "Accounting 30 · French quiz 10 · Log 5",
+   "45 min"
+  ],
+  [
+   "Sat",
+   "—",
+   "—",
+   "Python / AI 2 h (15 min revision first) · Log 5 · 60 min fully off",
+   "2 h 05"
+  ],
+  [
+   "Sun",
+   "—",
+   "—",
+   "Python / AI 1.5 h · App 30 · Recording 10 · LinkedIn 15 · Log 5 · Review 15 · Call home",
+   "2 h 45"
+  ]
+ ],
+ "titles": {
+  "T001": "Lead-in: validate_gstin() shape check",
+  "T002": "Set up the log",
+  "T003": "Choose a fixed lights-out time",
+  "T004": "1.2 Company form of business",
+  "T005": "Week 1 · Greetings and basics: words 1–5",
+  "T006": "Speak early in a meeting",
+  "T007": "Today's log line",
+  "T008": "Exercise 20–30 min",
+  "T009": "1.3 Accounting as an information system",
+  "T010": "Words 6–10 · listen 3 min",
+  "T011": "Restate: “So to confirm…”",
+  "T012": "Today's log line",
+  "T013": "10–20 min good alone time",
+  "T014": "1.4 Key terms: assets, liabilities, income, expenses",
+  "T015": "Read the 5 model sentences, translate back",
+  "T016": "Same-day written summary",
+  "T017": "Today's log line",
+  "T018": "Exercise 20–30 min",
+  "T019": "1.5 Tutorial: key terms",
+  "T020": "Say the 5 sentences · record 1 min",
+  "T021": "Explain one process twice",
+  "T022": "Today's log line",
+  "T023": "10–20 min good alone time",
+  "T024": "1.6 Accounting equation",
+  "T025": "Friday quiz: 10 words",
+  "T026": "Concise update: done · next · blocker",
+  "T027": "Today's log line",
+  "T028": "Exercise 20–30 min",
+  "T029": "PAN inside GSTIN: all 10 errors found",
+  "T030": "Log today's Python session",
+  "T031": "60 min fully off",
+  "T032": "Error report: error_report.xlsx",
+  "T033": "Step 1 · Prep",
+  "T034": "Recording: What my validator checks, and why it saves time",
+  "T035": "Profile: headline and About",
+  "T036": "★ Star the week's best line · log line",
+  "T037": "Call home",
+  "T038": "Weekly review · week 1 checkpoint",
+  "T039": "Cold quiz · 1.7 Balance Sheet I",
+  "T040": "Week 2 · Meetings and time: words 1–5",
+  "T041": "Speak early in a meeting",
+  "T042": "Today's log line",
+  "T043": "Exercise 20–30 min",
+  "T044": "1.8 Balance Sheet II",
+  "T045": "Words 6–10 · listen 3 min",
+  "T046": "Restate: “So to confirm…”",
+  "T047": "Today's log line",
+  "T048": "10–20 min good alone time",
+  "T049": "1.9 Balance Sheet III",
+  "T050": "Read the 5 model sentences, translate back",
+  "T051": "Prompt for 8 areas",
+  "T052": "Same-day written summary",
+  "T053": "Today's log line",
+  "T054": "Exercise 20–30 min",
+  "T055": "1.10 Income Statement",
+  "T056": "Say the 5 sentences · record 1 min",
+  "T057": "Explain one process twice",
+  "T058": "Today's log line",
+  "T059": "10–20 min good alone time",
+  "T060": "1.11–1.12 GAAP I and II",
+  "T061": "November check: 20 words",
+  "T062": "Concise update: done · next · blocker",
+  "T063": "Today's log line",
+  "T064": "Exercise 20–30 min",
+  "T065": "Monthly check: validate_pan() from memory · run_all()",
+  "T066": "Log today's Python session",
+  "T067": "60 min fully off",
+  "T068": "User guide, go-live notes, manager update",
+  "T069": "Recording: The 2-min manager update (send it with the email)",
+  "T070": "Find an SAP FICO consultant (2–5 years in)",
+  "T071": "★ Star the week's best line · log line",
+  "T072": "Call home · family step",
+  "T073": "Weekly review · week 2 checkpoint",
+  "T074": "November check: 20-card quiz · 2.0 Recap",
+  "T075": "Week 3 · The system: words 1–5",
+  "T076": "Speak early in a meeting",
+  "T077": "Today's log line · STAR #1",
+  "T078": "Money check #1",
+  "T079": "2.1 Types of accounts",
+  "T080": "Words 6–10 · listen 3 min",
+  "T081": "Restate: “So to confirm…”",
+  "T082": "Today's log line",
+  "T083": "10–20 min good alone time",
+  "T084": "2.2 Tutorial: types of accounts",
+  "T085": "Read the 5 model sentences, translate back",
+  "T086": "Same-day written summary",
+  "T087": "Today's log line",
+  "T088": "Exercise 20–30 min",
+  "T089": "2.3 Debit and Credit · 2.4 Tutorial",
+  "T090": "Say the 5 sentences · record 1 min",
+  "T091": "Explain one process twice",
+  "T092": "Today's log line",
+  "T093": "10–20 min good alone time",
+  "T094": "2.5 Rules of debit and credit",
+  "T095": "Friday quiz: 10 words",
+  "T096": "Concise update: done · next · blocker",
+  "T097": "Today's log line",
+  "T098": "Exercise 20–30 min",
+  "T099": "RAG 1: chunks with their source",
+  "T100": "Log today's Python session",
+  "T101": "60 min fully off",
+  "T102": "RAG 2: keyword retrieval, top 3",
+  "T103": "Step 2 · Repo and first build",
+  "T104": "Recording: What RAG is, in simple words: chunks, retrieval, sources",
+  "T105": "Skills section · find a data-migration consultant",
+  "T106": "★ Star the week's best line · log line",
+  "T107": "Call home",
+  "T108": "Weekly review · week 3 checkpoint",
+  "T109": "Cold quiz · 2.6 Entering transactions in Journal (first half)",
+  "T110": "Week 4 · Purchasing: words 1–5",
+  "T111": "Speak early in a meeting",
+  "T112": "Today's log line",
+  "T113": "Exercise 20–30 min",
+  "T114": "2.6 (second half)",
+  "T115": "Words 6–10 · listen 3 min",
+  "T116": "Restate: “So to confirm…”",
+  "T117": "Today's log line",
+  "T118": "10–20 min good alone time",
+  "T119": "2.7 Tutorial: journal entries, first half",
+  "T120": "Read the 5 model sentences, translate back",
+  "T121": "Same-day summary + training prep",
+  "T122": "Today's log line",
+  "T123": "Exercise 20–30 min",
+  "T124": "2.7 second half",
+  "T125": "Say the 5 sentences · record 1 min",
+  "T126": "User training #1: Vendor master",
+  "T127": "Today's log line",
+  "T128": "10–20 min good alone time",
+  "T129": "Check: 5 new Ravi Traders transactions → journal, cold",
+  "T130": "Friday quiz: 10 words",
+  "T131": "Concise update: done · next · blocker",
+  "T132": "Today's log line",
+  "T133": "Exercise 20–30 min",
+  "T134": "RAG 3: TF-IDF retrieval",
+  "T135": "Log today's Python session",
+  "T136": "60 min fully off",
+  "T137": "RAG 4: answers name the source",
+  "T138": "Step 3 · Signing and install",
+  "T139": "Recording: Debit and credit, for someone who isn't an accountant",
+  "T140": "Find someone at a small SAP partner firm",
+  "T141": "★ Star the week's best line · log line",
+  "T142": "Call home · family step",
+  "T143": "Weekly review · week 4 checkpoint",
+  "T144": "Cold quiz · 2.8 Key trends in journalising",
+  "T145": "Week 5 · Sales: words 1–5",
+  "T146": "Speak early in a meeting",
+  "T147": "Today's log line",
+  "T148": "Exercise 20–30 min",
+  "T149": "2.9 Journalising complex transactions (first half)",
+  "T150": "Words 6–10 · listen 3 min",
+  "T151": "Restate: “So to confirm…”",
+  "T152": "Today's log line",
+  "T153": "10–20 min good alone time",
+  "T154": "2.9 (second half)",
+  "T155": "Read the 5 model sentences, translate back",
+  "T156": "Same-day written summary",
+  "T157": "Today's log line",
+  "T158": "Exercise 20–30 min",
+  "T159": "Practice: 5 mixed transactions → journal, cold",
+  "T160": "Say the 5 sentences · record 1 min",
+  "T161": "Explain one process twice",
+  "T162": "Today's log line",
+  "T163": "10–20 min good alone time",
+  "T164": "Cumulative test #1: 10 transactions → journal in 20 min",
+  "T165": "Friday quiz: 10 words",
+  "T166": "Concise update: done · next · blocker",
+  "T167": "Today's log line",
+  "T168": "Exercise 20–30 min",
+  "T169": "RAG test: 20 questions",
+  "T170": "Log today's Python session",
+  "T171": "60 min fully off",
+  "T172": "RAG 16/20 · validator + assistant",
+  "T173": "Step 4 · Today screen",
+  "T174": "Recording: How the validator and the assistant work together",
+  "T175": "Find a finance systems analyst at a global capability centre",
+  "T176": "★ Star the week's best line · log line",
+  "T177": "Call home",
+  "T178": "Weekly review · week 5 checkpoint",
+  "T179": "2.10 Practice Problem I",
+  "T180": "Week 6 · Accounting: words 1–5",
+  "T181": "Speak early in a meeting",
+  "T182": "Today's log line",
+  "T183": "Exercise 20–30 min",
+  "T184": "Correct 2.10: Redo every wrong line",
+  "T185": "Words 6–10 · listen 3 min",
+  "T186": "Restate: “So to confirm…”",
+  "T187": "Today's log line",
+  "T188": "10–20 min good alone time",
+  "T189": "2.11 Practice Problem II",
+  "T190": "Read, say and record the 5 sentences",
+  "T191": "Same-day written summary",
+  "T192": "Today's log line",
+  "T193": "Exercise 20–30 min",
+  "T194": "Light day: 15 min flashcards",
+  "T195": "Quiz: 10 words (week 6)",
+  "T196": "Use and note",
+  "T197": "Explain one process twice",
+  "T198": "Today's log line",
+  "T199": "10–20 min good alone time",
+  "T200": "Rest day (Christmas)",
+  "T201": "Monthly check: explain retrieval · demo script",
+  "T202": "Log today's Python session",
+  "T203": "60 min fully off",
+  "T204": "Demo #1: 3-minute video",
+  "T205": "Recording: Your 3-min Demo #1 video counts this week",
+  "T206": "A former colleague (a check-in)",
+  "T207": "★ Star the week's best line · log line",
+  "T208": "Call home",
+  "T209": "Weekly review · week 6 checkpoint",
+  "T210": "2.12 Practice Problem III",
+  "T211": "Week 7 · Support and problems: words 1–5",
+  "T212": "Speak early in a meeting",
+  "T213": "Today's log line",
+  "T214": "Exercise 20–30 min",
+  "T215": "Correct 2.11 and 2.12",
+  "T216": "Words 6–10 · listen 3 min",
+  "T217": "Restate: “So to confirm…”",
+  "T218": "Today's log line",
+  "T219": "10–20 min good alone time",
+  "T220": "2.13 Summary: journal entries",
+  "T221": "Read, say and record the 5 sentences",
+  "T222": "Same-day written summary",
+  "T223": "Today's log line",
+  "T224": "Exercise 20–30 min",
+  "T225": "Light day: 15 min flashcards",
+  "T226": "December check: 20 words",
+  "T227": "Explain one process twice",
+  "T228": "Today's log line · STAR #2",
+  "T229": "Money check #2",
+  "T230": "Rest day (New Year)",
+  "T231": "Validator v2 file · duplicate check",
+  "T232": "Log today's Python session",
+  "T233": "60 min fully off",
+  "T234": "IFSC and mobile checks",
+  "T235": "Step 5 · Review, Plan and Journal",
+  "T236": "Recording: One DRC problem I solved (Situation, Task, Action, Result)",
+  "T237": "Projects section · find someone who passed C_TS4FI",
+  "T238": "★ Star the week's best line · log line",
+  "T239": "Call home",
+  "T240": "Weekly review · week 7 checkpoint",
+  "T241": "10-entry self-test, cold",
+  "T242": "Week 8 · Training users: words 1–5",
+  "T243": "Speak early in a meeting",
+  "T244": "Today's log line",
+  "T245": "Exercise 20–30 min",
+  "T246": "Correct the self-test: Each mistake becomes a new flashcard",
+  "T247": "Words 6–10 · listen 3 min",
+  "T248": "Restate: “So to confirm…”",
+  "T249": "Today's log line",
+  "T250": "10–20 min good alone time",
+  "T251": "3.0 Recap · 3.1 Introduction to Ledger",
+  "T252": "Read the 5 model sentences, translate back",
+  "T253": "Same-day written summary",
+  "T254": "Today's log line",
+  "T255": "Exercise 20–30 min",
+  "T256": "3.2 Process of ledger posting (first half)",
+  "T257": "Say the 5 sentences · record 1 min",
+  "T258": "Explain one process twice",
+  "T259": "Today's log line",
+  "T260": "10–20 min good alone time",
+  "T261": "3.2 (second half)",
+  "T262": "Friday quiz: 10 words",
+  "T263": "Concise update: done · next · blocker",
+  "T264": "Today's log line",
+  "T265": "Exercise 20–30 min",
+  "T266": "Email check · try / except",
+  "T267": "Log today's Python session",
+  "T268": "60 min fully off",
+  "T269": "Regression test on both files",
+  "T270": "Step 6 · Backup, charts, v1.0.0",
+  "T271": "Recording: Journal vs ledger",
+  "T272": "Find someone doing ERP work in French-speaking Africa",
+  "T273": "★ Star the week's best line · log line",
+  "T274": "Call home · family step",
+  "T275": "Weekly review · week 8 checkpoint",
+  "T276": "Cold quiz · 3.3 Balancing the accounts",
+  "T277": "Week 9 · Numbers and money: words 1–5",
+  "T278": "Speak early in a meeting",
+  "T279": "Today's log line",
+  "T280": "Exercise 20–30 min",
+  "T281": "3.4 Debit and credit balances",
+  "T282": "Words 6–10 · listen 3 min",
+  "T283": "Restate: “So to confirm…”",
+  "T284": "Today's log line",
+  "T285": "10–20 min good alone time",
+  "T286": "3.5 Tutorial: identifying balances",
+  "T287": "Read the 5 model sentences, translate back",
+  "T288": "Same-day summary + training prep",
+  "T289": "Today's log line",
+  "T290": "Exercise 20–30 min",
+  "T291": "8 Ravi Traders transactions → journal, cold",
+  "T292": "Say the 5 sentences · record 1 min",
+  "T293": "User training #2: PO to invoice",
+  "T294": "Today's log line",
+  "T295": "10–20 min good alone time",
+  "T296": "Post those 8 to the ledger and balance it",
+  "T297": "Friday quiz: 10 words",
+  "T298": "Concise update: done · next · blocker",
+  "T299": "Today's log line",
+  "T300": "Exercise 20–30 min",
+  "T301": "SQL with SQLite: 5 queries",
+  "T302": "Log today's Python session",
+  "T303": "60 min fully off",
+  "T304": "SQL duplicates: GROUP BY … HAVING",
+  "T305": "Step 7 · CSV import and v1.0.1",
+  "T306": "Recording: Finding duplicates: Python vs SQL",
+  "T307": "Find an SAP AMS (support) lead",
+  "T308": "★ Star the week's best line · log line",
+  "T309": "Call home",
+  "T310": "Weekly review · week 9 checkpoint",
+  "T311": "Cold quiz · 3.6 Practice Problem I",
+  "T312": "Week 10 · Go-live and data: words 1–5",
+  "T313": "Speak early in a meeting",
+  "T314": "Today's log line",
+  "T315": "Exercise 20–30 min",
+  "T316": "Correct 3.6: Redo wrong postings",
+  "T317": "Words 6–10 · listen 3 min",
+  "T318": "Restate: “So to confirm…”",
+  "T319": "Today's log line",
+  "T320": "10–20 min good alone time",
+  "T321": "3.7 Practice Problem II",
+  "T322": "Read the 5 model sentences, translate back",
+  "T323": "Same-day written summary",
+  "T324": "Today's log line",
+  "T325": "Exercise 20–30 min",
+  "T326": "Correct 3.7: Redo wrong postings",
+  "T327": "Say the 5 sentences · record 1 min",
+  "T328": "Explain one process twice",
+  "T329": "Today's log line",
+  "T330": "10–20 min good alone time",
+  "T331": "3.8 Practice Problem III",
+  "T332": "Friday quiz: 10 words",
+  "T333": "Concise update: done · next · blocker",
+  "T334": "Today's log line",
+  "T335": "Exercise 20–30 min",
+  "T336": "Extend the assistant: 20/25",
+  "T337": "Log today's Python session",
+  "T338": "60 min fully off",
+  "T339": "Simple screen (Streamlit or text menu)",
+  "T340": "Step 8 · Acceptance checklist",
+  "T341": "Recording: Why I built my own tracker app",
+  "T342": "Find an SAP recruiter",
+  "T343": "★ Star the week's best line · log line",
+  "T344": "Call home",
+  "T345": "Weekly review · week 10 checkpoint",
+  "T346": "Correct 3.8: Redo",
+  "T347": "Review quiz: weeks 1–4",
+  "T348": "Speak early in a meeting",
+  "T349": "Today's log line",
+  "T350": "Exercise 20–30 min",
+  "T351": "Cumulative test #2, part 1",
+  "T352": "Review quiz: weeks 5–8",
+  "T353": "Restate: “So to confirm…”",
+  "T354": "Today's log line",
+  "T355": "10–20 min good alone time",
+  "T356": "Test #2, part 2: post and balance",
+  "T357": "Review quiz: weeks 9–10",
+  "T358": "Same-day written summary",
+  "T359": "Today's log line",
+  "T360": "Exercise 20–30 min",
+  "T361": "January check: mark test #2",
+  "T362": "Your 1-minute introduction",
+  "T363": "Explain one process twice",
+  "T364": "Today's log line",
+  "T365": "10–20 min good alone time",
+  "T366": "One-page note: 'Journal → ledger'",
+  "T367": "January check: your introduction",
+  "T368": "Concise update: done · next · blocker",
+  "T369": "Today's log line · STAR #3",
+  "T370": "Money check #3",
+  "T371": "Record Demo #2",
+  "T372": "Log today's Python session",
+  "T373": "60 min fully off",
+  "T374": "Monthly check · send Demo #2",
+  "T375": "Step 9 · Restore drill + v2 list (steps 9–10)",
+  "T376": "Recording: Your Demo #2 video counts this week",
+  "T377": "Follow-ups: answer every reply",
+  "T378": "★ Star the week's best line · log line",
+  "T379": "Call home",
+  "T380": "Weekly review · week 11 checkpoint"
+ },
+ "accountingQuestions": [
+  {
+   "id": "AQ01",
+   "week": 1,
+   "prompt": "Who is personally liable, without limit, for a sole trader's debts?",
+   "options": [
+    "The owner",
+    "The bank",
+    "The customers",
+    "Nobody"
+   ],
+   "answer": "The owner",
+   "explanation": "A sole trader and the business are the same person in law."
+  },
+  {
+   "id": "AQ02",
+   "week": 1,
+   "prompt": "A company's shareholders are liable for its debts…",
+   "options": [
+    "Only up to the capital they put in",
+    "Without limit",
+    "Only if they are directors",
+    "For every debt, personally"
+   ],
+   "answer": "Only up to the capital they put in",
+   "explanation": "That's limited liability: the company is a separate legal person."
+  },
+  {
+   "id": "AQ03",
+   "week": 1,
+   "prompt": "Which is a separate legal entity?",
+   "options": [
+    "A company",
+    "A sole trader",
+    "The owner's family",
+    "The bank account"
+   ],
+   "answer": "A company",
+   "explanation": "A company can own assets and be sued in its own name."
+  },
+  {
+   "id": "AQ04",
+   "week": 1,
+   "prompt": "Ravi Traders' machinery is…",
+   "options": [
+    "An asset",
+    "A liability",
+    "An income",
+    "An expense"
+   ],
+   "answer": "An asset",
+   "explanation": "It's owned and used for years."
+  },
+  {
+   "id": "AQ05",
+   "week": 1,
+   "prompt": "A bank loan Ravi Traders must repay is…",
+   "options": [
+    "A liability",
+    "An asset",
+    "An income",
+    "An expense"
+   ],
+   "answer": "A liability",
+   "explanation": "It's owed to someone else."
+  },
+  {
+   "id": "AQ06",
+   "week": 1,
+   "prompt": "Sales of goods are…",
+   "options": [
+    "Income",
+    "An asset",
+    "A liability",
+    "An expense"
+   ],
+   "answer": "Income",
+   "explanation": "Money earned by the business."
+  },
+  {
+   "id": "AQ07",
+   "week": 1,
+   "prompt": "Rent paid for the shop is…",
+   "options": [
+    "An expense",
+    "An asset",
+    "A liability",
+    "Income"
+   ],
+   "answer": "An expense",
+   "explanation": "A cost of running the business."
+  },
+  {
+   "id": "AQ08",
+   "week": 1,
+   "prompt": "In an accounting information system, a vendor invoice keyed into the ERP is the…",
+   "options": [
+    "Input",
+    "Process",
+    "Output",
+    "Ledger"
+   ],
+   "answer": "Input",
+   "explanation": "Input → process (checks, posting) → output (entries, reports)."
+  },
+  {
+   "id": "AQ09",
+   "week": 2,
+   "prompt": "A current asset is…",
+   "options": [
+    "Stock you expect to sell this year",
+    "A machine used for 5 years",
+    "A 3-year bank loan",
+    "The owner's capital"
+   ],
+   "answer": "Stock you expect to sell this year",
+   "explanation": "Current means within about a year."
+  },
+  {
+   "id": "AQ10",
+   "week": 2,
+   "prompt": "Where does a vendor's unpaid invoice appear?",
+   "options": [
+    "Current liabilities",
+    "Current assets",
+    "Non-current assets",
+    "Income"
+   ],
+   "answer": "Current liabilities",
+   "explanation": "You owe it soon, so it's a current liability."
+  },
+  {
+   "id": "AQ11",
+   "week": 2,
+   "prompt": "Gross profit is…",
+   "options": [
+    "Sales minus cost of goods sold",
+    "Sales minus all expenses",
+    "Assets minus liabilities",
+    "Cash in minus cash out"
+   ],
+   "answer": "Sales minus cost of goods sold",
+   "explanation": "Net profit then subtracts the running expenses."
+  },
+  {
+   "id": "AQ12",
+   "week": 2,
+   "prompt": "An expense is booked when…",
+   "options": [
+    "The invoice arrives (it is incurred)",
+    "It is paid",
+    "The year ends",
+    "The bank statement shows it"
+   ],
+   "answer": "The invoice arrives (it is incurred)",
+   "explanation": "That's the accrual principle."
+  },
+  {
+   "id": "AQ13",
+   "week": 2,
+   "prompt": "Prudence (conservatism) means…",
+   "options": [
+    "Don't overstate income or assets",
+    "Record only cash",
+    "Use a new method every year",
+    "Ignore small amounts"
+   ],
+   "answer": "Don't overstate income or assets",
+   "explanation": "Expect losses; don't count gains before they happen."
+  },
+  {
+   "id": "AQ14",
+   "week": 3,
+   "prompt": "Cash is which type of account?",
+   "options": [
+    "Real",
+    "Personal",
+    "Nominal",
+    "Contra"
+   ],
+   "answer": "Real",
+   "explanation": "Things you own (cash, furniture, goods) are real accounts."
+  },
+  {
+   "id": "AQ15",
+   "week": 3,
+   "prompt": "A vendor is which type of account?",
+   "options": [
+    "Personal",
+    "Real",
+    "Nominal",
+    "Capital"
+   ],
+   "answer": "Personal",
+   "explanation": "People and businesses are personal accounts."
+  },
+  {
+   "id": "AQ16",
+   "week": 3,
+   "prompt": "Salaries are which type of account?",
+   "options": [
+    "Nominal",
+    "Real",
+    "Personal",
+    "Asset"
+   ],
+   "answer": "Nominal",
+   "explanation": "Expenses, losses, incomes and gains are nominal accounts."
+  },
+  {
+   "id": "AQ17",
+   "week": 5,
+   "prompt": "Ravi Traders buys goods for ₹10,000 + 18% GST on credit. The entry is…",
+   "options": [
+    "Dr Purchases 10,000 · Dr Input GST 1,800 · Cr Vendor 11,800",
+    "Dr Purchases 11,800 · Cr Vendor 11,800",
+    "Dr Vendor 11,800 · Cr Purchases 10,000 · Cr Input GST 1,800",
+    "Dr Purchases 10,000 · Cr Vendor 10,000 · Cr Output GST 1,800"
+   ],
+   "answer": "Dr Purchases 10,000 · Dr Input GST 1,800 · Cr Vendor 11,800",
+   "explanation": "GST paid on purchases is Input GST (a debit); the vendor is owed the total."
+  },
+  {
+   "id": "AQ18",
+   "week": 5,
+   "prompt": "Ravi Traders sells goods for ₹20,000 + 18% GST on credit. The entry is…",
+   "options": [
+    "Dr Customer 23,600 · Cr Sales 20,000 · Cr Output GST 3,600",
+    "Dr Customer 20,000 · Cr Sales 20,000",
+    "Dr Sales 20,000 · Dr Output GST 3,600 · Cr Customer 23,600",
+    "Dr Customer 23,600 · Cr Sales 23,600"
+   ],
+   "answer": "Dr Customer 23,600 · Cr Sales 20,000 · Cr Output GST 3,600",
+   "explanation": "GST charged on sales is Output GST, a credit owed to the government."
+  },
+  {
+   "id": "AQ19",
+   "week": 5,
+   "prompt": "Ravi Traders pays a vendor ₹9,800 in full settlement of ₹10,000. The entry is…",
+   "options": [
+    "Dr Vendor 10,000 · Cr Bank 9,800 · Cr Discount received 200",
+    "Dr Vendor 9,800 · Cr Bank 9,800",
+    "Dr Vendor 10,000 · Dr Discount allowed 200 · Cr Bank 10,200",
+    "Dr Bank 9,800 · Dr Discount received 200 · Cr Vendor 10,000"
+   ],
+   "answer": "Dr Vendor 10,000 · Cr Bank 9,800 · Cr Discount received 200",
+   "explanation": "The full debt is cleared; the ₹200 not paid is income."
+  },
+  {
+   "id": "AQ20",
+   "week": 8,
+   "prompt": "After the journal, the next step is…",
+   "options": [
+    "Posting to the ledger",
+    "The balance sheet",
+    "Closing the year",
+    "Paying the vendor"
+   ],
+   "answer": "Posting to the ledger",
+   "explanation": "Journal → ledger → (in February) trial balance."
+  },
+  {
+   "id": "AQ21",
+   "week": 9,
+   "prompt": "Why does Capital normally have a credit balance?",
+   "options": [
+    "The business owes it to the owner",
+    "It's an asset",
+    "It's an expense",
+    "Because of GST"
+   ],
+   "answer": "The business owes it to the owner",
+   "explanation": "Liabilities and capital sit on the credit side."
+  }
+ ],
+ "journal": [
+  {
+   "id": "J01",
+   "week": 4,
+   "text": "Ravi starts Ravi Traders with ₹1,00,000 in cash.",
+   "dr": "Cash",
+   "cr": "Capital"
+  },
+  {
+   "id": "J02",
+   "week": 4,
+   "text": "Ravi Traders deposits ₹40,000 cash into the bank.",
+   "dr": "Bank",
+   "cr": "Cash"
+  },
+  {
+   "id": "J03",
+   "week": 4,
+   "text": "Buys goods for ₹15,000 in cash.",
+   "dr": "Purchases",
+   "cr": "Cash"
+  },
+  {
+   "id": "J04",
+   "week": 4,
+   "text": "Buys goods on credit from a vendor for ₹20,000.",
+   "dr": "Purchases",
+   "cr": "Vendor"
+  },
+  {
+   "id": "J05",
+   "week": 4,
+   "text": "Sells goods for ₹12,000 in cash.",
+   "dr": "Cash",
+   "cr": "Sales"
+  },
+  {
+   "id": "J06",
+   "week": 4,
+   "text": "Sells goods on credit to a customer for ₹18,000.",
+   "dr": "Customer",
+   "cr": "Sales"
+  },
+  {
+   "id": "J07",
+   "week": 4,
+   "text": "Pays shop rent of ₹6,000 by bank transfer.",
+   "dr": "Rent",
+   "cr": "Bank"
+  },
+  {
+   "id": "J08",
+   "week": 4,
+   "text": "Pays salaries of ₹25,000 from the bank.",
+   "dr": "Salaries",
+   "cr": "Bank"
+  },
+  {
+   "id": "J09",
+   "week": 4,
+   "text": "Buys office furniture for ₹9,000 in cash.",
+   "dr": "Furniture",
+   "cr": "Cash"
+  },
+  {
+   "id": "J10",
+   "week": 4,
+   "text": "Buys a machine on credit from a vendor for ₹60,000.",
+   "dr": "Machinery",
+   "cr": "Vendor"
+  },
+  {
+   "id": "J11",
+   "week": 4,
+   "text": "Pays the vendor ₹20,000 by bank transfer.",
+   "dr": "Vendor",
+   "cr": "Bank"
+  },
+  {
+   "id": "J12",
+   "week": 4,
+   "text": "Receives ₹18,000 from the customer into the bank.",
+   "dr": "Bank",
+   "cr": "Customer"
+  },
+  {
+   "id": "J13",
+   "week": 4,
+   "text": "Ravi takes ₹3,000 cash for personal use.",
+   "dr": "Drawings",
+   "cr": "Cash"
+  },
+  {
+   "id": "J14",
+   "week": 4,
+   "text": "Pays the electricity bill of ₹1,500 in cash.",
+   "dr": "Electricity",
+   "cr": "Cash"
+  },
+  {
+   "id": "J15",
+   "week": 5,
+   "text": "Takes a bank loan of ₹50,000 into the bank account.",
+   "dr": "Bank",
+   "cr": "Bank loan"
+  },
+  {
+   "id": "J16",
+   "week": 5,
+   "text": "The bank credits ₹400 interest to the account.",
+   "dr": "Bank",
+   "cr": "Interest received"
+  },
+  {
+   "id": "J17",
+   "week": 5,
+   "text": "Returns damaged goods worth ₹2,000 to the vendor.",
+   "dr": "Vendor",
+   "cr": "Purchase returns"
+  },
+  {
+   "id": "J18",
+   "week": 5,
+   "text": "A customer returns goods worth ₹1,000.",
+   "dr": "Sales returns",
+   "cr": "Customer"
+  },
+  {
+   "id": "J19",
+   "week": 5,
+   "text": "Withdraws ₹10,000 cash from the bank for office use.",
+   "dr": "Cash",
+   "cr": "Bank"
+  },
+  {
+   "id": "J20",
+   "week": 5,
+   "text": "Receives a commission of ₹2,500 in cash.",
+   "dr": "Cash",
+   "cr": "Commission received"
+  },
+  {
+   "id": "J21",
+   "week": 5,
+   "text": "Pays ₹1,200 for advertising by bank transfer.",
+   "dr": "Advertisement",
+   "cr": "Bank"
+  },
+  {
+   "id": "J22",
+   "week": 6,
+   "text": "Writes off ₹800 that a customer will never pay.",
+   "dr": "Bad debts",
+   "cr": "Customer"
+  },
+  {
+   "id": "J23",
+   "week": 5,
+   "text": "The bank deducts ₹150 charges from the account.",
+   "dr": "Bank charges",
+   "cr": "Bank"
+  },
+  {
+   "id": "J24",
+   "week": 5,
+   "text": "Pays insurance of ₹3,600 by bank transfer.",
+   "dr": "Insurance",
+   "cr": "Bank"
+  },
+  {
+   "id": "J25",
+   "week": 5,
+   "text": "Ravi brings in another ₹30,000 into the bank.",
+   "dr": "Bank",
+   "cr": "Capital"
+  },
+  {
+   "id": "J26",
+   "week": 6,
+   "text": "Ravi takes goods worth ₹1,000 home for personal use.",
+   "dr": "Drawings",
+   "cr": "Purchases"
+  },
+  {
+   "id": "J27",
+   "week": 6,
+   "text": "Goods worth ₹2,000 are given away as free samples.",
+   "dr": "Advertisement",
+   "cr": "Purchases"
+  },
+  {
+   "id": "J28",
+   "week": 5,
+   "text": "Repays ₹10,000 of the bank loan.",
+   "dr": "Bank loan",
+   "cr": "Bank"
+  }
+ ],
+ "accounts": [
+  "Cash",
+  "Bank",
+  "Capital",
+  "Drawings",
+  "Purchases",
+  "Sales",
+  "Vendor",
+  "Customer",
+  "Rent",
+  "Salaries",
+  "Electricity",
+  "Furniture",
+  "Machinery",
+  "Bank loan",
+  "Interest received",
+  "Commission received",
+  "Purchase returns",
+  "Sales returns",
+  "Bad debts",
+  "Advertisement",
+  "Insurance",
+  "Bank charges",
+  "Input GST",
+  "Output GST",
+  "Discount received",
+  "Discount allowed"
+ ],
+ "calcs": [
+  {
+   "kind": "equation",
+   "week": 1
+  },
+  {
+   "kind": "gst",
+   "week": 5
+  },
+  {
+   "kind": "debits",
+   "week": 5
+  },
+  {
+   "kind": "ledger",
+   "week": 8
+  }
+ ],
+ "pythonQuestions": [
+  {
+   "id": "RQ01",
+   "week": 3,
+   "prompt": "In your RAG assistant, a chunk is…",
+   "options": [
+    "A small piece of a note, stored with its source",
+    "A whole folder of notes",
+    "An Excel row",
+    "A Python error"
+   ],
+   "answer": "A small piece of a note, stored with its source",
+   "explanation": "RAG 1: split every note into chunks {text, source}."
+  },
+  {
+   "id": "RQ02",
+   "week": 3,
+   "prompt": "Why store the source file with every chunk?",
+   "options": [
+    "So every answer can name where it came from",
+    "To make the file smaller",
+    "Python needs it to run",
+    "It sorts the chunks"
+   ],
+   "answer": "So every answer can name where it came from",
+   "explanation": "Source attribution: the answer names the right file."
+  },
+  {
+   "id": "RQ03",
+   "week": 3,
+   "prompt": "Keyword retrieval scores a chunk by…",
+   "options": [
+    "How many of the question's words it contains",
+    "Its length",
+    "Its file date",
+    "A random number"
+   ],
+   "answer": "How many of the question's words it contains",
+   "explanation": "RAG 2: score, sort, keep the top 3."
+  },
+  {
+   "id": "RQ04",
+   "week": 4,
+   "prompt": "TF-IDF gives a word more weight when it is…",
+   "options": [
+    "Frequent in this chunk but rare across all chunks",
+    "Common in every chunk",
+    "Very short",
+    "In capital letters"
+   ],
+   "answer": "Frequent in this chunk but rare across all chunks",
+   "explanation": "Rare, specific words tell chunks apart."
+  },
+  {
+   "id": "RQ05",
+   "week": 4,
+   "prompt": "Without an approved API key, the offline 'answer' is…",
+   "options": [
+    "The top 3 chunks with their sources",
+    "Nothing at all",
+    "A made-up summary",
+    "The whole notes folder"
+   ],
+   "answer": "The top 3 chunks with their sources",
+   "explanation": "Offline route: keyword or TF-IDF retrieval only."
+  },
+  {
+   "id": "RQ06",
+   "week": 4,
+   "prompt": "Where should an approved API key live?",
+   "options": [
+    "In a .env file, never in the code",
+    "In the code, near the top",
+    "In the notes folder",
+    "In the error report"
+   ],
+   "answer": "In a .env file, never in the code",
+   "explanation": "Keys in code leak through GitHub."
+  },
+  {
+   "id": "RQ07",
+   "week": 5,
+   "prompt": "Why test with 20 fixed questions that have expected answers?",
+   "options": [
+    "To measure accuracy and see whether a change helps",
+    "To make the assistant faster",
+    "Because the library needs 20",
+    "To fill the notes folder"
+   ],
+   "answer": "To measure accuracy and see whether a change helps",
+   "explanation": "A fixed test turns 'seems good' into a score."
+  },
+  {
+   "id": "RQ08",
+   "week": 5,
+   "prompt": "Your score is 14/20. What do you fix first?",
+   "options": [
+    "The notes behind the wrong answers, then re-test",
+    "Add more questions",
+    "Change the expected answers",
+    "Delete the wrong questions"
+   ],
+   "answer": "The notes behind the wrong answers, then re-test",
+   "explanation": "Fix the weakest notes and re-test (Sun 20 Dec)."
+  }
+ ],
+ "cardUnlocks": {
+  "PY-001": "T029",
+  "PY-002": "T029",
+  "PY-003": "T029",
+  "PY-004": "T029",
+  "PY-005": "T029",
+  "PY-006": "T029",
+  "PY-007": "T029",
+  "PY-008": "T029",
+  "PY-009": "T029",
+  "PY-010": "T029",
+  "PY-011": "T029",
+  "PY-012": "T029",
+  "PY-013": "T029",
+  "PY-014": "T029",
+  "PY-015": "T029",
+  "PY-016": "T029",
+  "PY-017": "T029",
+  "PY-018": "T029",
+  "PY-019": "T029",
+  "PY-020": "T029",
+  "PY-021": "T029",
+  "PY-022": "T029",
+  "PY-023": "T029",
+  "PY-024": "T029",
+  "PY-025": "T029",
+  "PY-026": "T029",
+  "PY-027": "T029",
+  "PY-028": "T029",
+  "PY-029": "T231",
+  "PY-030": "T231",
+  "PY-031": "T231",
+  "PY-036": "T231",
+  "PY-037": "T231",
+  "PY-038": "T231",
+  "PY-032": "T266",
+  "PY-033": "T266",
+  "PY-034": "T266",
+  "PY-035": "T266",
+  "PY-039": "T266",
+  "PY-040": "T266",
+  "PY-041": "T266",
+  "PY-042": "T266",
+  "PY-043": "T266",
+  "PY-044": "T266",
+  "PY-045": "T336",
+  "PY-046": "T336",
+  "PY-047": "T336",
+  "ER-01": "T029",
+  "ER-02": "T029",
+  "ER-03": "T029",
+  "ER-04": "T029",
+  "ER-05": "T029",
+  "ER-06": "T029",
+  "ER-07": "T029",
+  "ER-08": "T029",
+  "ER-09": "T029",
+  "ER-10": "T029",
+  "ER-11": "T029",
+  "ER-23": "T029",
+  "ER-24": "T029",
+  "ER-12": "T231",
+  "ER-13": "T231",
+  "ER-14": "T231",
+  "ER-15": "T231",
+  "ER-16": "T231",
+  "ER-17": "T231",
+  "ER-18": "T266",
+  "ER-19": "T371",
+  "ER-20": "T371",
+  "ER-21": "T371",
+  "ER-22": "T371",
+  "SQL-01": "T301",
+  "SQL-02": "T301",
+  "SQL-03": "T301",
+  "SQL-04": "T301",
+  "SQL-05": "T301",
+  "AC-01": "T004",
+  "AC-02": "T039",
+  "AC-03": "T039",
+  "AC-04": "T074",
+  "AC-05": "T074",
+  "AC-06": "T074",
+  "AC-07": "T074",
+  "AC-08": "T074",
+  "AC-09": "T074",
+  "AC-10": "T074",
+  "AC-11": "T109",
+  "AC-12": "T109",
+  "AC-13": "T109",
+  "AC-14": "T109",
+  "AC-15": "T109",
+  "AC-16": "T109",
+  "AC-17": "T109",
+  "AC-18": "T109",
+  "AC-19": "T109",
+  "AC-20": "T144",
+  "AC-21": "T144",
+  "AC-22": "T144",
+  "AC-23": "T144",
+  "AC-24": "T144",
+  "AC-25": "T144",
+  "AC-26": "T179",
+  "AC-27": "T179",
+  "AC-28": "T179",
+  "AC-29": "T179",
+  "AC-30": "T179",
+  "AC-31": "T179",
+  "AC-32": "T179",
+  "AC-33": "T179",
+  "AC-34": "T179",
+  "AC-35": "T241",
+  "AC-36": "T241",
+  "AC-37": "T276",
+  "AC-38": "T276",
+  "CM-01": "T041",
+  "CM-03": "T006",
+  "CM-04": "T006",
+  "CM-05": "T041",
+  "CM-07": "T041",
+  "CM-02": "T077",
+  "CM-09": "T077",
+  "CM-06": "T126"
+ }
+}

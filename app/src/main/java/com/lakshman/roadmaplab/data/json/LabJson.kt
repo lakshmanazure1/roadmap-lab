@@ -7,13 +7,13 @@ import com.lakshman.roadmaplab.domain.CardType
 import com.lakshman.roadmaplab.domain.DayLog
 import com.lakshman.roadmaplab.domain.DayPlanEntry
 import com.lakshman.roadmaplab.domain.Days
-import com.lakshman.roadmaplab.domain.Milestone
+import com.lakshman.roadmaplab.domain.LegacyMilestone
 import com.lakshman.roadmaplab.domain.Mode
-import com.lakshman.roadmaplab.domain.Phase
-import com.lakshman.roadmaplab.domain.PlanTask
+import com.lakshman.roadmaplab.domain.LegacyPhase
+import com.lakshman.roadmaplab.domain.LegacyTask
 import com.lakshman.roadmaplab.domain.Rating
 import com.lakshman.roadmaplab.domain.ReviewLog
-import com.lakshman.roadmaplab.domain.Roadmap
+import com.lakshman.roadmaplab.domain.LegacyRoadmap
 import com.lakshman.roadmaplab.domain.TaskLog
 import com.lakshman.roadmaplab.domain.TaskStatus
 import org.json.JSONArray
@@ -21,7 +21,7 @@ import org.json.JSONObject
 
 /** A complete copy of the app's data: what a backup file holds. */
 data class Snapshot(
-    val roadmap: Roadmap,
+    val roadmap: LegacyRoadmap,
     val cardsVersion: String,
     val cards: List<Card>,
     val taskLogs: List<TaskLog>,
@@ -39,18 +39,18 @@ object LabJson {
     const val BACKUP_FORMAT = 1
 
     // ------------------------------------------------------------- roadmap.json
-    fun parseRoadmap(text: String): Roadmap = parseRoadmap(obj(text, "roadmap"))
+    fun parseRoadmap(text: String): LegacyRoadmap = parseRoadmap(obj(text, "roadmap"))
 
-    fun parseRoadmap(o: JSONObject): Roadmap {
+    fun parseRoadmap(o: JSONObject): LegacyRoadmap {
         if (o.optString("kind", "roadmap") != "roadmap" || !o.has("tasks")) {
             throw LabFileException("This isn't a roadmap.json file.")
         }
         val timeline = o.optJSONObject("timeline") ?: JSONObject()
         val phases = o.optJSONArray("phases").objects().mapIndexed { i, p ->
-            Phase(p.req("id"), p.optString("track"), p.optString("title"), day(p, "start"), day(p, "end"), i)
+            LegacyPhase(p.req("id"), p.optString("track"), p.optString("title"), day(p, "start"), day(p, "end"), i)
         }
         val milestones = o.optJSONArray("milestones").objects().map { m ->
-            Milestone(m.req("id"), m.optString("title"), day(m, "date"), m.optString("track"))
+            LegacyMilestone(m.req("id"), m.optString("title"), day(m, "date"), m.optString("track"))
         }
         val seen = HashSet<String>()
         val tasks = o.optJSONArray("tasks").objects().mapIndexed { i, t ->
@@ -58,7 +58,7 @@ object LabJson {
             if (!seen.add(id)) throw LabFileException("Task id $id appears twice.")
             val min = t.optJSONObject("minutes") ?: JSONObject()
             val full = min.optInt("full", 30)
-            PlanTask(
+            LegacyTask(
                 id = id,
                 phaseId = t.optString("phase"),
                 track = t.optString("track"),
@@ -79,10 +79,10 @@ object LabJson {
         val tracks = o.optJSONArray("tracks").strings().ifEmpty { tasks.map { it.track }.distinct() }
         val start = if (timeline.has("start")) day(timeline, "start") else tasks.minOfOrNull { it.plannedDay } ?: Days.today()
         val end = if (timeline.has("end")) day(timeline, "end") else tasks.maxOfOrNull { it.plannedDay } ?: Days.today()
-        return Roadmap(o.optString("version"), o.optString("title"), start, end, tracks, phases, milestones, tasks)
+        return LegacyRoadmap(o.optString("version"), o.optString("title"), start, end, tracks, phases, milestones, tasks)
     }
 
-    fun roadmapToJson(r: Roadmap): JSONObject = JSONObject().apply {
+    fun roadmapToJson(r: LegacyRoadmap): JSONObject = JSONObject().apply {
         put("app", "roadmaplab")
         put("kind", "roadmap")
         put("version", r.version)
@@ -212,7 +212,7 @@ object LabJson {
     fun decodeBackup(text: String): Snapshot {
         val root = obj(text, "backup")
         if (root.optString("app") != "roadmaplab" || root.optString("kind") != "backup") {
-            throw LabFileException("This isn't a Roadmap Lab backup file.")
+            throw LabFileException("This isn't a LegacyRoadmap Lab backup file.")
         }
         if (root.optInt("format", 0) > BACKUP_FORMAT) {
             throw LabFileException("This backup was made by a newer version of the app. Update the app first.")

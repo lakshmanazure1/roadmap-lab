@@ -5,33 +5,33 @@ import com.lakshman.roadmaplab.domain.CardState
 import com.lakshman.roadmaplab.domain.CardType
 import com.lakshman.roadmaplab.domain.DayLog
 import com.lakshman.roadmaplab.domain.DayPlanEntry
-import com.lakshman.roadmaplab.domain.Milestone
-import com.lakshman.roadmaplab.domain.Phase
-import com.lakshman.roadmaplab.domain.PlanTask
+import com.lakshman.roadmaplab.domain.LegacyMilestone
+import com.lakshman.roadmaplab.domain.LegacyPhase
+import com.lakshman.roadmaplab.domain.LegacyTask
 import com.lakshman.roadmaplab.domain.Rating
 import com.lakshman.roadmaplab.domain.ReviewLog
 import com.lakshman.roadmaplab.domain.TaskLog
 import com.lakshman.roadmaplab.domain.TaskStatus
 import org.json.JSONArray
 
-fun PhaseEntity.toDomain() = Phase(id, track, title, startDay, endDay, sortOrder)
-fun Phase.toEntity() = PhaseEntity(id, track, title, startDay, endDay, order)
+fun PhaseEntity.toDomain() = LegacyPhase(id, track, title, startDay, endDay, sortOrder)
+fun LegacyPhase.toEntity() = PhaseEntity(id, track, title, startDay, endDay, order)
 
-fun TaskEntity.toDomain() = PlanTask(
+fun TaskEntity.toDomain() = LegacyTask(
     id = id, phaseId = phaseId, track = track, plannedDay = plannedDay, title = title, learn = learn,
     apply = apply, doneWhen = doneWhen, minFull = minFull, minDrc = minDrc, minMinimum = minMinimum,
     unlocks = unlocks.split(',').map { it.trim() }.filter { it.isNotEmpty() },
     core = core, assumedDone = assumedDone, order = sortOrder,
 )
 
-fun PlanTask.toEntity() = TaskEntity(
+fun LegacyTask.toEntity() = TaskEntity(
     id = id, phaseId = phaseId, track = track, plannedDay = plannedDay, title = title, learn = learn,
     apply = apply, doneWhen = doneWhen, minFull = minFull, minDrc = minDrc, minMinimum = minMinimum,
     unlocks = unlocks.joinToString(","), core = core, assumedDone = assumedDone, sortOrder = order,
 )
 
-fun MilestoneEntity.toDomain() = Milestone(id, title, day, track)
-fun Milestone.toEntity() = MilestoneEntity(id, title, day, track)
+fun MilestoneEntity.toDomain() = LegacyMilestone(id, title, day, track)
+fun LegacyMilestone.toEntity() = MilestoneEntity(id, title, day, track)
 
 fun CardEntity.toDomain(): Card {
     val arr = try { JSONArray(optionsJson) } catch (e: Exception) { JSONArray() }

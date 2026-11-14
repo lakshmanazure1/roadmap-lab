@@ -84,18 +84,15 @@ object Leitner {
     /** Cards that have reached box 3 or higher. */
     fun learnedCount(states: List<CardState>): Int = states.count { it.box >= 3 }
 
-    /** Card ids a finished task unlocks: listed on the task, or naming the task as their unlocker. */
-    fun unlockedBy(task: PlanTask, cards: Collection<Card>): Set<String> =
-        task.unlocks.toSet() + cards.filter { it.unlockedBy == task.id }.map { it.id }
-
-    /** New card states to create when [doneTasks] are finished. Cards already unlocked keep their history. */
-    fun unlockOnDone(doneTasks: Collection<PlanTask>, cards: Collection<Card>, existing: Collection<CardState>, day: Long): List<CardState> {
+    /**
+     * New card states for cards whose unlocking plan item is now completed (the plan's cardUnlocks map).
+     * Cards already unlocked keep their history; cards for later months (SAP, SQL…) stay locked.
+     */
+    fun unlockForItems(doneItemIds: Set<String>, cards: Collection<Card>, unlocks: Map<String, String>, existing: Collection<CardState>, day: Long): List<CardState> {
         val have = existing.mapTo(HashSet()) { it.cardId }
-        val known = cards.mapTo(HashSet()) { it.id }
-        val out = ArrayList<CardState>()
-        for (t in doneTasks) for (id in unlockedBy(t, cards)) {
-            if (id in known && have.add(id)) out.add(newState(id, day))
-        }
-        return out
+        return cards.filter { c -> unlocks[c.id]?.let { it in doneItemIds } == true && c.id !in have }.map { newState(it.id, day) }
     }
+
+    /** Your own cards (A5: "Write 10 flashcards") have ids starting with this. */
+    const val USER_PREFIX = "U-"
 }
