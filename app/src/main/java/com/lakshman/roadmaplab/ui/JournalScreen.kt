@@ -43,8 +43,8 @@ fun JournalScreen(ui: UiState, padding: PaddingValues, listState: LazyListState,
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize().padding(padding),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 40.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         item {
           Column {

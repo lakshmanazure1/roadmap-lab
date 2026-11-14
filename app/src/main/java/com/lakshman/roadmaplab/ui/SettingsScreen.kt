@@ -69,7 +69,7 @@ fun SettingsScreen(ui: UiState, vm: LabViewModel, onBack: () -> Unit, onBackup: 
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             Panel {
                 Label("Mode")

@@ -1,5 +1,6 @@
 package com.lakshman.roadmaplab.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,8 +40,8 @@ fun PlanScreen(
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize().padding(padding),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 40.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         item {
             Column {
@@ -56,7 +57,7 @@ fun PlanScreen(
             Panel {
                 Label("Tracks")
                 r.tracks.forEach { track ->
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(16.dp))
                     TrackBar(track, p.trackPercent[track] ?: 0.0)
                 }
             }
@@ -65,9 +66,11 @@ fun PlanScreen(
             Panel {
                 Label("Milestones")
                 r.milestones.forEach { m ->
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(12.dp))
                     val days = (m.day - ui.today).toInt()
-                    Row(verticalAlignment = Alignment.Top) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        androidx.compose.foundation.layout.Box(Modifier.size(8.dp).background(lab.track(m.track)))
+                        Spacer(Modifier.width(8.dp))
                         MonoText(Fmt.short(m.day), style = LabType.monoSmall, color = lab.muted, modifier = Modifier.width(64.dp))
                         Text(m.title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f),
                             color = if (days < 0) lab.muted else lab.text)
@@ -80,13 +83,13 @@ fun PlanScreen(
         item { Label("Phases", Modifier.padding(top = 4.dp)) }
         items(ui.phases, key = { it.phase.id }) { pp ->
             val open = expanded[pp.phase.id] ?: false
-            Panel(padding = 12.dp) {
+            Panel(padding = 16.dp, stripe = lab.track(pp.phase.track)) {
                 Row(
                     Modifier.fillMaxWidth().clickable { expanded[pp.phase.id] = !open },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Label(pp.phase.track)
+                        com.lakshman.roadmaplab.ui.components.TrackTag(pp.phase.track)
                         Text(pp.phase.title, style = MaterialTheme.typography.titleSmall)
                         MonoText("${Fmt.range(pp.phase.startDay, pp.phase.endDay)} · ${pp.done}/${pp.tasks.size} tasks",
                             style = LabType.monoSmall, color = lab.muted)

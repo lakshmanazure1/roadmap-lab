@@ -44,7 +44,7 @@ fun TaskScreen(ui: UiState, vm: LabViewModel, taskId: String, onBack: () -> Unit
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             Panel {
                 Label(t.track + (phase?.let { " · ${it.title}" } ?: ""))

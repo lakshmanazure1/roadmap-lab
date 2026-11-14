@@ -38,7 +38,7 @@ fun ReviewScreen(ui: UiState, vm: LabViewModel, padding: PaddingValues) {
             .padding(padding)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         Text("Review", style = MaterialTheme.typography.headlineSmall)
         val ids = session
@@ -129,9 +129,9 @@ private fun CardView(card: Card, state: CardState, index: Int, total: Int, onRat
     var shown by remember { mutableStateOf(false) }
     val options = remember { card.options.shuffled(Random(card.id.hashCode() + state.reviews)) }
 
-    Panel {
+    Panel(stripe = lab.topic(card.topic)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Label(card.topic, Modifier.weight(1f))
+            Label(card.topic, Modifier.weight(1f), color = lab.topic(card.topic))
             MonoText("${index + 1} / $total", style = LabType.monoSmall, color = lab.muted)
         }
         Spacer(Modifier.height(4.dp))

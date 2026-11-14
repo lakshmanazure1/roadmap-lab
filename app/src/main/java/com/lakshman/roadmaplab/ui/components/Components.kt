@@ -52,14 +52,15 @@ import com.lakshman.roadmaplab.ui.Fmt
 import com.lakshman.roadmaplab.ui.theme.LabType
 import com.lakshman.roadmaplab.ui.theme.LocalLab
 
-private val PanelShape = RoundedCornerShape(6.dp)
+private val PanelShape = RoundedCornerShape(12.dp)
 
 /** A flat instrument panel with a 1 dp border. With [grid], a faint graph-paper grid is drawn behind. */
 @Composable
 fun Panel(
     modifier: Modifier = Modifier,
     grid: Boolean = false,
-    padding: Dp = 16.dp,
+    padding: Dp = 20.dp,
+    stripe: Color? = null,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -70,8 +71,37 @@ fun Panel(
         .background(lab.panel)
         .border(BorderStroke(1.dp, lab.grid), PanelShape)
         .then(if (grid) Modifier.graphPaper(lab.grid.copy(alpha = 0.35f)) else Modifier)
+        .then(
+            if (stripe != null) Modifier.drawBehind {
+                drawRect(stripe, size = androidx.compose.ui.geometry.Size(5.dp.toPx(), size.height))
+            } else Modifier
+        )
         .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-    Column(base.padding(padding), content = content)
+    Column(base.padding(start = if (stripe != null) padding + 4.dp else padding, top = padding, end = padding, bottom = padding), content = content)
+}
+
+/** A big section heading with a coloured dot, e.g. "Morning". */
+@Composable
+fun SectionTitle(text: String, color: Color, detail: String? = null) {
+    val lab = LocalLab.current
+    Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.width(10.dp).height(10.dp).clip(RoundedCornerShape(5.dp)).background(color))
+        Spacer(Modifier.width(10.dp))
+        Text(text, style = MaterialTheme.typography.titleLarge, color = lab.text, modifier = Modifier.weight(1f))
+        if (detail != null) Text(detail, style = LabType.monoSmall, color = lab.muted)
+    }
+}
+
+/** Track name with its colour dot. */
+@Composable
+fun TrackTag(track: String, modifier: Modifier = Modifier) {
+    val lab = LocalLab.current
+    val c = lab.track(track)
+    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.width(8.dp).height(8.dp).clip(RoundedCornerShape(4.dp)).background(c))
+        Spacer(Modifier.width(6.dp))
+        Text(track.uppercase(), style = LabType.label, color = lab.text)
+    }
 }
 
 /** Faint graph-paper lines every 16 dp. */
@@ -147,8 +177,9 @@ fun ScaleRow(label: String, value: Int?, onSelect: (Int) -> Unit, lowText: Strin
 
 /** A thin bar with a label and a mono % on the right. */
 @Composable
-fun TrackBar(label: String, percent: Double, modifier: Modifier = Modifier) {
+fun TrackBar(label: String, percent: Double, modifier: Modifier = Modifier, color: Color? = null) {
     val lab = LocalLab.current
+    val barColor = color ?: lab.track(label)
     Column(modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(label, style = MaterialTheme.typography.bodyMedium, color = lab.text, modifier = Modifier.weight(1f),
@@ -159,11 +190,12 @@ fun TrackBar(label: String, percent: Double, modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(4.dp)
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
                 .background(lab.grid)
         ) {
             val f = (percent / 100.0).toFloat().coerceIn(0f, 1f)
-            if (f > 0f) Box(Modifier.fillMaxWidth(f).fillMaxHeight().background(lab.accent))
+            if (f > 0f) Box(Modifier.fillMaxWidth(f).fillMaxHeight().clip(RoundedCornerShape(4.dp)).background(barColor))
         }
     }
 }
@@ -183,16 +215,17 @@ fun BackBar(title: String, onBack: () -> Unit, actions: @Composable RowScope.() 
 
 /** A choice chip that is at least 48 dp tall. */
 @Composable
-fun Choice(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Choice(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, color: Color? = null) {
     val lab = LocalLab.current
+    val c = color ?: lab.accent
     Surface(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
-        shape = RoundedCornerShape(4.dp),
-        color = if (selected) lab.accent else lab.bg,
-        border = BorderStroke(1.dp, if (selected) lab.accent else lab.grid),
+        modifier = modifier.heightIn(min = 52.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = if (selected) c else if (color != null) c.copy(alpha = 0.14f) else lab.bg,
+        border = BorderStroke(1.dp, if (selected || color != null) c else lab.grid),
     ) {
-        Box(Modifier.padding(horizontal = 12.dp, vertical = 12.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.padding(horizontal = 14.dp, vertical = 14.dp), contentAlignment = Alignment.Center) {
             Text(text, style = MaterialTheme.typography.labelLarge, color = if (selected) lab.onAccent else lab.text,
                 textAlign = TextAlign.Center)
         }
