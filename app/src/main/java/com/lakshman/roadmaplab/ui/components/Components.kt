@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -65,6 +66,17 @@ fun Panel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val lab = LocalLab.current
+    if (lab.soft) {
+        val softShape = RoundedCornerShape(24.dp)
+        val soft = modifier
+            .fillMaxWidth()
+            .shadow(elevation = 10.dp, shape = softShape, ambientColor = Color(0x22305A70), spotColor = Color(0x22305A70))
+            .clip(softShape)
+            .background(lab.panel)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+        Column(soft.padding(padding), content = content)
+        return
+    }
     val base = modifier
         .fillMaxWidth()
         .clip(PanelShape)
@@ -122,7 +134,44 @@ fun Modifier.graphPaper(color: Color, step: Dp = 16.dp): Modifier = drawBehind {
 /** Small mono caps label, e.g. "TODAY'S TASKS". */
 @Composable
 fun Label(text: String, modifier: Modifier = Modifier, color: Color = LocalLab.current.muted) {
-    Text(text.uppercase(), modifier = modifier, style = LabType.label, color = color)
+    val lab = LocalLab.current
+    if (lab.soft) Text(text, modifier = modifier, style = LabType.softLabel, color = color)
+    else Text(text.uppercase(), modifier = modifier, style = LabType.label, color = color)
+}
+
+/**
+ * The hero card: white "glass" with a soft pink–peach–lavender glow on the right,
+ * like a premium card. Falls back to a normal panel in dark mode.
+ */
+@Composable
+fun GlowPanel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    val lab = LocalLab.current
+    if (!lab.soft) {
+        Panel(modifier = modifier, grid = true, content = content)
+        return
+    }
+    val shape = RoundedCornerShape(28.dp)
+    Column(
+        modifier
+            .fillMaxWidth()
+            .shadow(elevation = 14.dp, shape = shape, ambientColor = Color(0x22305A70), spotColor = Color(0x33305A70))
+            .clip(shape)
+            .background(Color.White)
+            .drawBehind {
+                val w = size.width
+                val h = size.height
+                fun glow(c: Color, x: Float, y: Float, r: Float) = drawCircle(
+                    brush = androidx.compose.ui.graphics.Brush.radialGradient(listOf(c, c.copy(alpha = 0f)), center = Offset(x, y), radius = r),
+                    radius = r, center = Offset(x, y),
+                )
+                glow(Color(0xCCC9D8FF), w * 0.62f, h * 0.95f, w * 0.45f) // lavender
+                glow(Color(0xCCFFC7A3), w * 1.00f, h * 0.70f, w * 0.42f) // peach
+                glow(Color(0xD9F7A9C8), w * 0.88f, h * 0.30f, w * 0.40f) // pink
+                glow(Color(0x99BFE3F5), w * 0.05f, h * 0.05f, w * 0.50f) // sky
+            }
+            .padding(24.dp),
+        content = content,
+    )
 }
 
 @Composable
@@ -154,13 +203,14 @@ fun ScaleRow(label: String, value: Int?, onSelect: (Int) -> Unit, lowText: Strin
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             for (n in 1..5) {
                 val selected = value == n
+                val cellShape = if (lab.soft) RoundedCornerShape(50) else RoundedCornerShape(4.dp)
                 Box(
                     Modifier
                         .weight(1f)
                         .height(48.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(if (selected) lab.accent else lab.bg)
-                        .border(1.dp, if (selected) lab.accent else lab.grid, RoundedCornerShape(4.dp))
+                        .clip(cellShape)
+                        .background(if (selected) lab.accent else if (lab.soft) Color(0xFFF2F5F7) else lab.bg)
+                        .border(1.dp, if (selected) lab.accent else if (lab.soft) Color(0xFFF2F5F7) else lab.grid, cellShape)
                         .clickable { onSelect(n) },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -209,7 +259,7 @@ fun BackBar(title: String, onBack: () -> Unit, actions: @Composable RowScope.() 
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
         },
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = lab.bg, titleContentColor = lab.text),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = lab.text),
     )
 }
 
@@ -217,6 +267,26 @@ fun BackBar(title: String, onBack: () -> Unit, actions: @Composable RowScope.() 
 @Composable
 fun Choice(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, color: Color? = null) {
     val lab = LocalLab.current
+    if (lab.soft) {
+        // Pills: selected = black; actions with a colour = white pill with a small colour dot.
+        Surface(
+            onClick = onClick,
+            modifier = modifier.heightIn(min = 52.dp),
+            shape = RoundedCornerShape(50),
+            color = if (selected) lab.text else Color(0xFFF2F5F7),
+        ) {
+            Row(Modifier.padding(horizontal = 18.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center) {
+                if (color != null && !selected) {
+                    Box(Modifier.width(8.dp).height(8.dp).clip(RoundedCornerShape(4.dp)).background(color))
+                    Spacer(Modifier.width(8.dp))
+                }
+                Text(text, style = MaterialTheme.typography.labelLarge, color = if (selected) Color.White else lab.text,
+                    textAlign = TextAlign.Center)
+            }
+        }
+        return
+    }
     val c = color ?: lab.accent
     Surface(
         onClick = onClick,
@@ -239,9 +309,10 @@ fun LabOutlinedButton(text: String, onClick: () -> Unit, modifier: Modifier = Mo
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.heightIn(min = 48.dp),
-        shape = RoundedCornerShape(4.dp),
-        border = BorderStroke(1.dp, color ?: lab.grid),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = color ?: lab.text),
+        shape = if (lab.soft) RoundedCornerShape(50) else RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, if (lab.soft) lab.grid else color ?: lab.grid),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = if (lab.soft) lab.text else color ?: lab.text,
+            containerColor = if (lab.soft) Color.White else Color.Transparent),
     ) { Text(text, fontWeight = FontWeight.Medium) }
 }
 
@@ -260,7 +331,7 @@ fun LabField(
         label = { Text(label) },
         minLines = minLines,
         singleLine = singleLine,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(16.dp),
         modifier = modifier.fillMaxWidth(),
     )
 }

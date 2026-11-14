@@ -30,6 +30,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lakshman.roadmaplab.ui.components.MonoText
 import com.lakshman.roadmaplab.ui.theme.LocalLab
@@ -53,12 +56,19 @@ private val TABS = listOf(
 @Composable
 fun AppRoot(ui: UiState?, vm: LabViewModel) {
     val lab = LocalLab.current
-    when {
-        ui == null || ui.s.roadmap == null -> Box(Modifier.fillMaxSize().background(lab.bg), contentAlignment = Alignment.Center) {
-            MonoText("Loading the plan…", color = lab.muted)
+    val wash = if (lab.soft) {
+        Brush.verticalGradient(0f to lab.bgTop, 0.35f to lab.bgMid, 1f to lab.bg)
+    } else {
+        Brush.verticalGradient(listOf(lab.bg, lab.bg))
+    }
+    Box(Modifier.fillMaxSize().background(wash)) {
+        when {
+            ui == null || ui.s.roadmap == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                MonoText("Loading the plan…", color = lab.muted)
+            }
+            !ui.s.settings.onboarded -> OnboardingScreen(ui, vm)
+            else -> MainFlow(ui, vm)
         }
-        !ui.s.settings.onboarded -> OnboardingScreen(ui, vm)
-        else -> MainFlow(ui, vm)
     }
 }
 
@@ -83,9 +93,9 @@ private fun MainFlow(ui: UiState, vm: LabViewModel) {
         is Screen.DayDetail -> DayScreen(ui, vm, top.day, onBack = { back() })
         Screen.Settings -> SettingsScreen(ui, vm, onBack = { back() }, onBackup = backup)
         Screen.Tabs -> Scaffold(
-            containerColor = lab.bg,
+            containerColor = Color.Transparent,
             bottomBar = {
-                NavigationBar(containerColor = lab.panel) {
+                NavigationBar(containerColor = lab.panel, tonalElevation = 0.dp) {
                     TABS.forEachIndexed { i, t ->
                         NavigationBarItem(
                             selected = tab == i,
@@ -93,8 +103,10 @@ private fun MainFlow(ui: UiState, vm: LabViewModel) {
                             icon = { Icon(if (tab == i) t.selected else t.icon, contentDescription = null) },
                             label = { Text(t.label) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = lab.accent, selectedTextColor = lab.accent,
-                                indicatorColor = lab.grid, unselectedIconColor = lab.muted, unselectedTextColor = lab.muted,
+                                selectedIconColor = if (lab.soft) lab.text else lab.accent,
+                                selectedTextColor = if (lab.soft) lab.text else lab.accent,
+                                indicatorColor = if (lab.soft) Color.Transparent else lab.grid,
+                                unselectedIconColor = lab.muted, unselectedTextColor = lab.muted,
                             ),
                         )
                     }

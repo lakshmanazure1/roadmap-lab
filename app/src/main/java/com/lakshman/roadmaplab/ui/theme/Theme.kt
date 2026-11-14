@@ -42,6 +42,10 @@ data class LabColors(
     val partly: Color = Color(0xFFF0E442),
     val morning: Color = Color(0xFFF0E442),
     val evening: Color = Color(0xFFCC79A7),
+    /** The soft, airy light style (white cards on a sky-blue wash, black pill buttons). */
+    val soft: Boolean = false,
+    val bgTop: Color = bg,
+    val bgMid: Color = bg,
 ) {
     fun track(name: String): Color = when {
         name.startsWith("AI") -> ai
@@ -76,9 +80,21 @@ val LightLab = LabColors(
     morning = Color(0xFFA68F00), evening = Color(0xFFB3588E),
 )
 
-val LocalLab = staticCompositionLocalOf { DarkLab }
+/** Default look: white rounded cards on a soft sky-blue wash, black pills, thin type. */
+val SoftLab = LabColors(
+    bg = Color(0xFFF3F6F8), panel = Color(0xFFFFFFFF), grid = Color(0xFFE4E9ED), text = Color(0xFF111418),
+    muted = Color(0xFF7D8690), accent = Color(0xFF111418), onAccent = Color(0xFFFFFFFF), amber = Color(0xFFB7791F),
+    error = Color(0xFFD1432E), isDark = false,
+    ai = Color(0xFF2B8CC4), accounting = Color(0xFFD08C00), communication = Color(0xFFB3588E),
+    networking = Color(0xFF00805D), done = Color(0xFF00805D), partly = Color(0xFFC9A400),
+    morning = Color(0xFFD08C00), evening = Color(0xFFB3588E),
+    soft = true, bgTop = Color(0xFFCADDE7), bgMid = Color(0xFFE8F0F4),
+)
+
+val LocalLab = staticCompositionLocalOf { SoftLab }
 
 val PlexSans = FontFamily(
+    Font(R.font.plex_sans_light, FontWeight.Light),
     Font(R.font.plex_sans_regular, FontWeight.Normal),
     Font(R.font.plex_sans_medium, FontWeight.Medium),
     Font(R.font.plex_sans_semibold, FontWeight.SemiBold),
@@ -91,11 +107,13 @@ val PlexMono = FontFamily(
 )
 
 object LabType {
-    val bigNumber = TextStyle(fontFamily = PlexMono, fontWeight = FontWeight.Medium, fontSize = 40.sp, lineHeight = 44.sp)
-    val number = TextStyle(fontFamily = PlexMono, fontWeight = FontWeight.Medium, fontSize = 16.sp, lineHeight = 22.sp)
+    val bigNumber = TextStyle(fontFamily = PlexSans, fontWeight = FontWeight.Light, fontSize = 44.sp, lineHeight = 50.sp)
+    val greeting = TextStyle(fontFamily = PlexSans, fontWeight = FontWeight.Light, fontSize = 28.sp, lineHeight = 34.sp)
+    val number = TextStyle(fontFamily = PlexSans, fontWeight = FontWeight.Normal, fontSize = 17.sp, lineHeight = 22.sp)
     val mono = TextStyle(fontFamily = PlexMono, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp)
     val monoSmall = TextStyle(fontFamily = PlexMono, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp)
     val label = TextStyle(fontFamily = PlexMono, fontWeight = FontWeight.Medium, fontSize = 11.sp, lineHeight = 14.sp, letterSpacing = 1.sp)
+    val softLabel = TextStyle(fontFamily = PlexSans, fontWeight = FontWeight.Normal, fontSize = 13.sp, lineHeight = 18.sp)
 }
 
 private fun plexTypography(): Typography {
@@ -116,12 +134,14 @@ private fun plexTypography(): Typography {
 
 @Composable
 fun RoadmapLabTheme(theme: String, content: @Composable () -> Unit) {
-    val dark = when (theme) {
-        "light" -> false
-        "system" -> isSystemInDarkTheme()
-        else -> true
+    val systemDark = isSystemInDarkTheme()
+    val lab = when (theme) {
+        "dark" -> DarkLab
+        "system" -> if (systemDark) DarkLab else SoftLab
+        "classic" -> LightLab
+        else -> SoftLab
     }
-    val lab = if (dark) DarkLab else LightLab
+    val dark = lab.isDark
     val scheme = if (dark) {
         darkColorScheme(
             primary = lab.accent, onPrimary = lab.onAccent, secondary = lab.accent, onSecondary = lab.onAccent,

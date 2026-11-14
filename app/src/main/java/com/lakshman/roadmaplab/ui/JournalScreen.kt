@@ -103,7 +103,7 @@ fun DayScreen(ui: UiState, vm: LabViewModel, day: Long, onBack: () -> Unit) {
     val lab = LocalLab.current
     val log = ui.s.dayLogs[day] ?: DayLog(day)
     Scaffold(
-        containerColor = lab.bg,
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = { BackBar(Fmt.logTitle(log.logNumber, day, log.finishedAt), onBack) },
     ) { padding ->

@@ -25,7 +25,7 @@ fun TaskScreen(ui: UiState, vm: LabViewModel, taskId: String, onBack: () -> Unit
     val lab = LocalLab.current
     val t = ui.tasksById[taskId]
     Scaffold(
-        containerColor = lab.bg,
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = { BackBar(t?.title ?: "Task", onBack) },
     ) { padding ->

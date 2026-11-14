@@ -134,8 +134,8 @@ data class AppSettings(
     val reminderOn: Boolean = false,
     val reminderHour: Int = 21,
     val reminderMinute: Int = 0,
-    /** "dark" (default), "light" or "system". */
-    val theme: String = "dark",
+    /** "soft" (default light look), "dark" or "system". */
+    val theme: String = "soft",
     val firstUseDay: Long = 0,
     val lastBackupDay: Long = 0,
     val restartDismissedDay: Long = 0,

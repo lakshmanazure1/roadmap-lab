@@ -63,7 +63,7 @@ fun SettingsScreen(ui: UiState, vm: LabViewModel, onBack: () -> Unit, onBackup: 
     val pickCards = rememberOpenTextFile { text -> readOr(text) { pendingCards = LabJson.parseCards(it) } }
 
     Scaffold(
-        containerColor = lab.bg,
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = { BackBar("Settings", onBack) },
     ) { padding ->
@@ -120,7 +120,7 @@ fun SettingsScreen(ui: UiState, vm: LabViewModel, onBack: () -> Unit, onBackup: 
                 Label("Theme")
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf("dark" to "Dark", "light" to "Light", "system" to "Phone").forEach { (key, name) ->
+                    listOf("soft" to "Light", "dark" to "Dark", "system" to "Phone").forEach { (key, name) ->
                         Choice(name, s.theme == key, onClick = { vm.updateSettings { it.copy(theme = key) } }, modifier = Modifier.weight(1f))
                     }
                 }

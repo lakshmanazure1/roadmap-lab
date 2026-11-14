@@ -35,6 +35,15 @@ object Fmt {
         return listOfNotNull(n, full(day), finishedAt?.let { time(it) }).joinToString(" · ")
     }
 
+    fun greeting(): String {
+        val h = LocalTime.now().hour
+        return when {
+            h < 12 -> "Good morning"
+            h < 17 -> "Good afternoon"
+            else -> "Good evening"
+        }
+    }
+
     fun relDays(n: Int): String = when {
         n == 0 -> "today"
         n == 1 -> "in 1 day"

@@ -61,16 +61,20 @@ fun TodayScreen(
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    MonoText(Fmt.day(today), style = LabType.monoSmall, color = lab.muted)
-                    Spacer(Modifier.height(2.dp))
-                    Text("Today", style = MaterialTheme.typography.headlineMedium, color = lab.text)
+                    Label("Your career roadmap · ${Fmt.short(today)}")
+                    Spacer(Modifier.height(4.dp))
+                    Text(Fmt.greeting(), style = LabType.greeting, color = lab.text)
                 }
-                Surface(shape = RoundedCornerShape(20.dp), color = lab.accent.copy(alpha = 0.15f)) {
-                    MonoText("Streak ${ui.streak} d", style = LabType.number, color = lab.accent,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp))
+                Surface(shape = RoundedCornerShape(50), color = if (lab.soft) androidx.compose.ui.graphics.Color.White else lab.accent.copy(alpha = 0.15f)) {
+                    Text("${ui.streak} d streak", style = MaterialTheme.typography.labelLarge, color = lab.text,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp))
                 }
-                IconButton(onClick = onOpenSettings) {
-                    Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = lab.muted)
+                Spacer(Modifier.width(8.dp))
+                Surface(onClick = onOpenSettings, shape = RoundedCornerShape(50),
+                    color = if (lab.soft) androidx.compose.ui.graphics.Color.White else lab.panel, modifier = Modifier.size(44.dp)) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = lab.text, modifier = Modifier.size(20.dp))
+                    }
                 }
             }
         }
@@ -165,7 +169,7 @@ fun YouAreHerePanel(ui: UiState, vm: LabViewModel) {
     val lab = LocalLab.current
     val p = ui.progress
     val r = ui.s.roadmap ?: return
-    Panel(grid = true) {
+    com.lakshman.roadmaplab.ui.components.GlowPanel {
         Label("Overall progress")
         Spacer(Modifier.height(6.dp))
         Row(verticalAlignment = Alignment.Bottom) {

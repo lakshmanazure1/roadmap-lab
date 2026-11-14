@@ -44,7 +44,7 @@ fun OnboardingScreen(ui: UiState, vm: LabViewModel) {
         step = 2
     }
 
-    Scaffold(containerColor = lab.bg, contentWindowInsets = WindowInsets.safeDrawing) { padding ->
+    Scaffold(containerColor = androidx.compose.ui.graphics.Color.Transparent, contentWindowInsets = WindowInsets.safeDrawing) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),

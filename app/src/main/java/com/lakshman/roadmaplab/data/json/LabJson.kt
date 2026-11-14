@@ -279,7 +279,7 @@ object LabJson {
         reminderOn = o.optBoolean("reminderOn", false),
         reminderHour = o.optInt("reminderHour", 21).coerceIn(0, 23),
         reminderMinute = o.optInt("reminderMinute", 0).coerceIn(0, 59),
-        theme = o.optString("theme", "dark").ifBlank { "dark" },
+        theme = o.optString("theme", "soft").ifBlank { "soft" },
         firstUseDay = o.optLong("firstUseDay", 0),
         lastBackupDay = o.optLong("lastBackupDay", 0),
         showEvidenceLog = o.optBoolean("showEvidenceLog", true),

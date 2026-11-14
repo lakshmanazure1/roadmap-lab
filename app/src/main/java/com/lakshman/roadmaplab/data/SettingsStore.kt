@@ -28,7 +28,7 @@ class SettingsStore(context: Context) {
         val reminderOn = booleanPreferencesKey("reminder_on")
         val reminderHour = intPreferencesKey("reminder_hour")
         val reminderMinute = intPreferencesKey("reminder_minute")
-        val theme = stringPreferencesKey("theme")
+        val theme = stringPreferencesKey("theme_v2")
         val firstUseDay = longPreferencesKey("first_use_day")
         val lastBackupDay = longPreferencesKey("last_backup_day")
         val restartDismissedDay = longPreferencesKey("restart_dismissed_day")
@@ -66,7 +66,7 @@ class SettingsStore(context: Context) {
                 reminderOn = p[K.reminderOn] ?: false,
                 reminderHour = p[K.reminderHour] ?: 21,
                 reminderMinute = p[K.reminderMinute] ?: 0,
-                theme = p[K.theme] ?: "dark",
+                theme = p[K.theme] ?: "soft",
                 firstUseDay = p[K.firstUseDay] ?: 0,
                 lastBackupDay = p[K.lastBackupDay] ?: 0,
                 restartDismissedDay = p[K.restartDismissedDay] ?: 0,
