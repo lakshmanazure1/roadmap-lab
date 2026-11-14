@@ -5,222 +5,232 @@ import android.app.TimePickerDialog
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.lakshman.roadmaplab.BuildConfig
-import com.lakshman.roadmaplab.data.json.LabFileException
-import com.lakshman.roadmaplab.data.json.LabJson
-import com.lakshman.roadmaplab.data.json.Snapshot
-import com.lakshman.roadmaplab.domain.Card
-import com.lakshman.roadmaplab.domain.Mode
-import com.lakshman.roadmaplab.domain.Roadmap
-import com.lakshman.roadmaplab.domain.plural
-import com.lakshman.roadmaplab.reminder.Reminders
-import com.lakshman.roadmaplab.ui.components.BackBar
-import com.lakshman.roadmaplab.ui.components.Choice
+import com.lakshman.roadmaplab.domain.Days
+import com.lakshman.roadmaplab.ui.components.Chip
+import com.lakshman.roadmaplab.ui.components.ChipRow
 import com.lakshman.roadmaplab.ui.components.ConfirmDialog
-import com.lakshman.roadmaplab.ui.components.Label
-import com.lakshman.roadmaplab.ui.components.LabOutlinedButton
-import com.lakshman.roadmaplab.ui.components.MonoText
+import com.lakshman.roadmaplab.ui.components.Field
+import com.lakshman.roadmaplab.ui.components.KeyValue
+import com.lakshman.roadmaplab.ui.components.LabCard
 import com.lakshman.roadmaplab.ui.components.Muted
-import com.lakshman.roadmaplab.ui.components.Panel
-import com.lakshman.roadmaplab.ui.theme.LabType
-import com.lakshman.roadmaplab.ui.theme.LocalLab
+import com.lakshman.roadmaplab.ui.components.PrimaryButton
+import com.lakshman.roadmaplab.ui.components.ScreenPadding
+import com.lakshman.roadmaplab.ui.components.SecondaryButton
+import com.lakshman.roadmaplab.ui.components.SectionTitle
+import com.lakshman.roadmaplab.ui.components.Stepper
+import com.lakshman.roadmaplab.ui.components.TopBar
+import com.lakshman.roadmaplab.ui.theme.LocalPalette
+import com.lakshman.roadmaplab.ui.theme.Type
 
 @Composable
-fun SettingsScreen(ui: UiState, vm: LabViewModel, onBack: () -> Unit, onBackup: () -> Unit) {
-    val lab = LocalLab.current
-    val context = LocalContext.current
+fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
+    val p = LocalPalette.current
     val s = ui.s.settings
-    var pendingRestore by remember { mutableStateOf<Snapshot?>(null) }
-    var pendingRoadmap by remember { mutableStateOf<Roadmap?>(null) }
-    var pendingCards by remember { mutableStateOf<Pair<String, List<Card>>?>(null) }
-
+    val context = LocalContext.current
+    var cue by remember { mutableStateOf(s.cue) }
+    var confirmRestore by remember { mutableStateOf(false) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) vm.updateSettings { it.copy(reminderOn = true) }
-        else toast(context, "Allow notifications for Roadmap Lab in your phone's settings to get the reminder.")
+        act.updateSettings { it.copy(reminderOn = granted) }
+        if (!granted) act.note(Note("Notifications are off for this app. You can allow them in Android settings."))
     }
-    fun readOr(text: String?, parse: (String) -> Unit) {
-        if (text == null) return
-        try {
-            parse(text)
-        } catch (e: LabFileException) {
-            toast(context, e.message ?: "That file couldn't be read.")
-        } catch (e: Exception) {
-            toast(context, "That file couldn't be read.")
+    Column(Modifier.fillMaxSize()) {
+        TopBar("Settings", nav.back)
+        LazyColumn(contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            item { SectionTitle("Look") }
+            item {
+                LabCard {
+                    ChipRow {
+                        Chip("Light", s.theme == "light", { act.updateSettings { it.copy(theme = "light") } })
+                        Chip("Dark", s.theme == "dark", { act.updateSettings { it.copy(theme = "dark") } })
+                        Chip("Same as phone", s.theme == "system", { act.updateSettings { it.copy(theme = "system") } })
+                    }
+                }
+            }
+            item { SectionTitle("Daily minimum", trailing = "what makes a day count") }
+            item {
+                LabCard {
+                    Muted("Minutes of planned study you must finish for the day to count in your streak. Health habits and opening the app don't count. " +
+                        "Keep them small: the plan's reduced routine is about 20 minutes.")
+                    val t = s.targets
+                    Stepper(t.weekday, { v -> act.updateSettings { it.copy(targets = it.targets.copy(weekday = v)) } }, 5, 120, 5, "min", "Weekday")
+                    Stepper(t.saturday, { v -> act.updateSettings { it.copy(targets = it.targets.copy(saturday = v)) } }, 5, 180, 5, "min", "Saturday")
+                    Stepper(t.sunday, { v -> act.updateSettings { it.copy(targets = it.targets.copy(sunday = v)) } }, 5, 180, 5, "min", "Sunday")
+                    Stepper(t.reduced, { v -> act.updateSettings { it.copy(targets = it.targets.copy(reduced = v)) } }, 5, 60, 5, "min", "Reduced routine")
+                    Stepper(t.catchup, { v -> act.updateSettings { it.copy(targets = it.targets.copy(catchup = v)) } }, 5, 180, 5, "min", "Catch-up day")
+                }
+            }
+            item { SectionTitle("Cue and reminder") }
+            item {
+                LabCard {
+                    Field(cue, { cue = it }, "Your stable cue (a time or routine)", supporting = "e.g. “After dinner, at my desk”. Same cue every day builds the habit.")
+                    if (cue != s.cue) SecondaryButton("Save cue", { act.updateSettings { it.copy(cue = cue.trim()) } }, Modifier.padding(top = 8.dp))
+                    Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Daily reminder", style = Type.bodyStrong, color = p.text)
+                            Muted("One a day, only if today's minimum isn't met. Quiet on rest days.")
+                        }
+                        Switch(s.reminderOn, { on ->
+                            if (on && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else act.updateSettings { it.copy(reminderOn = on) }
+                        }, colors = SwitchDefaults.colors(checkedTrackColor = p.accent))
+                    }
+                    if (s.reminderOn) {
+                        SecondaryButton("Time: %02d:%02d".format(s.reminderHour, s.reminderMinute), {
+                            TimePickerDialog(context, { _, h, m -> act.updateSettings { it.copy(reminderHour = h, reminderMinute = m) } },
+                                s.reminderHour, s.reminderMinute, true).show()
+                        }, Modifier.padding(top = 8.dp))
+                        Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text("On Sundays, remind me of the weekly review", style = Type.body, color = p.text, modifier = Modifier.weight(1f))
+                            Switch(s.weeklyReminder, { on -> act.updateSettings { it.copy(weeklyReminder = on) } },
+                                colors = SwitchDefaults.colors(checkedTrackColor = p.accent))
+                        }
+                    }
+                }
+            }
+            item { SectionTitle("Backup and restore") }
+            item {
+                LabCard {
+                    Muted(if (s.lastBackupDay > 0) "Last backup: ${Days.short(s.lastBackupDay)} (${Days.relative(s.lastBackupDay, ui.today)})" else "No backup yet.")
+                    Muted("Saves one dated file (RoadmapLab_backup_YYYY-MM-DD.json). Choose Google Drive in the save screen to keep it off the phone.",
+                        Modifier.padding(top = 4.dp))
+                    PrimaryButton("Back up now", backup.backupNow, Modifier.fillMaxWidth().padding(top = 10.dp))
+                    SecondaryButton("Restore from a backup file", { confirmRestore = true }, Modifier.fillMaxWidth().padding(top = 8.dp))
+                    SecondaryButton("Export the evidence log (text)", backup.exportEvidence, Modifier.fillMaxWidth().padding(top = 8.dp))
+                    if (backup.safetyCopies > 0) Muted("${backup.safetyCopies} safety cop${if (backup.safetyCopies == 1) "y" else "ies"} kept from before earlier restores.",
+                        Modifier.padding(top = 6.dp))
+                }
+            }
+            item { SectionTitle("Plan file") }
+            item {
+                LabCard {
+                    KeyValue("Plan", "${ui.plan.meta.title}\n${ui.plan.tasks.size} tasks · ${if (backup.usingImportedPlan) "your imported CSV" else ui.plan.meta.csvName}")
+                    Muted("Import a CSV with the same columns (for example a February–March plan). Your ticks and scores stay: they're linked by task id.")
+                    SecondaryButton("Import a plan CSV", backup.importPlan, Modifier.fillMaxWidth().padding(top = 8.dp))
+                    if (backup.usingImportedPlan) SecondaryButton("Use the bundled plan again", backup.useBundledPlan, Modifier.fillMaxWidth().padding(top = 8.dp))
+                }
+            }
+            item { SectionTitle("Your data and privacy") }
+            item {
+                LabCard {
+                    Text("Where your data lives", style = Type.bodyStrong, color = p.text)
+                    Muted("Only on this phone, in the app's private storage. The app has no internet permission, so it can't send anything anywhere. " +
+                        "Nobody else can read it unless they have your unlocked phone.")
+                    Text("Who can see backups", style = Type.bodyStrong, color = p.text, modifier = Modifier.padding(top = 8.dp))
+                    Muted("A backup or export file is plain text. Anyone who can open the place you save it (for example your Google Drive) can read it. " +
+                        "Android's own phone backup may also copy app data to your Google account.")
+                    Text("What never goes in", style = Type.bodyStrong, color = p.text, modifier = Modifier.padding(top = 8.dp))
+                    Muted("Client names, PAN, GSTIN, bank details, invoices, company source code or internal documents. Use “the client” and fictional data. " +
+                        "The evidence log warns you if text looks like a PAN, GSTIN, IFSC, account number, phone number or e-mail.")
+                    if (ui.s.legacyTaskLogs > 0) Muted("Kept from version 1: ${ui.s.legacyTaskLogs} task records from the October roadmap (in backups).",
+                        Modifier.padding(top = 8.dp))
+                }
+            }
+            item { SecondaryButton("How levels and streaks work", { nav.open(Screen.HowItWorks) }, Modifier.fillMaxWidth()) }
+            item { Muted("Roadmap Lab ${BuildConfig.VERSION_NAME} · plan ${ui.plan.meta.version} · dates use Africa/Kinshasa time") }
         }
     }
-    val pickBackup = rememberOpenTextFile { text -> readOr(text) { pendingRestore = LabJson.decodeBackup(it) } }
-    val pickRoadmap = rememberOpenTextFile { text -> readOr(text) { pendingRoadmap = LabJson.parseRoadmap(it) } }
-    val pickCards = rememberOpenTextFile { text -> readOr(text) { pendingCards = LabJson.parseCards(it) } }
+    if (confirmRestore) ConfirmDialog(
+        "Restore from a backup?",
+        "Everything on the phone is replaced by the file's contents. Before that, a safety copy of what's here now is saved inside the app.",
+        "Choose file", { confirmRestore = false; backup.restore() }, { confirmRestore = false },
+    )
+}
 
-    Scaffold(
-        containerColor = androidx.compose.ui.graphics.Color.Transparent,
-        contentWindowInsets = WindowInsets.safeDrawing,
-        topBar = { BackBar("Settings", onBack) },
-    ) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
-        ) {
-            Panel {
-                Label("Mode")
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Mode.entries.forEach { m ->
-                        Choice(m.label, s.mode == m, onClick = {
-                            vm.updateSettings { it.copy(mode = m) }
-                            vm.launch { replanToday() }
-                        }, modifier = Modifier.weight(1f))
-                    }
-                }
-                Spacer(Modifier.height(6.dp))
-                Muted("Daily capacity: India about 120 min, DRC about 60 min, heavy week about 15 min. At most 3 tasks a day.")
-                Spacer(Modifier.height(12.dp))
-                SwitchRow("Reduced plan", "Sets optional tasks aside. Your roadmap's rule: switch, don't quit.", s.reducedPlan) { on ->
-                    vm.updateSettings { it.copy(reducedPlan = on) }
-                    vm.launch { replanToday() }
-                }
-                SwitchRow("Evidence log on Today", "Date | Module | Problem | Action | Result | Learning", s.showEvidenceLog) { on ->
-                    vm.updateSettings { it.copy(showEvidenceLog = on) }
+/** Plain-language rules for levels, streaks and the plan's order. Transparent on purpose. */
+@Composable
+fun HowItWorksScreen(ui: UiState, nav: Nav) {
+    Column(Modifier.fillMaxSize()) {
+        TopBar("How it works", nav.back)
+        LazyColumn(contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            item {
+                LabCard {
+                    Text("Follow the order, not the dates", style = Type.section, color = LocalPalette.current.text)
+                    Muted("Accounting, French, Python, app steps, LinkedIn and Sunday recordings each show the next task you haven't done, on the days that " +
+                        "area uses. A missed day moves the next task one slot later; nothing is lost, and it never doubles up. Day-bound tasks (the log line, " +
+                        "work habits, health) belong to their day. Dated steps (STAR stories, money checks, trainings, reviews) wait until done.")
+                    ui.plan.meta.recovery.forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
                 }
             }
-
-            Panel {
-                Label("Evening reminder")
-                Spacer(Modifier.height(4.dp))
-                SwitchRow("Remind me", "At most one a day, only if the evening log isn't done. Arrives within 15 minutes of the time.", s.reminderOn) { on ->
-                    if (on && Build.VERSION.SDK_INT >= 33 && !Reminders.canNotify(context)) {
-                        permission.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    } else {
-                        vm.updateSettings { it.copy(reminderOn = on) }
-                    }
-                }
-                Row(
-                    Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable {
-                        TimePickerDialog(context, { _, h, m -> vm.updateSettings { it.copy(reminderHour = h, reminderMinute = m) } },
-                            s.reminderHour, s.reminderMinute, true).show()
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("Time", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                    MonoText(Fmt.clock(s.reminderHour, s.reminderMinute), style = LabType.number, color = lab.accent)
+            item {
+                LabCard {
+                    Text("The 7 levels (section 12)", style = Type.section, color = LocalPalette.current.text)
+                    ui.plan.meta.levels.forEachIndexed { i, (name, meaning) -> Muted("${i + 1} $name: $meaning", Modifier.padding(top = 4.dp)) }
+                    Muted("Needs revision: your latest marked check is below its target. Retaking it adds a new attempt; the old ones stay so you can see improvement. " +
+                        "Mastered needs a passing check again at least 14 days after the first pass.", Modifier.padding(top = 6.dp))
                 }
             }
-
-            Panel {
-                Label("Theme")
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf("soft" to "Light", "dark" to "Dark", "system" to "Phone").forEach { (key, name) ->
-                        Choice(name, s.theme == key, onClick = { vm.updateSettings { it.copy(theme = key) } }, modifier = Modifier.weight(1f))
-                    }
+            item {
+                LabCard {
+                    Text("Streak and consistency", style = Type.section, color = LocalPalette.current.text)
+                    listOf(
+                        "A day counts when your completed study reaches that day's minimum (Settings). Opening the app or ticking a health habit adds nothing.",
+                        "Planned rest days (25 Dec, 1 Jan and any you plan ahead) and reduced-routine days never break the streak.",
+                        "The first missed day in each Monday–Sunday week is forgiven: the streak pauses instead of resetting.",
+                        "Today is never a miss while it's still open.",
+                        "The longest streak and every past day are kept, even after a streak ends.",
+                        "7- and 28-day consistency = days that met the minimum ÷ days that had work scheduled.",
+                        "Dates follow Africa/Kinshasa time, so travel can't split or merge a day.",
+                    ).forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
                 }
-            }
-
-            Panel {
-                Label("Backup")
-                Spacer(Modifier.height(6.dp))
-                Text("Back up to Drive every Sunday.", style = MaterialTheme.typography.bodyMedium)
-                Muted("Saves a dated file such as RoadmapLab_backup_${java.time.LocalDate.now()}.json. In the next screen tap ☰, choose Drive, open your backup folder and tap Save. Older backups stay.")
-                Spacer(Modifier.height(4.dp))
-                MonoText("Last backup: " + (if (s.lastBackupDay > 0) Fmt.full(s.lastBackupDay) else "never"), style = LabType.monoSmall, color = lab.muted)
-                Spacer(Modifier.height(10.dp))
-                LabOutlinedButton("Back up to Drive", onClick = onBackup, color = lab.accent, modifier = Modifier.fillMaxWidth())
-                Spacer(Modifier.height(6.dp))
-                LabOutlinedButton("Restore from a backup file", onClick = pickBackup, modifier = Modifier.fillMaxWidth())
-                Spacer(Modifier.height(6.dp))
-                Muted("Android's own phone backup is also on, as a safety net.")
-            }
-
-            Panel {
-                Label("Roadmap files")
-                Spacer(Modifier.height(6.dp))
-                MonoText("roadmap.json · ${ui.s.roadmap?.version ?: "–"} · ${ui.s.roadmap?.tasks?.size ?: 0} tasks", style = LabType.monoSmall)
-                MonoText("cards.json · ${ui.s.cardsVersion.ifBlank { "–" }} · ${ui.s.cards.size} cards", style = LabType.monoSmall)
-                Spacer(Modifier.height(8.dp))
-                Muted("When the plan changes, import the new file Claude gives you. Your logs, card progress and history stay.")
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    LabOutlinedButton("Import roadmap.json", onClick = pickRoadmap, modifier = Modifier.weight(1f))
-                    LabOutlinedButton("Import cards.json", onClick = pickCards, modifier = Modifier.weight(1f))
-                }
-            }
-
-            Panel {
-                Label("About")
-                Spacer(Modifier.height(6.dp))
-                MonoText("Roadmap Lab v${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE})", style = LabType.mono)
-                Spacer(Modifier.height(6.dp))
-                Muted("No analytics, no account, no server. The app has no internet permission, so it can't send anything anywhere; backups go only where you save them. Never enter company or client data.")
-                Spacer(Modifier.height(6.dp))
-                Muted("Fonts: IBM Plex, SIL Open Font License.")
             }
         }
-    }
-
-    pendingRestore?.let { b ->
-        ConfirmDialog(
-            title = "Restore this backup?",
-            message = "Everything on this phone will be replaced with the backup: ${plural(b.taskLogs.size, "task log")}, " +
-                "${plural(b.dayLogs.size, "day log")}, ${plural(b.cardStates.size, "card")} in review, and its settings.",
-            confirm = "Restore",
-            destructive = true,
-            onDismiss = { pendingRestore = null },
-            onConfirm = {
-                pendingRestore = null
-                vm.launch {
-                    restore(b)
-                    Reminders.schedule(context, settings.current())
-                }
-                toast(context, "Backup restored")
-            },
-        )
-    }
-    pendingRoadmap?.let { r ->
-        ConfirmDialog(
-            title = "Import this roadmap?",
-            message = "Version ${r.version.ifBlank { "(none)" }} with ${plural(r.tasks.size, "task")}. The plan is replaced; your logs and history stay.",
-            confirm = "Import",
-            onDismiss = { pendingRoadmap = null },
-            onConfirm = {
-                pendingRoadmap = null
-                vm.launch { importRoadmap(r) }
-                toast(context, "Roadmap updated")
-            },
-        )
-    }
-    pendingCards?.let { (version, cards) ->
-        ConfirmDialog(
-            title = "Import these cards?",
-            message = "Version ${version.ifBlank { "(none)" }} with ${plural(cards.size, "card")}. Progress on cards you already have is kept.",
-            confirm = "Import",
-            onDismiss = { pendingCards = null },
-            onConfirm = {
-                pendingCards = null
-                vm.launch { importCards(version, cards) }
-                toast(context, "Cards updated")
-            },
-        )
     }
 }
 
+/** First run of 2.0: what changed, where data lives, the cue. One screen, then straight to Today. */
 @Composable
-private fun SwitchRow(title: String, detail: String, checked: Boolean, onChange: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            Muted(detail)
+fun IntroScreen(ui: UiState, act: Actions) {
+    val p = LocalPalette.current
+    var cue by remember { mutableStateOf(ui.s.settings.cue) }
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(ScreenPadding), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item {
+            Column(Modifier.padding(top = 32.dp)) {
+                Text("Your Eight-Area plan is ready", style = Type.display, color = p.text)
+                Muted("${ui.plan.meta.title} · ${ui.plan.tasks.size} tasks, 15 Nov – 31 Jan", Modifier.padding(top = 4.dp))
+            }
         }
-        Spacer(Modifier.width(12.dp))
-        Switch(checked = checked, onCheckedChange = onChange)
+        item {
+            LabCard {
+                listOf(
+                    "Today shows what to do, in order. A missed day just moves the next task; nothing is lost.",
+                    "Done isn't the same as learned: record scores, take cold checks, and watch each task climb the 7 levels.",
+                    "A day counts when your study reaches a small minimum you set. Rest days and reduced weeks never break it.",
+                    "Every Sunday, a 15-minute checkpoint review. The evidence log keeps your 9-field lines and STAR stories.",
+                ).forEach { Text("• $it", style = Type.body, color = p.text, modifier = Modifier.padding(vertical = 3.dp)) }
+            }
+        }
+        item {
+            LabCard {
+                Text("Your data stays on this phone", style = Type.bodyStrong, color = p.text)
+                Muted("No internet permission. Backups go only where you save them. Use fictional data: no client names, PAN, GSTIN or bank details." +
+                    if (ui.s.legacyTaskLogs > 0 || ui.s.evidence.isNotEmpty()) " Everything you recorded before is kept." else "")
+            }
+        }
+        item { Field(cue, { cue = it }, "Your daily cue", supporting = "A time or routine you already have, e.g. “After dinner, at my desk”.") }
+        item {
+            PrimaryButton("Start", { act.updateSettings { it.copy(v2Intro = true, onboarded = true, cue = cue.trim().ifBlank { it.cue }) } },
+                Modifier.fillMaxWidth())
+        }
     }
 }
