@@ -15,12 +15,12 @@ import com.lakshman.roadmaplab.domain.AppSettings
 import java.time.ZonedDateTime
 
 /**
- * At most one reminder a day, only if the evening log isn't done by your chosen time.
+ * At most one reminder a day, at your chosen time, only if today's minimum isn't met yet.
  * Uses an inexact alarm with a 15-minute window: exact alarms are denied by default on
  * Android 14, and a window is enough for a reminder.
  */
 object Reminders {
-    const val CHANNEL_ID = "evening_log"
+    const val CHANNEL_ID = "evening_log" // kept from version 1 so your notification setting stays
     const val EXTRA_OPEN_TODAY = "com.lakshman.roadmaplab.OPEN_TODAY"
     const val WINDOW_MILLIS = 15 * 60 * 1000L
     private const val REQUEST_ALARM = 2001
@@ -29,8 +29,8 @@ object Reminders {
 
     fun createChannel(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
-        val channel = NotificationChannel(CHANNEL_ID, "Evening log reminder", NotificationManager.IMPORTANCE_DEFAULT)
-        channel.description = "One reminder a day, only when the evening log isn't done"
+        val channel = NotificationChannel(CHANNEL_ID, "Daily reminder", NotificationManager.IMPORTANCE_DEFAULT)
+        channel.description = "One reminder a day, only when today's minimum isn't met yet"
         manager.createNotificationChannel(channel)
     }
 
@@ -48,14 +48,14 @@ object Reminders {
         val alarms = context.getSystemService(AlarmManager::class.java) ?: return
         val pending = alarmIntent(context)
         alarms.cancel(pending)
-        if (!settings.reminderOn || !settings.onboarded) return
+        if (!settings.reminderOn) return
         val now = ZonedDateTime.now()
         var next = now.withHour(settings.reminderHour).withMinute(settings.reminderMinute).withSecond(0).withNano(0)
         if (!next.isAfter(now.plusSeconds(30))) next = next.plusDays(1)
         alarms.setWindow(AlarmManager.RTC_WAKEUP, next.toInstant().toEpochMilli(), WINDOW_MILLIS, pending)
     }
 
-    fun show(context: Context, dueCards: Int) {
+    fun show(context: Context, weeklyReview: Boolean, cue: String, minutesLeft: Int) {
         if (!canNotify(context)) return
         val open = context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return
         open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -63,11 +63,12 @@ object Reminders {
         val content = PendingIntent.getActivity(
             context, REQUEST_OPEN, open, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        val text = if (dueCards > 0) "2–3 minutes: mark today's tasks, review $dueCards cards, one line of notes."
-        else "2–3 minutes: mark today's tasks and write one line of notes."
+        val title = if (weeklyReview) "Sunday: weekly review" else "Today's plan"
+        val text = if (weeklyReview) "15 minutes: fill this week's checkpoint table, then choose next week's load."
+        else "${cue.ifBlank { "Your cue" }}: about $minutesLeft min to today's minimum. One task in order is enough."
         val notification = Notification.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_notify)
-            .setContentTitle("Evening log")
+            .setContentTitle(title)
             .setContentText(text)
             .setStyle(Notification.BigTextStyle().bigText(text))
             .setContentIntent(content)

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.lakshman.roadmaplab.RoadmapLabApp
 import com.lakshman.roadmaplab.domain.Days
-import com.lakshman.roadmaplab.domain.Leitner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,13 +21,13 @@ class ReminderReceiver : BroadcastReceiver() {
             try {
                 val settings = repo.settings.current()
                 Reminders.schedule(context, settings)
-                if (settings.reminderOn && settings.onboarded) {
+                if (settings.reminderOn) {
                     val today = Days.today()
-                    val dao = repo.db.dao()
-                    val done = dao.dayLog(today)?.eveningDone == true
-                    if (!done) {
-                        val dueCards = dao.cardStates().count { it.dueDay <= today }.coerceAtMost(Leitner.DAILY_CAP)
-                        Reminders.show(context, dueCards)
+                    repo.loadPlan() // a reminder can start the app process on its own
+                    val (minutes, target) = repo.todayMinutes(today)
+                    // Quiet once today's minimum is met, and on rest days (target 0).
+                    if (target > 0 && minutes < target) {
+                        Reminders.show(context, Days.isSunday(today) && settings.weeklyReminder, settings.cue, target - minutes)
                     }
                 }
             } finally {

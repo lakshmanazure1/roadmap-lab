@@ -21,7 +21,7 @@ class RoadmapLabApp : Application() {
         repository = LabRepository(this, LabDatabase.build(this), SettingsStore(this))
         Reminders.createChannel(this)
         appScope.launch {
-            repository.importBundledIfEmpty()
+            repository.loadPlan()
             Reminders.schedule(this@RoadmapLabApp, repository.settings.current())
         }
     }

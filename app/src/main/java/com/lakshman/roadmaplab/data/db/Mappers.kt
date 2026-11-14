@@ -74,3 +74,52 @@ fun ReviewLog.toEntity() = ReviewLogEntity(0, cardId, day, rating.name, correct,
 
 fun DayPlanEntity.toDomain() = DayPlanEntry(day, taskId, position)
 fun DayPlanEntry.toEntity() = DayPlanEntity(day, taskId, position)
+
+// ---------------------------------------------------------------- version 2
+
+fun TaskEventEntity.toDomain() = com.lakshman.roadmaplab.domain.ItemEvent(
+    id, itemId, day, com.lakshman.roadmaplab.domain.EventType.of(type), minutes, independent, note, createdAt,
+)
+fun com.lakshman.roadmaplab.domain.ItemEvent.toEntity() = TaskEventEntity(id, itemId, day, type.key, minutes, independent, note, createdAt)
+
+fun AssessmentEntity.toDomain() = com.lakshman.roadmaplab.domain.Assessment(
+    id, itemId, area, topic, type, score, maxScore, passed, independent, detail, day, createdAt, seconds,
+)
+fun com.lakshman.roadmaplab.domain.Assessment.toEntity() = AssessmentEntity(
+    id, itemId, area, topic, type, score, max, passed, independent, detail, day, createdAt, seconds,
+)
+
+fun DayTickEntity.toDomain() = com.lakshman.roadmaplab.domain.RoutineCheck(day, tickId, done, minutes, updatedAt)
+fun com.lakshman.roadmaplab.domain.RoutineCheck.toEntity() = DayTickEntity(day, routineId, done, minutes, updatedAt)
+
+fun EvidenceEntity.toDomain() = com.lakshman.roadmaplab.domain.Evidence(
+    id, day, area, itemId, kind, task, problem, action, result, lesson, skill, proof, confidence, starred,
+    starS, starT, starA, starR, createdAt, updatedAt,
+)
+fun com.lakshman.roadmaplab.domain.Evidence.toEntity() = EvidenceEntity(
+    id, day, area, itemId, kind, task, problem, action, result, lesson, skill, proof, confidence, starred,
+    starS, starT, starA, starR, createdAt, updatedAt,
+)
+
+fun DayMetaEntity.toDomain() = com.lakshman.roadmaplab.domain.DayMeta(
+    day, com.lakshman.roadmaplab.domain.DayKind.of(kind), focusItemId, kindSetAt, updatedAt,
+)
+fun com.lakshman.roadmaplab.domain.DayMeta.toEntity() = DayMetaEntity(day, kind?.key, focusItemId, kindSetAt, updatedAt)
+
+private fun mapJson(text: String): Map<String, String> = try {
+    val o = org.json.JSONObject(text)
+    o.keys().asSequence().associateWith { o.getString(it) }
+} catch (e: Exception) {
+    emptyMap()
+}
+private fun Map<String, String>.json(): String = org.json.JSONObject(this as Map<*, *>).toString()
+
+fun WeeklyReviewEntity.toDomain() = com.lakshman.roadmaplab.domain.WeeklyReview(
+    weekStart, mapJson(actualJson), mapJson(assessmentJson), mapJson(adjustmentJson), missedWhy,
+    obstacleTags.split(',').map { it.trim() }.filter { it.isNotEmpty() }, best, weakest, priorities, nextLoad, spending,
+    completedAt, updatedAt,
+)
+fun com.lakshman.roadmaplab.domain.WeeklyReview.toEntity() = WeeklyReviewEntity(
+    weekStart, actual.json(), assessment.json(), adjustment.json(), missedWhy, obstacleTags.joinToString(","), best, weakest,
+    priorities, nextLoad, spending, completedAt, updatedAt,
+)

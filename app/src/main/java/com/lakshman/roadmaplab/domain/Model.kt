@@ -134,18 +134,27 @@ data class AppSettings(
     val reminderOn: Boolean = false,
     val reminderHour: Int = 21,
     val reminderMinute: Int = 0,
-    /** "soft" (default light look), "dark" or "system". */
-    val theme: String = "soft",
+    /** "light", "dark" or "system" (older values "soft" and "classic" mean light). */
+    val theme: String = "light",
     val firstUseDay: Long = 0,
     val lastBackupDay: Long = 0,
     val restartDismissedDay: Long = 0,
     val lowMoodHiddenUntil: Long = 0,
     val showEvidenceLog: Boolean = true,
+    // ---- version 2
+    /** The "what's new in 2.0" screen has been seen. */
+    val v2Intro: Boolean = false,
+    /** Minimum minutes of study that make a day count, per kind of day. */
+    val targets: Targets = Targets(),
+    /** Your stable cue for the evening session, e.g. "After dinner, at my desk". */
+    val cue: String = "After dinner, at my desk",
+    /** Reminder on Sunday for the weekly review (same time as the daily one). */
+    val weeklyReminder: Boolean = true,
 )
 
 data class DayPlanEntry(val day: Long, val taskId: String, val position: Int)
 
-/** Everything the plan is made of, as loaded from roadmap.json. */
+/** The version-1 roadmap (Oct 2026 plan), kept so nothing recorded with it is lost. */
 data class LegacyRoadmap(
     val version: String,
     val title: String,

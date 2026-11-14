@@ -166,4 +166,120 @@ interface LabDao {
 
     @Query("DELETE FROM meta")
     suspend fun clearMeta()
+
+    // ================================================================= version 2
+
+    @Query("SELECT * FROM task_events ORDER BY createdAt, id")
+    fun taskEventsFlow(): Flow<List<TaskEventEntity>>
+
+    @Query("SELECT * FROM assessments ORDER BY createdAt, id")
+    fun assessmentsFlow(): Flow<List<AssessmentEntity>>
+
+    @Query("SELECT * FROM day_ticks")
+    fun dayTicksFlow(): Flow<List<DayTickEntity>>
+
+    @Query("SELECT * FROM evidence ORDER BY day DESC, id DESC")
+    fun evidenceFlow(): Flow<List<EvidenceEntity>>
+
+    @Query("SELECT * FROM day_meta")
+    fun dayMetaFlow(): Flow<List<DayMetaEntity>>
+
+    @Query("SELECT * FROM weekly_reviews ORDER BY weekStart")
+    fun weeklyReviewsFlow(): Flow<List<WeeklyReviewEntity>>
+
+    @Query("SELECT * FROM task_events ORDER BY createdAt, id")
+    suspend fun taskEvents(): List<TaskEventEntity>
+
+    @Query("SELECT * FROM task_events WHERE itemId = :itemId ORDER BY createdAt, id")
+    suspend fun taskEventsFor(itemId: String): List<TaskEventEntity>
+
+    @Query("SELECT * FROM assessments ORDER BY createdAt, id")
+    suspend fun assessments(): List<AssessmentEntity>
+
+    @Query("SELECT * FROM day_ticks")
+    suspend fun dayTicks(): List<DayTickEntity>
+
+    @Query("SELECT * FROM day_ticks WHERE day = :day")
+    suspend fun dayTicksOn(day: Long): List<DayTickEntity>
+
+    @Query("SELECT * FROM evidence ORDER BY day, id")
+    suspend fun evidence(): List<EvidenceEntity>
+
+    @Query("SELECT * FROM evidence WHERE id = :id")
+    suspend fun evidenceById(id: Long): EvidenceEntity?
+
+    @Query("SELECT * FROM day_meta")
+    suspend fun dayMeta(): List<DayMetaEntity>
+
+    @Query("SELECT * FROM day_meta WHERE day = :day")
+    suspend fun dayMetaOn(day: Long): DayMetaEntity?
+
+    @Query("SELECT * FROM weekly_reviews ORDER BY weekStart")
+    suspend fun weeklyReviews(): List<WeeklyReviewEntity>
+
+    @Query("SELECT * FROM weekly_reviews WHERE weekStart = :weekStart")
+    suspend fun weeklyReview(weekStart: Long): WeeklyReviewEntity?
+
+    @Insert
+    suspend fun insertTaskEvent(item: TaskEventEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertTaskEvents(items: List<TaskEventEntity>)
+
+    @Insert
+    suspend fun insertAssessment(item: AssessmentEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAssessments(items: List<AssessmentEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDayTick(item: DayTickEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDayTicks(items: List<DayTickEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertEvidence(item: EvidenceEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertEvidenceList(items: List<EvidenceEntity>)
+
+    @Query("DELETE FROM evidence WHERE id = :id")
+    suspend fun deleteEvidence(id: Long)
+
+    @Query("UPDATE evidence SET starred = 0, updatedAt = :now WHERE day BETWEEN :from AND :to AND kind = 'line' AND id <> :keep AND starred = 1")
+    suspend fun unstarOthers(from: Long, to: Long, keep: Long, now: Long)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDayMeta(item: DayMetaEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDayMetaList(items: List<DayMetaEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertWeeklyReview(item: WeeklyReviewEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertWeeklyReviews(items: List<WeeklyReviewEntity>)
+
+    @Query("DELETE FROM cards WHERE id NOT LIKE 'U-%'")
+    suspend fun clearBundledCards()
+
+    @Query("DELETE FROM task_events")
+    suspend fun clearTaskEvents()
+
+    @Query("DELETE FROM assessments")
+    suspend fun clearAssessments()
+
+    @Query("DELETE FROM day_ticks")
+    suspend fun clearDayTicks()
+
+    @Query("DELETE FROM evidence")
+    suspend fun clearEvidence()
+
+    @Query("DELETE FROM day_meta")
+    suspend fun clearDayMeta()
+
+    @Query("DELETE FROM weekly_reviews")
+    suspend fun clearWeeklyReviews()
 }
