@@ -35,14 +35,26 @@ jobs:
         id: key
         env:
           SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+          PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          if [ -n "$SIGNING_KEY_BASE64" ]; then
-            echo "$SIGNING_KEY_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
-            echo "signed=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ -z "$SIGNING_KEY_BASE64" ]; then
             echo "::warning::No signing key yet, so this is only a check build. See SETUP.md, part 2."
             echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          # Ignore spaces and line breaks that can sneak in while copying.
+          CLEAN=$(printf '%s' "$SIGNING_KEY_BASE64" | tr -d ' \r\n\t')
+          echo "Key text length after cleaning: ${#CLEAN} characters (a full key is usually 3,500–4,000)."
+          if ! printf '%s' "$CLEAN" | base64 -d > "$RUNNER_TEMP/release.jks" 2>/dev/null; then
+            echo "::error::SIGNING_KEY_BASE64 isn't complete key text. Open SIGNING_KEY_BASE64.txt from your Drive, copy ALL of it (Ctrl+A, Ctrl+C), and paste it again into the secret (Update secret)."
+            exit 1
+          fi
+          if ! keytool -list -keystore "$RUNNER_TEMP/release.jks" -storetype PKCS12 -storepass "$PASSWORD" -alias roadmaplab > /dev/null 2>&1; then
+            echo "::error::The key doesn't open with SIGNING_PASSWORD. Check both secrets come from the same key folder and password."
+            exit 1
+          fi
+          echo "Signing key OK."
+          echo "signed=true" >> "$GITHUB_OUTPUT"
 
       - name: Build the signed APK
         if: steps.key.outputs.signed == 'true'
