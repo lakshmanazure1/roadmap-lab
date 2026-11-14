@@ -1,0 +1,71 @@
+name: Check (work branches)
+
+# Runs on work branches only (not main, which builds the release APK).
+# Runs every test, renders the real screens to PNG pictures (Robolectric, no phone needed),
+# and saves the pictures, test results and database schema to the "ci-output" branch
+# so they can be reviewed without downloading anything.
+on:
+  push:
+    branches-ignore: [main, ci-output]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Run all tests (logic, database migration, screen pictures)
+        id: tests
+        run: |
+          set +e
+          ./gradlew --no-daemon testDebugUnitTest --continue 2>&1 | tee gradle-test.log
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Check the release build still compiles and shrinks
+        id: release
+        if: steps.tests.outputs.code == '0'
+        run: |
+          set +e
+          ./gradlew --no-daemon assembleRelease 2>&1 | tail -60 > gradle-release.log
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Save pictures, results and schema to the ci-output branch
+        if: always()
+        run: |
+          OUT="$RUNNER_TEMP/ci-output"
+          mkdir -p "$OUT/screens" "$OUT/test-results" "$OUT/schemas"
+          cp -r app/build/screens/. "$OUT/screens/" 2>/dev/null || true
+          cp -r app/build/test-results/testDebugUnitTest/. "$OUT/test-results/" 2>/dev/null || true
+          cp -r app/schemas/. "$OUT/schemas/" 2>/dev/null || true
+          tail -200 gradle-test.log > "$OUT/gradle-test-tail.log" 2>/dev/null || true
+          cp gradle-release.log "$OUT/" 2>/dev/null || true
+          echo "source=${GITHUB_SHA} branch=${GITHUB_REF_NAME} tests=${{ steps.tests.outputs.code }} release=${{ steps.release.outputs.code }}" > "$OUT/STATUS.txt"
+          cd "$OUT"
+          git init -q
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add -A
+          git commit -qm "CI output for ${GITHUB_SHA}"
+          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci-output
+
+      - name: Fail if tests or the release build failed
+        if: steps.tests.outputs.code != '0' || steps.release.outputs.code != '0'
+        run: |
+          grep -E "FAILED|error:|e: " gradle-test.log | head -40 || true
+          exit 1

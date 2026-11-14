@@ -71,7 +71,16 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric needs the real resources and assets to draw the screens in tests.
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.maxHeapSize = "3g"
+            it.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
+        }
     }
+
+    // The migration test reads the saved database schemas.
+    sourceSets.getByName("test").assets.srcDir("$projectDir/schemas")
 }
 
 ksp {
@@ -104,4 +113,13 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20240303")
+
+    // Screen pictures and database tests run on the computer with Robolectric (no phone needed).
+    testImplementation(composeBom)
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core-ktx:1.6.1")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    testImplementation("androidx.room:room-testing:2.6.1")
 }
