@@ -37,5 +37,5 @@ at most one reminder a day, only if the evening log isn't done.
 ## Releasing a new version (for Claude)
 
 1. Change `VERSION_NAME` in `version.properties` (e.g. `1.0.1`).
-2. Commit, then push a tag with the same name: `git tag v1.0.1 && git push origin v1.0.1`.
-3. GitHub Actions builds the signed APK and attaches it to the release.
+2. Commit and push to `main`.
+3. GitHub Actions builds the signed APK and publishes release `v1.0.1` with the APK attached (once per version).

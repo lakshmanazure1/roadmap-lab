@@ -1,11 +1,10 @@
 name: Build APK
 
-# Runs on every push. On a version tag (v1.0.0, v1.0.1, …) it also publishes a GitHub Release
-# with the signed APK attached, ready to download on your phone.
+# Runs on every push. When version.properties has a new VERSION_NAME (1.0.0, 1.0.1, …) and the
+# signing key is set, it publishes a GitHub Release (v1.0.0, …) with the signed APK attached.
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -82,22 +81,17 @@ jobs:
           path: app/schemas
           if-no-files-found: ignore
 
-      - name: Publish the GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish the GitHub Release (once per version)
+        if: github.ref == 'refs/heads/main' && steps.key.outputs.signed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.apk.outputs.version }}
         run: |
-          if [ "${{ steps.key.outputs.signed }}" != "true" ]; then
-            echo "::error::Releases must be signed. Add the signing key first (SETUP.md, part 2)."; exit 1
-          fi
-          if [ "$GITHUB_REF_NAME" != "v$VERSION" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME doesn't match version.properties ($VERSION)."; exit 1
-          fi
+          TAG="v$VERSION"
           APK="out/RoadmapLab-v$VERSION.apk"
-          NOTES="Roadmap Lab $GITHUB_REF_NAME. On your phone: tap the APK below to download, open it, and tap Install (or Update). Your data stays."
-          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" "$APK" --clobber
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "Release $TAG already exists; bump VERSION_NAME in version.properties to publish a new one."
           else
-            gh release create "$GITHUB_REF_NAME" "$APK" --title "Roadmap Lab $GITHUB_REF_NAME" --notes "$NOTES"
+            NOTES="Roadmap Lab $TAG. On your phone: tap the APK below to download, open it, and tap Install (or Update). Your data stays."
+            gh release create "$TAG" "$APK" --target "$GITHUB_SHA" --title "Roadmap Lab $TAG" --notes "$NOTES"
           fi
