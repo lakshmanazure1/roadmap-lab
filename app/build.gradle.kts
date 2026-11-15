@@ -79,8 +79,9 @@ android {
         }
     }
 
-    // The migration test reads the saved database schemas.
-    sourceSets.getByName("test").assets.srcDir("$projectDir/schemas")
+    // The migration test reads the saved database schemas. Robolectric reads the debug variant's
+    // merged assets (not the test source set's), so the schemas go there; release builds don't get them.
+    sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
 }
 
 ksp {
