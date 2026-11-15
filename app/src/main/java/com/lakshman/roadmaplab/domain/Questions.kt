@@ -57,6 +57,7 @@ object QuestionBank {
         return when (spec.bank) {
             "accounting" -> accounting(plan, task, spec.count, cards, rnd, coldQuiz = task.learn.contains("Quiz") || task.learn.contains("check:"))
             "journal" -> journal(plan, task.week, spec.count, rnd)
+            "side" -> side(plan, task.week, spec.count, rnd)
             "python" -> python(plan, task, spec.count, cards, rnd)
             "french" -> frenchWords(plan, spec, rnd)
             "french-sentences" -> frenchSentences(plan, spec, rnd)
@@ -100,6 +101,46 @@ object QuestionBank {
         if (out.size < count) out += tagged.filter { it.first != focus }.map { it.second }.shuffled(rnd).take(count - out.size)
         while (out.size < count && calcs.isNotEmpty()) out += calcQuestion(calcs.random(rnd).first, rnd)
         return out.take(count)
+    }
+
+    /** "Which side?" (T109): does this change go on the debit or the credit side? Ravi Traders, made up. */
+    private val MOVES = listOf(
+        "Ravi Traders' cash increases" to "Debit",
+        "Ravi Traders' cash decreases" to "Credit",
+        "The bank balance increases" to "Debit",
+        "The bank balance decreases" to "Credit",
+        "Ravi Traders buys shop furniture: the Furniture account increases" to "Debit",
+        "Ravi Traders takes a bank loan: the Bank loan account increases" to "Credit",
+        "Part of the bank loan is repaid: the Bank loan account decreases" to "Debit",
+        "Ravi brings more money into the business: Capital increases" to "Credit",
+        "Ravi takes cash home for personal use: Drawings" to "Debit",
+        "Shop rent is paid: the Rent expense" to "Debit",
+        "Staff salaries are paid: the Salaries expense" to "Debit",
+        "Goods are sold: Sales income" to "Credit",
+        "A customer now owes Ravi Traders more" to "Debit",
+        "A customer pays what they owe: the customer's balance decreases" to "Credit",
+        "Ravi Traders now owes a supplier more" to "Credit",
+        "Ravi Traders pays a supplier: the supplier's balance decreases" to "Debit",
+        "The bank pays interest to Ravi Traders: Interest received" to "Credit",
+        "Goods are bought for resale: Purchases" to "Debit",
+    )
+    private const val SIDE_RULE = "Assets, expenses and drawings go up on the debit side; liabilities, capital and income go up on the credit side. A decrease goes on the opposite side."
+
+    fun side(plan: DayPlan, week: Int, count: Int, rnd: Random): List<Question> {
+        val pool = ArrayList<Question>()
+        MOVES.forEachIndexed { i, (what, side) ->
+            pool += Question.Choice("side:$i", "Which side? $what", listOf("Debit", "Credit"), side, "$side. $SIDE_RULE")
+        }
+        // Both accounts of an entry already taught: "In this entry, is Cash debited or credited?"
+        for (t in plan.meta.journal.filter { it.week <= maxOf(4, week) }) {
+            val (acct, side) = if (rnd.nextBoolean()) t.dr to "Debit" else t.cr to "Credit"
+            pool += Question.Choice("sidej:${t.id}:$acct", "${t.text} Which side is $acct on?", listOf("Debit", "Credit"), side,
+                "Dr ${t.dr} · Cr ${t.cr}.")
+        }
+        val moves = pool.filter { it.id.startsWith("side:") }.shuffled(rnd)
+        val entries = pool.filter { it.id.startsWith("sidej:") }.shuffled(rnd)
+        // Mostly plain movements (the rules), a few from real-looking entries.
+        return (moves.take(count - minOf(3, entries.size)) + entries.take(3)).shuffled(rnd).take(count)
     }
 
     /** A test from the plan: N made-up Ravi Traders transactions → journal (debit and credit). */

@@ -226,8 +226,8 @@ fun Stat(label: String, value: String, modifier: Modifier = Modifier, sub: Strin
     val p = LocalPalette.current
     Column(modifier) {
         Text(value, style = Type.stat, color = valueColor ?: p.text, maxLines = 1)
-        Text(label, style = Type.small, color = p.text2, maxLines = 2)
-        if (sub != null) Text(sub, style = Type.caption, color = p.text3, maxLines = 2)
+        Text(label, style = Type.small, color = p.text2)
+        if (sub != null) Text(sub, style = Type.caption, color = p.text3)
     }
 }
 

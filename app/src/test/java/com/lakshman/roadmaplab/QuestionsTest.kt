@@ -29,6 +29,21 @@ class QuestionsTest {
     }
 
     @Test
+    fun whichSideQuizAsksDebitOrCredit() {
+        val q = quiz("T109")
+        assertEquals("side", q.bank)
+        assertEquals(10, q.count)
+        val qs = build("T109")
+        assertEquals(10, qs.size)
+        for (x in qs) {
+            val c = x as Question.Choice
+            assertEquals(setOf("Debit", "Credit"), c.options.toSet())
+            assertTrue(c.answer == "Debit" || c.answer == "Credit")
+        }
+        assertEquals(10, qs.map { it.id }.toSet().size)
+    }
+
+    @Test
     fun translateBackBuildsTheModelSentences() {
         val qs = build("T015")
         assertEquals(5, qs.size)

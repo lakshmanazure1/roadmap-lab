@@ -80,7 +80,7 @@ fun WeeklyReviewScreen(ui: UiState, act: Actions, nav: Nav, week: Int) {
                 LabCard {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Stat("Done / planned", "${sum.completed}/${sum.planned}", Modifier.weight(1f), sub = "tasks")
-                        Stat("Days with the minimum", "${sum.qualifiedDays}/${sum.scheduledDays}", Modifier.weight(1f))
+                        Stat("Days met minimum", "${sum.qualifiedDays}/${sum.scheduledDays}", Modifier.weight(1f))
                         Stat("Checks", if (sum.avgScore != null) "%.0f%%".format(sum.avgScore) else "—", Modifier.weight(1f), sub = "${sum.checks} this week")
                     }
                     val h = sum.habits

@@ -141,6 +141,8 @@ object PlanCsv {
                 when {
                     testCount != null -> out += CheckSpec.Quiz("In-app test: $testCount transactions", "journal", testCount,
                         target = score?.target ?: 0, timedMinutes = minutes)
+                    quizCount != null && all.contains("which side") -> out += CheckSpec.Quiz("Which side? Cold quiz in the app", "side", quizCount,
+                        target = score?.takeIf { it.max == quizCount }?.target ?: 0, timedMinutes = minutes)
                     quizCount != null -> out += CheckSpec.Quiz("Cold quiz in the app", "accounting", quizCount,
                         target = score?.takeIf { it.max == quizCount }?.target ?: 0, timedMinutes = minutes)
                 }

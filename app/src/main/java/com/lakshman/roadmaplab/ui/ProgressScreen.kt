@@ -79,7 +79,7 @@ fun ProgressScreen(ui: UiState, nav: Nav) {
                     Stat("Last 7 days", pct(c.rolling7), Modifier.weight(1f))
                     Stat("Last 28 days", pct(c.rolling28), Modifier.weight(1f))
                     val w = ui.weeks.firstOrNull { it.current }
-                    Stat("Study this week", if (w != null) "${w.completed}/${w.planned}" else "—", Modifier.weight(1f), sub = "sessions done/planned")
+                    Stat("Study tasks", if (w != null) "${w.completed}/${w.planned}" else "—", Modifier.weight(1f), sub = "this week, done / planned")
                 }
                 Spacer(Modifier.padding(top = 10.dp))
                 val last28 = c.days.filter { it.day in (ui.today - 27)..ui.today }
@@ -95,13 +95,13 @@ fun ProgressScreen(ui: UiState, nav: Nav) {
             LabCard {
                 Text("Overall", style = Type.section, color = p.text)
                 Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Stat("Tasks done", "${ui.totalDone}", Modifier.weight(1f), sub = "of ${ui.plan.tasks.count { it.kind != TaskKind.REST }}")
+                    Stat("Tasks done", "${ui.totalDone}", Modifier.weight(1f), sub = "of ${ui.plan.tasks.count { it.kind != TaskKind.REST }} (rest days not counted)")
                     Stat("Planned by today", "${ui.dueByToday}", Modifier.weight(1f))
                     val mins = ui.minutes.values.sum()
                     Stat("Study time", if (mins >= 60) "%.1f h".format(mins / 60.0) else "$mins min", Modifier.weight(1f))
                 }
                 Spacer(Modifier.padding(top = 12.dp))
-                Text("Weekly: study sessions done against planned", style = Type.smallStrong, color = p.text2)
+                Text("Weekly: study tasks done against planned", style = Type.smallStrong, color = p.text2)
                 WeekBars(ui.weeks.map { it.planned }, ui.weeks.map { it.completed }, ui.weeks.indexOfFirst { it.current },
                     Modifier.padding(top = 8.dp), labels = ui.weeks.map { "${it.week}" })
                 Muted("Weeks 1–11", style = Type.caption)
