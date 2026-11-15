@@ -46,12 +46,12 @@ Tell Claude "key added". Claude then publishes **v1.0.0**.
 
 ## Part 3 — Install on your phone
 
-1. On your phone, open the repository on github.com → **Releases** → **Roadmap Lab v1.0.0**.
-2. Tap **RoadmapLab-v1.0.0.apk** to download it.
+1. On your phone, open the repository on github.com → **Releases** → the newest one (now **v2.0.0**).
+2. Tap **RoadmapLab-v2.0.0.apk** to download it.
 3. Open the downloaded file. The first time, Android asks to **allow installs from this source** — allow it for your browser or My Files, then go back and tap **Install**.
 4. Open **Roadmap Lab** and follow the 3 setup screens.
 
-**Updates (v1.0.1, v1.1.0, …):** same steps; Android shows **Update** instead of Install, and all your data stays.
+**Updates (v1.1.1 → v2.0.0, …):** same steps; Android shows **Update** instead of Install, and all your data stays.
 
 > Never install a file named `…CHECK-ONLY-do-not-install.apk`. Those are test builds made before the key exists.
 
