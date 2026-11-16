@@ -106,7 +106,7 @@ class ScreensTest {
 
     @Test
     fun planHasEveryCsvRow() {
-        assertTrue(TestData.plan.tasks.size == 380)
+        assertTrue(TestData.plan.csvTasks.size == 380 && TestData.plan.tasks.size == 387)
     }
 }
 
