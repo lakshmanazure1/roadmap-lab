@@ -19,9 +19,12 @@ class PlanTest {
     fun everyCsvRowIsATask() {
         val rows = PlanCsv.parse(TestData.csv)
         assertEquals(381, rows.size) // header + 380
-        assertEquals(380, plan.tasks.size)
-        assertEquals("T001", plan.tasks.first().id)
-        assertEquals("T380", plan.tasks.last().id)
+        assertEquals(380, plan.csvTasks.size)
+        assertEquals("T001", plan.csvTasks.first().id)
+        assertEquals("T380", plan.csvTasks.last().id)
+        // The app adds only the 7-step Python recap from your fresh start (16 Nov), never inside the CSV.
+        assertEquals(387, plan.tasks.size)
+        assertEquals((1..7).map { "PR$it" }, plan.tasks.filter { it.seq == "recap" }.map { it.id })
         assertEquals(d("2026-11-15"), plan.leadIn)
         assertEquals(d("2026-11-16"), plan.start)
         assertEquals(d("2027-01-31"), plan.end)
@@ -42,7 +45,7 @@ class PlanTest {
         assertEquals(listOf(d("2026-12-25"), d("2027-01-01")), plan.restDays.keys.sorted())
         assertEquals(TaskKind.REST, plan.task("T200")!!.kind)
         // Week 1 study minutes: 5 weekdays × 45 + Sat 125 + Sun 165 = 515 (roadmap section 4).
-        val w1 = plan.tasks.filter { it.week == 1 && it.study }.sumOf { it.minutes }
+        val w1 = plan.csvTasks.filter { it.week == 1 && it.study }.sumOf { it.minutes }
         assertEquals(515, w1)
     }
 

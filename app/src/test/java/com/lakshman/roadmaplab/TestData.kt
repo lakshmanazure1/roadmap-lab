@@ -19,7 +19,11 @@ object TestData {
     }
 
     val csv: String by lazy { asset("schedule.csv").readText() }
-    val plan: DayPlan by lazy { PlanMetaJson.plan(asset("plan_meta.json").readText(), csv) }
+    val recapCsv: String by lazy { asset("python_recap.csv").readText() }
+    /** The plan as the app loads it: the roadmap CSV + the Python recap added on the fresh start. */
+    val plan: DayPlan by lazy { PlanMetaJson.plan(asset("plan_meta.json").readText(), csv, recapCsv) }
+    /** The roadmap CSV alone (for the plan's own rules). */
+    val csvPlan: DayPlan by lazy { PlanMetaJson.plan(asset("plan_meta.json").readText(), csv) }
     val cards: List<Card> by lazy { LabJson.parseCards(asset("cards.json").readText()).second }
 
     fun d(iso: String): Long = Days.of(iso)

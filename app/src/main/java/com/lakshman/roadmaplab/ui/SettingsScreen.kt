@@ -50,6 +50,8 @@ fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
     val context = LocalContext.current
     var cue by remember { mutableStateOf(s.cue) }
     var confirmRestore by remember { mutableStateOf(false) }
+    var confirmFresh by remember { mutableStateOf(false) }
+    var confirmBringBack by remember { mutableStateOf(false) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         act.updateSettings { it.copy(reminderOn = granted) }
         if (!granted) act.note(Note("Notifications are off for this app. You can allow them in Android settings."))
@@ -117,14 +119,27 @@ fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
                     PrimaryButton("Back up now", backup.backupNow, Modifier.fillMaxWidth().padding(top = 10.dp))
                     SecondaryButton("Restore from a backup file", { confirmRestore = true }, Modifier.fillMaxWidth().padding(top = 8.dp))
                     SecondaryButton("Export the evidence log (text)", backup.exportEvidence, Modifier.fillMaxWidth().padding(top = 8.dp))
-                    if (backup.safetyCopies > 0) Muted("${backup.safetyCopies} safety cop${if (backup.safetyCopies == 1) "y" else "ies"} kept from before earlier restores.",
-                        Modifier.padding(top = 6.dp))
+                }
+            }
+            item { SectionTitle("Start fresh") }
+            item {
+                LabCard {
+                    Muted(if (s.freshStartDay > 0) "You started fresh on ${Days.short(s.freshStartDay)}. Days before it count as \"nothing scheduled\", never as missed."
+                        else "Clears every record (ticks, scores, streak days, log lines, flashcard progress) and counts from today. The plan and your settings stay.")
+                    SecondaryButton("Start fresh from today", { confirmFresh = true }, Modifier.fillMaxWidth().padding(top = 8.dp))
+                    if (backup.latestCopy != null) {
+                        Muted("Safety copy on this phone: ${backup.latestCopy}. Bringing it back replaces what's here now " +
+                            "(and saves a safety copy of that first).", Modifier.padding(top = 10.dp))
+                        SecondaryButton("Bring back the safety copy", { confirmBringBack = true }, Modifier.fillMaxWidth().padding(top = 8.dp))
+                    }
                 }
             }
             item { SectionTitle("Plan file") }
             item {
                 LabCard {
-                    KeyValue("Plan", "${ui.plan.meta.title}\n${ui.plan.tasks.size} tasks · ${if (backup.usingImportedPlan) "your imported CSV" else ui.plan.meta.csvName}")
+                    val recap = ui.plan.tasks.size - ui.plan.csvTasks.size
+                    KeyValue("Plan", "${ui.plan.meta.title}\n${ui.plan.csvTasks.size} tasks · ${if (backup.usingImportedPlan) "your imported CSV" else ui.plan.meta.csvName}" +
+                        if (recap > 0) "\n+ $recap Python recap tasks (your fresh start)" else "")
                     Muted("Import a CSV with the same columns (for example a February–March plan). Your ticks and scores stay: they're linked by task id.")
                     SecondaryButton("Import a plan CSV", backup.importPlan, Modifier.fillMaxWidth().padding(top = 8.dp))
                     if (backup.usingImportedPlan) SecondaryButton("Use the bundled plan again", backup.useBundledPlan, Modifier.fillMaxWidth().padding(top = 8.dp))
@@ -150,6 +165,12 @@ fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
             item { Muted("Roadmap Lab ${BuildConfig.VERSION_NAME} · plan ${ui.plan.meta.version} · dates use Africa/Kinshasa time") }
         }
     }
+    if (confirmFresh) FreshStartDialog({ confirmFresh = false; act.startFresh() }, { confirmFresh = false })
+    if (confirmBringBack) ConfirmDialog(
+        "Bring back the safety copy?",
+        "What's on the phone now is replaced by the copy from ${backup.latestCopy}. A safety copy of what's here now is saved first.",
+        "Bring back", { confirmBringBack = false; backup.bringBack() }, { confirmBringBack = false },
+    )
     if (confirmRestore) ConfirmDialog(
         "Restore from a backup?",
         "Everything on the phone is replaced by the file's contents. Before that, a safety copy of what's here now is saved inside the app.",

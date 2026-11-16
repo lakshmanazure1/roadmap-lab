@@ -381,6 +381,7 @@ object LabJson {
         put("theme", s.theme); put("firstUseDay", s.firstUseDay); put("lastBackupDay", s.lastBackupDay)
         put("showEvidenceLog", s.showEvidenceLog)
         put("v2Intro", s.v2Intro); put("cue", s.cue); put("weeklyReminder", s.weeklyReminder)
+        put("freshStartDay", s.freshStartDay); put("freshStartAsked", s.freshStartAsked)
         put("targets", JSONObject().put("weekday", s.targets.weekday).put("saturday", s.targets.saturday).put("sunday", s.targets.sunday)
             .put("reduced", s.targets.reduced).put("catchup", s.targets.catchup))
     }
@@ -399,6 +400,8 @@ object LabJson {
         v2Intro = o.optBoolean("v2Intro", false),
         cue = o.optString("cue", AppSettings().cue),
         weeklyReminder = o.optBoolean("weeklyReminder", true),
+        freshStartDay = o.optLong("freshStartDay", 0),
+        freshStartAsked = o.optBoolean("freshStartAsked", false),
         targets = o.optJSONObject("targets")?.let { t ->
             val d = Targets()
             Targets(t.optInt("weekday", d.weekday).coerceIn(0, 240), t.optInt("saturday", d.saturday).coerceIn(0, 240),

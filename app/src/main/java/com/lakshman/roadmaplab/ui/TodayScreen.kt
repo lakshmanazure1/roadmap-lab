@@ -79,6 +79,7 @@ fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item { Header(ui, onSettings = { nav.open(Screen.Settings) }) }
+        if (ui.offerFreshStart) item { FreshStartCard(act) }
         item { DayBanners(ui, act) }
         item { TodayCard(ui) }
         item { NextActionCard(ui, act, nav) }
@@ -150,6 +151,32 @@ private fun Header(ui: UiState, onSettings: () -> Unit) {
         IconButton(onClick = onSettings) { Icon(Icons.Outlined.Settings, "Settings", tint = p.text2) }
     }
 }
+
+/** One-time offer after the update: clear old records and count from today (a safety copy is kept). */
+@Composable
+private fun FreshStartCard(act: Actions) {
+    val p = LocalPalette.current
+    var confirm by remember { mutableStateOf(false) }
+    LabCard(border = p.accent) {
+        Text("Start fresh from today?", style = Type.title, color = p.text)
+        Muted("Clears your old ticks, scores, streak days, log lines and flashcard progress, so today counts as your first day. " +
+            "A safety copy is saved on the phone first, and Settings can bring it back.", Modifier.padding(top = 4.dp))
+        Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PrimaryButton("Start fresh", { confirm = true }, Modifier.weight(1f))
+            SecondaryButton("Keep my records", { act.updateSettings { it.copy(freshStartAsked = true) } }, Modifier.weight(1f))
+        }
+    }
+    if (confirm) FreshStartDialog({ confirm = false; act.startFresh() }, { confirm = false })
+}
+
+@Composable
+fun FreshStartDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) = com.lakshman.roadmaplab.ui.components.ConfirmDialog(
+    "Start fresh from today?",
+    "Everything you recorded is cleared: task ticks, scores, streak days, log lines, STAR stories, weekly reviews, flashcard progress " +
+        "and the old version-1 records. The plan and your settings stay.\n\nA safety copy is saved on this phone first. " +
+        "To undo, go to Settings → Bring back.",
+    "Start fresh", onConfirm, onDismiss, danger = true,
+)
 
 @Composable
 private fun DayBanners(ui: UiState, act: Actions) {

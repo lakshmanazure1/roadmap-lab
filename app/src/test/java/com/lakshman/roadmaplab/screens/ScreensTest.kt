@@ -68,6 +68,15 @@ class ScreensTest {
     @Test fun a05_todayBeforeStart() = shot("05_today_before_start", DemoData.empty(), d("2026-11-14")) { TodayScreen(it, NoActions, nav) }
     @Test fun a06_todayReduced() = shot("06_today_reduced", DemoData.midPlan(d("2026-12-09"), reducedToday = true), d("2026-12-09")) { TodayScreen(it, NoActions, nav) }
     @Test fun a07_todaySaturday() = shot("07_today_saturday", DemoData.midPlan(d("2026-12-12")), d("2026-12-12")) { TodayScreen(it, NoActions, nav) }
+    /** After the update: old records exist and the one-time "Start fresh from today?" card shows (Day 1). */
+    @Test fun a09_freshStartOffer() = shot("09_today_fresh_start_offer",
+        DemoData.empty().let { it.copy(legacyTaskLogs = 12, settings = it.settings.copy(freshStartAsked = false)) }, d("2026-11-16")) { TodayScreen(it, NoActions, nav) }
+    /** Day 1 after starting fresh: accounting and the Python recap side by side. */
+    @Test fun a10_freshDay1() = shot("10_today_fresh_day1",
+        DemoData.empty().let { it.copy(settings = it.settings.copy(freshStartDay = d("2026-11-16"), freshStartAsked = true)) }, d("2026-11-16")) { TodayScreen(it, NoActions, nav) }
+    @Test fun a11_settingsFresh() = shot("11_settings_fresh",
+        DemoData.empty().let { it.copy(settings = it.settings.copy(freshStartDay = d("2026-11-16"), freshStartAsked = true)) }, d("2026-11-16")) {
+            SettingsScreen(it, NoActions, nav, BackupHooks(latestCopy = "Mon 16 Nov, before your fresh start", safetyCopies = 1)) }
     @Test fun a08_restDay() = shot("08_today_rest", DemoData.midPlan(d("2026-12-25")), d("2026-12-25")) { TodayScreen(it, NoActions, nav) }
 
     @Test fun b01_progress() = shot("11_progress", DemoData.midPlan(mid), mid) { ProgressScreen(it, nav) }

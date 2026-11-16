@@ -150,6 +150,11 @@ data class AppSettings(
     val cue: String = "After dinner, at my desk",
     /** Reminder on Sunday for the weekly review (same time as the daily one). */
     val weeklyReminder: Boolean = true,
+    // ---- version 2.1
+    /** The day you started fresh (everything before it was cleared), or 0 if you never did. */
+    val freshStartDay: Long = 0,
+    /** The one-time "start fresh?" card has been answered. */
+    val freshStartAsked: Boolean = false,
 )
 
 data class DayPlanEntry(val day: Long, val taskId: String, val position: Int)

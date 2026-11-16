@@ -47,15 +47,21 @@ data class UiState(
     val logged: Pair<Int, Int>,
     val habitsThisWeek: HabitWeek,
     val sleep: Map<Long, Boolean>,
+    /** Show the one-time "Start fresh from today?" card: there are records and you haven't answered yet. */
+    val offerFreshStart: Boolean = false,
 ) {
     val totalDone: Int get() = states.values.count { it.progress == Progress.COMPLETED && plan.task(it.itemId) != null }
-    val dueByToday: Int get() = plan.tasks.count { TodayEngine.effectiveDay(it, reducedWeeks) <= today && it.kind != com.lakshman.roadmaplab.domain.TaskKind.REST }
+    val dueByToday: Int get() = plan.tasks.count {
+        TodayEngine.effectiveDay(it, reducedWeeks) <= today && it.kind != com.lakshman.roadmaplab.domain.TaskKind.REST && !it.optional &&
+            !(it.kind == com.lakshman.roadmaplab.domain.TaskKind.DAILY && it.day < plan.freshStart)
+    }
     fun level(id: String): Level = levels[id] ?: Level.NOT_STARTED
     fun checks(id: String): List<Assessment> = checksByItem[id].orEmpty()
 }
 
 fun derive(s: LabState, today: Long): UiState? {
-    val plan = s.plan ?: return null
+    // After a fresh start, days before it are "nothing scheduled", never "missed".
+    val plan = (s.plan ?: return null).let { p -> if (s.settings.freshStartDay > 0) p.withFreshStart(s.settings.freshStartDay) else p }
     val states = Mastery.states(s.events)
     val checksByItem = s.assessments.filter { it.itemId != null }.groupBy { it.itemId!! }
     val levels = plan.tasks.associate { t -> t.id to Mastery.level(t.area, states[t.id], checksByItem[t.id].orEmpty()) }
@@ -85,5 +91,8 @@ fun derive(s: LabState, today: Long): UiState? {
         logged = Analytics.loggedWorkingDays(plan, states, today),
         habitsThisWeek = Analytics.habits(plan, Days.weekStart(today), states, sleep, today),
         sleep = sleep,
+        offerFreshStart = !s.settings.freshStartAsked && s.settings.freshStartDay == 0L &&
+            (s.events.isNotEmpty() || s.assessments.isNotEmpty() || s.evidence.isNotEmpty() || s.cardStates.isNotEmpty() ||
+                s.ticks.isNotEmpty() || s.dayLogs.isNotEmpty() || s.legacyTaskLogs > 0),
     )
 }

@@ -26,12 +26,13 @@ import java.time.LocalDateTime
  * Nothing is ever sent by the app itself: it has no internet permission.
  */
 @Composable
-fun rememberBackupHooks(vm: LabViewModel): BackupHooks {
+fun rememberBackupHooks(vm: LabViewModel, refreshKey: Any? = null): BackupHooks {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var version by remember { mutableIntStateOf(0) }
     var imported by remember(version) { mutableStateOf(vm.repo.usingImportedPlan()) }
-    val copies = remember(version) { vm.repo.safetyCopies().size }
+    val copies = remember(version, refreshKey) { vm.repo.safetyCopies().size }
+    val latestCopy = remember(version, refreshKey) { vm.repo.latestSafetyCopyLabel() }
 
     val save = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) scope.launch {
@@ -85,6 +86,14 @@ fun rememberBackupHooks(vm: LabViewModel): BackupHooks {
         useBundledPlan = { scope.launch { vm.repo.useBundledPlan(); version++; imported = false; toast(context, "Using the bundled plan") } },
         usingImportedPlan = imported,
         safetyCopies = copies,
+        latestCopy = latestCopy,
+        bringBack = {
+            scope.launch {
+                runCatching { vm.repo.restoreLatestSafetyCopy(BuildConfig.VERSION_NAME) }
+                    .onSuccess { s -> version++; vm.refreshDay(); toast(context, "Brought back: ${s.events.size} task records, ${s.evidence.size} log entries") }
+                    .onFailure { toast(context, "Nothing was changed. ${it.message ?: ""}") }
+            }
+        },
     )
 }
 

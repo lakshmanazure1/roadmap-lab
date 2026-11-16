@@ -3,7 +3,7 @@ package com.lakshman.roadmaplab
 import com.lakshman.roadmaplab.TestData.check
 import com.lakshman.roadmaplab.TestData.d
 import com.lakshman.roadmaplab.TestData.ev
-import com.lakshman.roadmaplab.TestData.plan
+import com.lakshman.roadmaplab.TestData.csvPlan as plan
 import com.lakshman.roadmaplab.data.LabState
 import com.lakshman.roadmaplab.domain.AppSettings
 import com.lakshman.roadmaplab.domain.EventType

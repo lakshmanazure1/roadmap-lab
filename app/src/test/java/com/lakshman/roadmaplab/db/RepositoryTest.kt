@@ -17,6 +17,7 @@ import com.lakshman.roadmaplab.domain.Evidence
 import com.lakshman.roadmaplab.domain.Mastery
 import com.lakshman.roadmaplab.domain.Progress
 import com.lakshman.roadmaplab.domain.WeeklyReview
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -131,5 +132,43 @@ class RepositoryTest {
         repo.addCard("French", "« une facture »", "an invoice")
         repo.loadPlan()
         assertTrue(db.dao().cards().any { it.id.startsWith("U-") })
+    }
+
+    @Test
+    fun startFreshClearsEveryRecordKeepsASafetyCopyAndCanBeUndone() = runBlocking {
+        repo.setTask("T004", EventType.DONE, 30)
+        repo.saveEvidence(line())
+        repo.addAssessment(Assessment(0, "T014", "accounting", "Basics", "score", 10.0, 12.0, true, false, "{}", mon, 0, 0))
+        repo.setDayKind(mon + 3, DayKind.REST)
+        repo.addCard("Accounting", "Capital is…", "What the owner put in")
+        val before = db.dao().taskEvents().size to db.dao().evidence().size
+        val bundledCards = db.dao().cards().count { !it.id.startsWith("U-") }
+
+        val copy = repo.startFresh("test")
+
+        assertTrue(copy.exists() && copy.name.contains("fresh-start"))
+        assertEquals(0, db.dao().taskEvents().size)
+        assertEquals(0, db.dao().evidence().size)
+        assertEquals(0, db.dao().assessments().size)
+        assertEquals(0, db.dao().dayMeta().size)
+        assertEquals(0, db.dao().cardStates().size)
+        assertEquals(bundledCards, db.dao().cards().size) // your own card is gone, the bundled deck stays
+        val s = repo.settings.current()
+        assertEquals(mon, s.freshStartDay)
+        assertTrue(s.freshStartAsked)
+        assertTrue(repo.latestSafetyCopyLabel()!!.contains("before your fresh start"))
+
+        // Undo: "Bring back" restores exactly what was there.
+        repo.restoreLatestSafetyCopy("test")
+        assertEquals(before, db.dao().taskEvents().size to db.dao().evidence().size)
+        assertEquals(1, db.dao().assessments().size)
+        assertEquals(DayKind.REST, db.dao().dayMetaOn(mon + 3)!!.toDomain().kind)
+    }
+
+    @Test
+    fun theRecapIsLoadedWithThePlanAndTheCsvStaysWhole() = runBlocking {
+        val plan = repo.state.first { it.plan != null }.plan!!
+        assertEquals(380, plan.csvTasks.size)
+        assertEquals(listOf("PR1", "PR2", "PR3", "PR4", "PR5", "PR6", "PR7"), plan.tasks.filter { it.seq == "recap" }.map { it.id })
     }
 }

@@ -48,6 +48,8 @@ interface Actions {
     fun addCard(topic: String, prompt: String, answer: String)
     fun updateSettings(change: (AppSettings) -> AppSettings)
     fun note(n: Note)
+    /** Save a safety copy, clear every record, and count from today (Settings and the one-time card). */
+    fun startFresh()
 }
 
 class LabViewModel(app: Application) : AndroidViewModel(app), Actions {
@@ -102,6 +104,11 @@ class LabViewModel(app: Application) : AndroidViewModel(app), Actions {
     override fun review(cardId: String, rating: Rating, asMcq: Boolean) = safely { repo.review(cardId, rating, asMcq) }
     override fun addCard(topic: String, prompt: String, answer: String) = safely { repo.addCard(topic, prompt, answer) }
     override fun note(n: Note) { _notes.tryEmit(n) }
+    override fun startFresh() = safely {
+        repo.startFresh(com.lakshman.roadmaplab.BuildConfig.VERSION_NAME)
+        refreshDay()
+        _notes.tryEmit(Note("Fresh start: today is your first day. A safety copy of the old records is kept in Settings."))
+    }
 
     override fun updateSettings(change: (AppSettings) -> AppSettings) {
         viewModelScope.launch {

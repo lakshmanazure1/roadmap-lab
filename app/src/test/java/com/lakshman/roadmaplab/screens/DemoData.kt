@@ -25,7 +25,8 @@ object DemoData {
     private val plan get() = TestData.plan
 
     fun empty(theme: String = "light") = LabState(
-        settings = AppSettings(onboarded = true, v2Intro = true, theme = theme, reminderOn = true, reminderHour = 20, reminderMinute = 30),
+        settings = AppSettings(onboarded = true, v2Intro = true, theme = theme, reminderOn = true, reminderHour = 20, reminderMinute = 30,
+            freshStartAsked = true),
         plan = plan, planError = null, cards = TestData.cards.associateBy { it.id }, cardStates = emptyList(), reviewLogs = emptyList(),
         dayLogs = emptyMap(), events = emptyList(), assessments = emptyList(), ticks = emptyList(), evidence = emptyList(),
         dayMeta = emptyMap(), weeklyReviews = emptyMap(), legacyTaskLogs = 0,
@@ -105,4 +106,5 @@ object NoActions : com.lakshman.roadmaplab.ui.Actions {
     override fun addCard(topic: String, prompt: String, answer: String) {}
     override fun updateSettings(change: (AppSettings) -> AppSettings) {}
     override fun note(n: com.lakshman.roadmaplab.ui.Note) {}
+    override fun startFresh() {}
 }

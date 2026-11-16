@@ -164,7 +164,20 @@ data class PlanMeta(
 )
 
 /** The whole plan: the CSV's tasks plus the roadmap's notes. */
-class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>) {
+class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>, val freshStart: Long = 0) {
+    companion object {
+        /** The Python recap week added on your fresh start (PR1–PR7). */
+        const val RECAP = "recap"
+    }
+
+    /** The same plan, counted from a fresh start: days before it are "nothing scheduled", never "missed". */
+    fun withFreshStart(day: Long): DayPlan = if (day == freshStart) this else DayPlan(meta, tasks, day)
+
+    /** Tasks that come from the roadmap's CSV (not the recap you added). */
+    val csvTasks: List<PlanTask> get() = tasks.filter { it.seq != RECAP }
+
+    /** A sequence that waits for another to finish first: the plan's Python waits for your recap. */
+    val waitsFor: Map<String, String> = if (tasks.any { it.seq == RECAP }) mapOf("python" to RECAP) else emptyMap()
     private val byId = tasks.associateBy { it.id }
     private val areaById = meta.areas.associateBy { it.id }
 
@@ -175,7 +188,7 @@ class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>) {
 
     fun task(id: String): PlanTask? = byId[id]
     fun area(id: String): Area? = areaById[id]
-    fun inPlan(day: Long): Boolean = day in start..end
+    fun inPlan(day: Long): Boolean = day in maxOf(start, freshStart)..end
 
     /** Planned rest days come from the plan's own "Rest day" rows. */
     val restDays: Map<Long, PlanTask> = tasks.filter { it.kind == TaskKind.REST }.associateBy { it.day }
@@ -194,8 +207,9 @@ class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>) {
     fun weekStartOf(week: Int): Long = start + (week - 1) * 7L
 
     /** Each sequence's own weekdays: the weekdays it has 3 or more tasks on (e.g. Python: Sat and Sun). */
-    val slotDays: Map<String, Set<Int>> = tasks.filter { it.kind == TaskKind.SEQUENCE && !it.optional }.groupBy { it.seq }.mapValues { (_, l) ->
-        l.groupingBy { Days.dow(it.day) }.eachCount().filterValues { it >= 3 }.keys
+    val slotDays: Map<String, Set<Int>> = tasks.filter { it.kind == TaskKind.SEQUENCE && !it.optional }.groupBy { it.seq }.mapValues { (seq, l) ->
+        // The recap is meant to be done fast, any day of its week (and after, if it runs over).
+        if (seq == RECAP) (1..7).toSet() else l.groupingBy { Days.dow(it.day) }.eachCount().filterValues { it >= 3 }.keys
     }
 
     /** The sequences in order: next undone first. */

@@ -134,6 +134,9 @@ object TodayEngine {
             else -> {
                 val catchup = type == DayType.CATCHUP
                 for ((seq, list) in plan.sequences) {
+                    // The plan's Python waits until your recap week (PR1–PR7) is done, then continues in order.
+                    val waitFor = plan.waitsFor[seq]
+                    if (waitFor != null && plan.sequences[waitFor].orEmpty().any { !closed(it.id) }) continue
                     val (ahead, earlier) = frontier(list) { closed(it) }
                     holes += earlier.filter { planned(it) <= day }
                     val undone = if (catchup) earlier + ahead else ahead
@@ -152,6 +155,9 @@ object TodayEngine {
                             entries += taskEntry(t, input, day, if (day in (states[t.id]?.laterDays ?: emptySet())) Section.LATER else Section.MAIN,
                                 reason, anchor = k == 0 && seq == anchor(dow))
                         }
+                    } else if (seq == DayPlan.RECAP && planned(next) > day) {
+                        // You said you'd redo Python fast: the next recap step is always one tap away.
+                        entries += taskEntry(next, input, day, Section.OPTIONAL, "Recap: keep going if you have energy · planned ${Days.short(planned(next))}")
                     } else if (dow in slots && planned(next) > day && planned(next) - day <= 6 && entries.none { it.area == next.area && it.done }) {
                         entries += taskEntry(next, input, day, Section.OPTIONAL, "You're ahead · planned ${Days.short(planned(next))}")
                     }

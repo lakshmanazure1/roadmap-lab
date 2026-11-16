@@ -146,6 +146,9 @@ class BackupHooks(
     val useBundledPlan: () -> Unit = {},
     val usingImportedPlan: Boolean = false,
     val safetyCopies: Int = 0,
+    /** "Mon 16 Nov, before your fresh start" for the newest safety copy, or null. */
+    val latestCopy: String? = null,
+    val bringBack: () -> Unit = {},
 )
 
 @Suppress("unused")

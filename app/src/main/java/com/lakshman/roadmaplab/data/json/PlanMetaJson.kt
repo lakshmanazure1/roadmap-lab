@@ -17,9 +17,18 @@ import org.json.JSONObject
 
 /** Reads assets/plan_meta.json (made by tools/build_plan.py from the roadmap PDF) and joins it with the CSV. */
 object PlanMetaJson {
-    fun plan(metaText: String, csvText: String): DayPlan {
+    /**
+     * The plan = the roadmap CSV's rows (unchanged) + the Python recap you added on your fresh start
+     * (assets/python_recap.csv, tasks PR1–PR7). The plan's own Python waits until the recap is done.
+     */
+    fun plan(metaText: String, csvText: String, recapText: String? = null): DayPlan {
         val meta = parse(metaText)
-        return DayPlan(meta, PlanCsv.tasks(csvText, meta.titles))
+        val tasks = PlanCsv.tasks(csvText, meta.titles)
+        val ids = tasks.mapTo(HashSet()) { it.id }
+        val recap = recapText?.let { PlanCsv.tasks(it, meta.titles) }.orEmpty()
+            .filter { it.id !in ids }
+            .map { it.copy(seq = DayPlan.RECAP, kind = com.lakshman.roadmaplab.domain.TaskKind.SEQUENCE, order = tasks.size + it.order) }
+        return DayPlan(meta, tasks + recap)
     }
 
     fun parse(text: String): PlanMeta {

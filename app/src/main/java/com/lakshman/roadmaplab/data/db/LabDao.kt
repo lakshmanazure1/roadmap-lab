@@ -262,6 +262,10 @@ interface LabDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertWeeklyReviews(items: List<WeeklyReviewEntity>)
 
+    /** Your own flashcards (ids start with "U-"). */
+    @Query("DELETE FROM cards WHERE id LIKE 'U-%'")
+    suspend fun deleteUserCards()
+
     @Query("DELETE FROM cards WHERE id NOT LIKE 'U-%'")
     suspend fun clearBundledCards()
 

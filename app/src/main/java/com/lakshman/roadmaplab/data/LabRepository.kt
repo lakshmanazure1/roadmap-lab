@@ -99,11 +99,11 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
         val load = try {
             val meta = asset("plan_meta.json")
             val csv = if (importedCsv.exists()) importedCsv.readText() else asset("schedule.csv")
-            PlanLoad(PlanMetaJson.plan(meta, csv), null)
+            PlanLoad(PlanMetaJson.plan(meta, csv, recapCsv()), null)
         } catch (e: Exception) {
             // Never lose data over a bad plan file: fall back to the bundled plan and say what went wrong.
             try {
-                PlanLoad(PlanMetaJson.plan(asset("plan_meta.json"), asset("schedule.csv")), "Your imported plan couldn't be read: ${e.message}")
+                PlanLoad(PlanMetaJson.plan(asset("plan_meta.json"), asset("schedule.csv"), recapCsv()), "Your imported plan couldn't be read: ${e.message}")
             } catch (e2: Exception) {
                 PlanLoad(null, e2.message)
             }
@@ -314,16 +314,59 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
         )
     }
 
-    /** Before any restore, a copy of what's on the phone now is saved privately (the last 3 are kept). */
-    private suspend fun safetyCopy(appVersion: String): File {
+    /** The Python recap added on your fresh start (PR1–PR7). */
+    private fun recapCsv(): String? = runCatching { asset("python_recap.csv") }.getOrNull()
+
+    /**
+     * Before a restore or a fresh start, a copy of what's on the phone now is saved privately
+     * (the last 3 are kept). Settings → "Bring back" restores the newest one.
+     */
+    private suspend fun safetyCopy(appVersion: String, reason: String = "before-restore"): File {
         val dir = File(context.filesDir, "safety").apply { mkdirs() }
-        val file = File(dir, "before-restore-${Days.nowMillis()}.json")
+        val file = File(dir, "${Days.nowMillis()}-$reason.json")
         file.writeText(LabJson.encodeBackup(snapshot(), appVersion, java.time.LocalDateTime.now(Days.ZONE).withNano(0).toString()))
-        dir.listFiles()?.sortedByDescending { it.name }?.drop(3)?.forEach { it.delete() }
+        safetyCopies().drop(3).forEach { it.delete() }
         return file
     }
 
-    fun safetyCopies(): List<File> = File(context.filesDir, "safety").listFiles()?.sortedByDescending { it.name } ?: emptyList()
+    /** Newest first. */
+    fun safetyCopies(): List<File> = File(context.filesDir, "safety").listFiles()
+        ?.filter { it.name.endsWith(".json") }
+        ?.sortedByDescending { it.name.substringBefore('-').toLongOrNull() ?: it.lastModified() } ?: emptyList()
+
+    /** "Fri 20 Nov, before your fresh start" for the newest safety copy, or null. */
+    fun latestSafetyCopyLabel(): String? = safetyCopies().firstOrNull()?.let { f ->
+        val millis = f.name.substringBefore('-').toLongOrNull() ?: f.lastModified()
+        val why = if (f.name.contains("fresh-start")) "before your fresh start" else "before a restore"
+        "${Days.short(Days.dayOf(millis))}, $why"
+    }
+
+    /** Brings back the newest safety copy (what was on the phone before the last restore or fresh start). */
+    suspend fun restoreLatestSafetyCopy(appVersion: String): Snapshot {
+        val file = safetyCopies().firstOrNull() ?: error("There is no safety copy on this phone.")
+        val snap = LabJson.decodeBackup(file.readText())
+        restore(snap, appVersion)
+        return snap
+    }
+
+    /**
+     * Start fresh: everything you recorded is cleared and today becomes the first day that counts.
+     *  - First a safety copy of everything is saved on the phone ("Bring back" in Settings undoes this).
+     *  - Cleared: task ticks and undo history, check scores, day and week records, evidence and STAR stories,
+     *    flashcard progress and your own cards, and the version-1 (October roadmap) records.
+     *  - Kept: the plan, the bundled flashcards (locked again until their tasks), and your settings
+     *    (cue, reminder, daily minimums, theme).
+     */
+    suspend fun startFresh(appVersion: String): File = withContext(Dispatchers.IO) {
+        val copy = safetyCopy(appVersion, "before-fresh-start")
+        db.withTransaction {
+            dao.clearTaskEvents(); dao.clearAssessments(); dao.clearDayTicks(); dao.clearEvidence(); dao.clearDayMeta()
+            dao.clearWeeklyReviews(); dao.clearCardStates(); dao.clearReviewLogs(); dao.deleteUserCards()
+            dao.clearTaskLogs(); dao.clearDayLogs(); dao.clearDayPlans(); dao.clearPhases(); dao.clearTasks(); dao.clearMilestones()
+        }
+        settings.update { it.copy(freshStartDay = Days.today(), freshStartAsked = true, lastBackupDay = 0) }
+        copy
+    }
 
     /**
      * Replaces everything on the phone with the backup's contents, in one transaction (all or nothing).
@@ -357,7 +400,7 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
             dao.upsertDayMetaList(s.dayMeta.map { it.toEntity() })
             dao.upsertWeeklyReviews(s.weeklyReviews.map { it.toEntity() })
         }
-        settings.update { s.settings.copy(onboarded = true, v2Intro = true) }
+        settings.update { s.settings.copy(onboarded = true, v2Intro = true, freshStartAsked = true) }
         if (dao.cardCount() == 0) loadPlan()
     }
 

@@ -43,6 +43,8 @@ class SettingsStore(context: Context) {
         val tCatchup = intPreferencesKey("target_catchup")
         val cue = stringPreferencesKey("cue")
         val weeklyReminder = booleanPreferencesKey("weekly_reminder")
+        val freshStartDay = longPreferencesKey("fresh_start_day")
+        val freshStartAsked = booleanPreferencesKey("fresh_start_asked")
     }
 
     /** Older looks ("soft", "classic") are the light theme now. */
@@ -72,6 +74,8 @@ class SettingsStore(context: Context) {
                 p[K.tReduced] ?: t.reduced, p[K.tCatchup] ?: t.catchup),
             cue = p[K.cue] ?: d.cue,
             weeklyReminder = p[K.weeklyReminder] ?: d.weeklyReminder,
+            freshStartDay = p[K.freshStartDay] ?: d.freshStartDay,
+            freshStartAsked = p[K.freshStartAsked] ?: d.freshStartAsked,
         )
     }
 
@@ -103,6 +107,8 @@ class SettingsStore(context: Context) {
             p[K.tCatchup] = s.targets.catchup
             p[K.cue] = s.cue
             p[K.weeklyReminder] = s.weeklyReminder
+            p[K.freshStartDay] = s.freshStartDay
+            p[K.freshStartAsked] = s.freshStartAsked
             result = s
         }
         return result

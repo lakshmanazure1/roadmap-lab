@@ -546,6 +546,14 @@ def first_task(area, week):
 AREA_OF_CARD = {"PY": "python", "ER": "python", "SQ": "python", "AC": "accounting", "CM": "comms"}
 CARD_UNLOCKS = {cid: first_task(AREA_OF_CARD[cid[:2]], w) for cid, w in CARD_WEEKS.items()}
 CARD_UNLOCKS.update({"CM-02": "T077", "CM-09": "T077", "CM-06": "T126"})  # STAR #1 line; user training #1
+# Fresh start (16 Nov): the week-1 Python cards unlock with the recap step that re-teaches them
+# (assets/python_recap.csv, PR1–PR7) instead of waiting for T029.
+RECAP_CARDS = {"PR1": [1, 2, 3, 4, 5, 6, 7, 8], "PR2": [9, 10, 11, 12, 13, 14, 15, 16], "PR3": [17, 18, 19, 20],
+               "PR4": [21, 22, 23, 24], "PR5": [25, 26, 27, 28]}
+for step, nums in RECAP_CARDS.items():
+    for i in nums: CARD_UNLOCKS[f"PY-{i:03d}"] = step
+for i in (1, 2, 3, 4, 5): CARD_UNLOCKS[f"ER-{i:02d}"] = "PR5"          # PAN
+for i in (6, 7, 8, 9, 10, 11, 23, 24): CARD_UNLOCKS[f"ER-{i:02d}"] = "PR6"  # GSTIN, duplicates, state codes
 assert all(CARD_UNLOCKS.values()), [k for k, v in CARD_UNLOCKS.items() if not v]
 
 meta = dict(

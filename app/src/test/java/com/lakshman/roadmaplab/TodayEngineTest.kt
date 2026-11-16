@@ -2,7 +2,7 @@ package com.lakshman.roadmaplab
 
 import com.lakshman.roadmaplab.TestData.d
 import com.lakshman.roadmaplab.TestData.ev
-import com.lakshman.roadmaplab.TestData.plan
+import com.lakshman.roadmaplab.TestData.csvPlan as plan
 import com.lakshman.roadmaplab.domain.DayKind
 import com.lakshman.roadmaplab.domain.DayMeta
 import com.lakshman.roadmaplab.domain.DayType

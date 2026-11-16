@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
                     onDispose { }
                 }
-                AppRoot(ui, vm, vm.notes, rememberBackupHooks(vm))
+                AppRoot(ui, vm, vm.notes, rememberBackupHooks(vm, ui?.s?.settings?.freshStartDay))
             }
         }
     }
