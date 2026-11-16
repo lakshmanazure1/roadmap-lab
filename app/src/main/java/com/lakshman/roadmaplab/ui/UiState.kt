@@ -56,6 +56,11 @@ data class UiState(
             !(it.kind == com.lakshman.roadmaplab.domain.TaskKind.DAILY && it.day < plan.freshStart)
     }
     fun level(id: String): Level = levels[id] ?: Level.NOT_STARTED
+
+    /** The week's focus; while your Python recap (PR1–PR7) is open, that's the focus. */
+    fun weekFocus(week: Int): String? =
+        if (plan.tasks.any { it.seq == DayPlan.RECAP && states[it.id]?.progress != Progress.COMPLETED }) "Python recap + accounting"
+        else plan.meta.weekFocus[week]
     fun checks(id: String): List<Assessment> = checksByItem[id].orEmpty()
 }
 

@@ -143,7 +143,7 @@ private fun Header(ui: UiState, onSettings: () -> Unit) {
                 ui.today < ui.plan.leadIn -> "Plan starts ${Days.short(ui.plan.leadIn)} · ${t.daysLeft} days to 31 Jan"
                 ui.today == ui.plan.leadIn -> "Optional lead-in · day 1 is tomorrow"
                 t.planDay != null -> "Day ${t.planDay} of ${ui.plan.totalDays} · Week $week" +
-                    (week?.let { ui.plan.meta.weekFocus[it] }?.let { " · $it" } ?: "") + " · ${t.daysLeft} days left"
+                    (week?.let { ui.weekFocus(it) }?.let { " · $it" } ?: "") + " · ${t.daysLeft} days left"
                 else -> "Plan finished on 31 Jan"
             }
             Muted(sub, Modifier.padding(top = 2.dp))
@@ -161,10 +161,8 @@ private fun FreshStartCard(act: Actions) {
         Text("Start fresh from today?", style = Type.title, color = p.text)
         Muted("Clears your old ticks, scores, streak days, log lines and flashcard progress, so today counts as your first day. " +
             "A safety copy is saved on the phone first, and Settings can bring it back.", Modifier.padding(top = 4.dp))
-        Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            PrimaryButton("Start fresh", { confirm = true }, Modifier.weight(1f))
-            SecondaryButton("Keep my records", { act.updateSettings { it.copy(freshStartAsked = true) } }, Modifier.weight(1f))
-        }
+        PrimaryButton("Start fresh", { confirm = true }, Modifier.fillMaxWidth().padding(top = 12.dp))
+        SecondaryButton("Keep my records", { act.updateSettings { it.copy(freshStartAsked = true) } }, Modifier.fillMaxWidth().padding(top = 8.dp))
     }
     if (confirm) FreshStartDialog({ confirm = false; act.startFresh() }, { confirm = false })
 }

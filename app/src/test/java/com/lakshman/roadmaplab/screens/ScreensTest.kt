@@ -132,4 +132,13 @@ class NarrowScreensTest {
     @Test fun n3_weekly() = shot("43_narrow_weekly", DemoData.midPlan(mid), mid) { WeeklyReviewScreen(it, NoActions, nav, 3) }
     @Test fun n4_task() = shot("44_narrow_task", DemoData.midPlan(mid), mid) { TaskScreen(it, NoActions, nav, "T164") }
     @Test fun n5_settings() = shot("45_narrow_settings", DemoData.midPlan(mid), mid) { SettingsScreen(it, NoActions, nav, BackupHooks()) }
+    @Test fun n6_freshDay1() = shot("46_narrow_fresh_day1",
+        DemoData.empty().let { it.copy(settings = it.settings.copy(freshStartDay = d("2026-11-16"), freshStartAsked = true)) }, d("2026-11-16")) {
+            TodayScreen(it, NoActions, nav) }
+    @Test fun n7_freshOffer() = shot("47_narrow_fresh_offer",
+        DemoData.empty().let { it.copy(legacyTaskLogs = 12, settings = it.settings.copy(freshStartAsked = false)) }, d("2026-11-16")) {
+            TodayScreen(it, NoActions, nav) }
+    @Test fun n8_settingsFresh() = shot("48_narrow_settings_fresh",
+        DemoData.empty().let { it.copy(settings = it.settings.copy(freshStartDay = d("2026-11-16"), freshStartAsked = true)) }, d("2026-11-16")) {
+            SettingsScreen(it, NoActions, nav, BackupHooks(latestCopy = "Mon 16 Nov, before your fresh start", safetyCopies = 1)) }
 }
