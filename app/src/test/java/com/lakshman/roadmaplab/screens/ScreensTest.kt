@@ -15,6 +15,9 @@ import com.lakshman.roadmaplab.ui.AppRoot
 import com.lakshman.roadmaplab.ui.AreaScreen
 import com.lakshman.roadmaplab.ui.BackupHooks
 import com.lakshman.roadmaplab.ui.CheckScreen
+import com.lakshman.roadmaplab.ui.DayBlock
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import com.lakshman.roadmaplab.ui.EvidenceScreen
 import com.lakshman.roadmaplab.ui.HowItWorksScreen
 import com.lakshman.roadmaplab.ui.IntroScreen
@@ -86,6 +89,16 @@ class ScreensTest {
     @Test fun b01_progress() = shot("13_progress", DemoData.midPlan(mid), mid) { ProgressScreen(it, nav) }
     @Test fun b02_progressDark() = shot("14_progress_dark", DemoData.midPlan(mid, "dark"), mid) { ProgressScreen(it, nav) }
     @Test fun b03_area() = shot("15_category_accounting", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "accounting") }
+    /** The Python category's day-by-day block: yesterday and today, with their tasks and status. */
+    @Test fun b03b_areaPythonDays() = shot("20_category_python_days", DemoData.midPlan(mid), mid) { ui ->
+        androidx.compose.foundation.layout.Column(androidx.compose.ui.Modifier.padding(12.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+            val c = ui.category("python")
+            listOf(mid - 1, mid).forEach { d ->
+                val list = ui.plan.tasks.filter { it.area == "python" && com.lakshman.roadmaplab.domain.TodayEngine.effectiveDay(it, ui.reducedWeeks) == d }
+                if (list.isNotEmpty()) DayBlock(ui, nav, "python", d, list, c?.days?.firstOrNull { it.day == d }?.status)
+            }
+        }
+    }
     @Test fun b04_plan() = shot("16_plan_week4", DemoData.midPlan(mid), mid) { PlanScreen(it, NoActions, nav) }
     @Test fun b05_log() = shot("17_log", DemoData.midPlan(mid), mid) { LogScreen(it, NoActions, nav, BackupHooks()) }
     @Test fun b06_areaSap() = shot("18_category_sap", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "sap") }

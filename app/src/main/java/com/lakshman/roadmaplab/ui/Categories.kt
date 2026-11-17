@@ -424,7 +424,7 @@ private fun CategoryCalendar(ui: UiState, id: String, c: CategoryStats, onDay: (
 
 /** One date in this category: what was planned, how it went, and any notes written for that day. */
 @Composable
-private fun DayBlock(ui: UiState, nav: Nav, id: String, day: Long, list: List<PlanTask>, status: CatStatus?) {
+internal fun DayBlock(ui: UiState, nav: Nav, id: String, day: Long, list: List<PlanTask>, status: CatStatus?) {
     val p = LocalPalette.current
     val auto = setOf("Ticked when you saved the log line", "Weekly review completed")
     val dayNote = ui.s.dayLogs[day]?.note.orEmpty()
