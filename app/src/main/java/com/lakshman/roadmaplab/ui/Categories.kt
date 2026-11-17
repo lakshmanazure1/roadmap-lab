@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -64,6 +65,8 @@ import com.lakshman.roadmaplab.ui.components.ScreenPadding
 import com.lakshman.roadmaplab.ui.components.SectionTitle
 import com.lakshman.roadmaplab.ui.components.Stat
 import com.lakshman.roadmaplab.ui.components.TopBar
+import com.lakshman.roadmaplab.ui.components.Tag
+import com.lakshman.roadmaplab.ui.components.Tone
 import com.lakshman.roadmaplab.ui.theme.LocalPalette
 import com.lakshman.roadmaplab.ui.theme.Type
 import kotlin.math.roundToInt
@@ -247,12 +250,19 @@ fun AreaScreen(ui: UiState, act: Actions, nav: Nav, id: String) {
     val tasks = ui.plan.tasks.filter { it.area == id }
     val checks = ui.s.assessments.filter { it.area == id }.sortedByDescending { it.createdAt }
     val open = Streaks.untickedRecent(ui.plan, ui.states, ui.today, back = 7).filter { it.area == id }
+    val byDay = tasks.groupBy { TodayEngine.effectiveDay(it, ui.reducedWeeks) }.toSortedMap()
+    val listState = rememberLazyListState()
+    val levelsShown = prog != null && Level.entries.any { (prog.levels[it] ?: 0) > 0 }
+    // Items above the day list: summary, calendar, not-ticked, goals, levels, rules, scores, "Day by day" title.
+    val dayStart = (if (c != null) 2 else 0) + (if (open.isNotEmpty()) 2 else 0) + 1 + (if (levelsShown) 1 else 0) +
+        (if (area.rules.isNotEmpty()) 1 else 0) + (if (checks.isNotEmpty()) 2 else 0) + 1
+    var jumpTo by remember { mutableStateOf<Long?>(null) }
     Column(Modifier.fillMaxSize()) {
         TopBar(area.name, nav.back)
-        LazyColumn(contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        LazyColumn(state = listState, contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (c != null) {
                 item { CategorySummary(ui, id, c) }
-                item { CategoryCalendar(ui, id, c) }
+                item { CategoryCalendar(ui, id, c, onDay = { jumpTo = it }) }
             }
             if (open.isNotEmpty()) {
                 item { SectionTitle("Not ticked yet", trailing = "last 7 days") }
@@ -301,16 +311,22 @@ fun AreaScreen(ui: UiState, act: Actions, nav: Nav, id: String) {
                     }
                 }
             }
-            item { SectionTitle("Tasks", trailing = "${tasks.count { ui.states[it.id]?.progress == Progress.COMPLETED }}/${tasks.size} done") }
-            item {
-                LabCard(padding = PaddingValues(0.dp)) {
-                    val upcoming = tasks.sortedBy { TodayEngine.effectiveDay(it, ui.reducedWeeks) }
-                    upcoming.forEachIndexed { i, t ->
-                        if (i > 0) Divider(Modifier.padding(start = 56.dp))
-                        TaskLine(ui, t, { nav.open(Screen.Task(t.id)) }, null, showDate = true)
-                    }
-                }
+            item { SectionTitle("Day by day", trailing = "${tasks.count { ui.states[it.id]?.progress == Progress.COMPLETED }}/${tasks.size} done") }
+            byDay.forEach { (d, list) ->
+                item(key = "day$d") { DayBlock(ui, nav, id, d, list, c?.days?.firstOrNull { it.day == d }?.status) }
             }
+        }
+    }
+    val target = jumpTo
+    if (target != null) {
+        androidx.compose.runtime.LaunchedEffect(target) {
+            // Find the item whose key is that day (or the next planned day), then scroll to it.
+            val d = byDay.keys.firstOrNull { it >= target } ?: byDay.keys.lastOrNull()
+            if (d != null) {
+                val idx = dayStart + byDay.keys.indexOf(d)
+                listState.animateScrollToItem(idx)
+            }
+            jumpTo = null
         }
     }
 }
@@ -357,7 +373,7 @@ private fun CategorySummary(ui: UiState, id: String, c: CategoryStats) {
 
 /** The plan as a calendar (Mon–Sun rows), each day coloured by how this category went. */
 @Composable
-private fun CategoryCalendar(ui: UiState, id: String, c: CategoryStats) {
+private fun CategoryCalendar(ui: UiState, id: String, c: CategoryStats, onDay: (Long) -> Unit) {
     val p = LocalPalette.current
     val color = p.area(id)
     val planned = ui.plan.tasks.filter { it.area == id && it.kind != TaskKind.REST && !it.optional }.mapTo(HashSet()) { it.day }
@@ -380,7 +396,7 @@ private fun CategoryCalendar(ui: UiState, id: String, c: CategoryStats) {
                 for (k in 0L..6L) {
                     val d = w + k
                     val s = byDay[d]
-                    Box(Modifier.weight(1f).padding(2.dp).heightIn(min = 26.dp), contentAlignment = Alignment.Center) {
+                    Box(Modifier.weight(1f).padding(2.dp).heightIn(min = 26.dp).clickable(enabled = d in planned) { onDay(d) }, contentAlignment = Alignment.Center) {
                         val shape = RoundedCornerShape(8.dp)
                         val mod = Modifier.fillMaxWidth().heightIn(min = 26.dp).clip(shape)
                         when {
@@ -400,7 +416,55 @@ private fun CategoryCalendar(ui: UiState, id: String, c: CategoryStats) {
             ws += 7
             week++
         }
-        Muted("Filled: done · pale: forgiven · outline: missed · bold outline: today · grey: planned later · dot: nothing planned",
+        Muted("Tap a day to see its plan. Filled: done · pale: forgiven · outline: missed · bold outline: today · grey: planned later · dot: nothing planned",
             Modifier.padding(top = 8.dp), style = Type.caption)
+    }
+}
+
+
+/** One date in this category: what was planned, how it went, and any notes written for that day. */
+@Composable
+private fun DayBlock(ui: UiState, nav: Nav, id: String, day: Long, list: List<PlanTask>, status: CatStatus?) {
+    val p = LocalPalette.current
+    val auto = setOf("Ticked when you saved the log line", "Weekly review completed")
+    val dayNote = ui.s.dayLogs[day]?.note.orEmpty()
+    val (label, tone) = when {
+        day == ui.today -> "Today" to Tone.ACCENT
+        status == CatStatus.HIT -> "Done" to Tone.SUCCESS
+        status == CatStatus.GRACE -> "Missed, forgiven" to Tone.WARNING
+        status == CatStatus.MISSED -> "Missed" to Tone.DANGER
+        day > ui.today -> "Planned" to Tone.NEUTRAL
+        else -> "No action" to Tone.NEUTRAL
+    }
+    LabCard(padding = PaddingValues(0.dp)) {
+        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 12.dp, top = 12.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(Days.long(day), style = Type.section, color = p.text)
+                Text((ui.plan.weekOf(day)?.let { "Week $it · " } ?: "") + Days.relative(day, ui.today), style = Type.caption, color = p.text3)
+            }
+            Tag(label, tone)
+        }
+        list.forEachIndexed { i, t ->
+            if (i > 0) Divider(Modifier.padding(start = 56.dp))
+            val st = ui.states[t.id]
+            val state = when (st?.progress) {
+                Progress.COMPLETED -> "Done" + (st.doneDay?.takeIf { it != day }?.let { " on ${Days.dayMonth(it)}" } ?: "")
+                Progress.SKIPPED -> "Skipped"
+                Progress.IN_PROGRESS -> "Started"
+                else -> if (day < ui.today) "Not done" else "Not started"
+            }
+            val notes = ui.s.events.filter { it.itemId == t.id && it.note.isNotBlank() && it.note !in auto }.sortedBy { it.createdAt }
+            Column {
+                TaskLine(ui, t, { nav.open(Screen.Task(t.id)) }, null)
+                Text(state + if ((st?.doneMinutes ?: 0) > 0) " · ${st?.doneMinutes} min" else "", style = Type.caption,
+                    color = if (st?.progress == Progress.COMPLETED) p.text2 else p.text3, modifier = Modifier.padding(start = 56.dp, bottom = 4.dp))
+                notes.forEach { n -> Text("Note: ${n.note}", style = Type.small, color = p.text, modifier = Modifier.padding(start = 56.dp, end = 12.dp, bottom = 6.dp)) }
+            }
+        }
+        if (dayNote.isNotBlank()) {
+            Divider(Modifier.padding(start = 16.dp))
+            Text("Day note: $dayNote", style = Type.small, color = p.text, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+        }
+        Spacer(Modifier.size(4.dp))
     }
 }
