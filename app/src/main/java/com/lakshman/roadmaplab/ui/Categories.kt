@@ -268,7 +268,8 @@ fun AreaScreen(ui: UiState, act: Actions, nav: Nav, id: String, startTab: Int = 
         TopBar(area.name, nav.back)
         PrimaryTabRow(selectedTabIndex = tab, containerColor = Color.Transparent) {
             listOf("Days", "About").forEachIndexed { i, label ->
-                Tab(selected = tab == i, onClick = { tab = i }, text = { Text(label, style = Type.smallStrong) })
+                Tab(selected = tab == i, onClick = { tab = i }, text = { Text(label, style = Type.smallStrong) },
+                    unselectedContentColor = LocalPalette.current.text2)
             }
         }
         if (tab == 0) AreaDays(ui, act, nav, id) else AreaAbout(ui, id)
@@ -471,7 +472,10 @@ private fun dayLabel(ui: UiState, d: CategoryDay): Pair<String, Tone> = when {
     d.dayKind == DayKind.CATCHUP -> "Catch-up day" to Tone.NEUTRAL
     d.dayKind == DayKind.REDUCED -> "Reduced day" to Tone.NEUTRAL
     d.status == null -> "Before start" to Tone.NEUTRAL
-    d.planned.isNotEmpty() && d.planned.all { it.optional } -> "Optional" to Tone.NEUTRAL
+    d.day < ui.s.settings.freshStartDay -> "Before fresh start" to Tone.NEUTRAL
+    // Done or written on a day this category had nothing planned: extra, never a miss.
+    d.planned.isEmpty() -> "Not planned" to Tone.NEUTRAL
+    d.planned.all { it.optional } -> "Optional" to Tone.NEUTRAL
     else -> "Not counted" to Tone.NEUTRAL
 }
 
