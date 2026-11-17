@@ -1,45 +1,51 @@
 # Roadmap Lab
 
-A personal Android app that runs the **Eight-Area Career Development Roadmap: DRC Edition**
-(16 Nov 2026 – 31 Jan 2027): what to do today, whether it's done, whether it's *learned*, how consistent
-you've been, and the evidence for your career move.
+A personal Android app that runs the **Fresh Start Career Roadmap: SAP Finance Edition**
+(Tue 17 Nov 2026 – Sun 31 Jan 2027): what to do today, whether it's done, whether it's *learned*, how consistent
+you've been in each of the 10 categories, and the evidence for your career move.
 
 **Setup and install: see [SETUP.md](SETUP.md).**
 
-## What's in version 2
+## What's in version 3
 
 | Tab / screen | What it holds |
 |---|---|
-| **Today** | Date, plan day (1–77), week focus, days left · minutes done against today's minimum (ring) · one recommended next action with the reason · today's tasks in order with area, time and priority · health, family and money (with "slept 7 h?") · optional, not-today and paused lists · review the day · day options (reduced routine, catch-up day, plan a rest day) |
-| **Plan** | All 380 tasks from the CSV, week by week, filter by area, each week's checkpoint targets; tick anything already done |
-| **Progress** | Consistency (current and longest streak, active days this week, 7- and 28-day %, last 28 days) · overall (tasks done, planned by today, study time, weekly bars, monthly totals) · the 8 areas with "you are here" markers, scores and levels · needs attention · next milestones · outputs (LinkedIn conversations, logged working days, health counts) |
-| **Log** | Evidence log with the roadmap's 9 fields, confidence, the weekly ★, the 3 STAR stories with a format check; privacy warnings for PAN, GSTIN, IFSC, account numbers, phone numbers and e-mail; export as text |
-| Task | What to do, done when, evidence; the 7-level scale; mark done (time, done on, without help); started / did part / not today / let go; every check with its history |
-| Checks | In-app quizzes (French words both ways, translate-back sentence builder, accounting MCQ, journal entries Dr/Cr, fresh calculations, Python/RAG), timed tests, notebook scores against the CSV's targets, the 5-criterion rubric (out of 10), checklists, "explain it without notes", demonstrations, LinkedIn replies |
-| Weekly review | The Sunday checkpoint table: numbers filled in, actual result / assessment / next week per area, obstacles, best, weakest, top 3, spending, next week's load (normal or reduced), suggestions from the plan's own rules |
-| Flashcards | Leitner spaced repetition; cards unlock with the plan's tasks; add your own |
-| Settings | Light / dark / system · daily minimum per kind of day · cue and reminder · backup, restore (with a safety copy), export · plan CSV import · where your data lives |
+| **Today** | Date, plan day (1–76), week focus, days left · **all 10 categories** (SAP, Accounting, Python, Career, French, Comms, Evidence, Health, Practice, Review), each with its own streak, a % ring and a done-today mark · **Yesterday** card: tick what you did yesterday and it counts for yesterday · minutes against today's minimum · mood 1–5 in one tap · one recommended next action · today's tasks in order · health, family and money (with "slept 7 h?") · daily practice · optional, not-today and paused lists · day options (reduced routine, catch-up day, plan a rest day) |
+| **Category** (tap one) | Current and best streak, % done, last 7 and 28 days, on track (done ÷ due), a Mon–Sun calendar of the whole plan, anything not ticked in the last 7 days (tick it for its day), goals, dated checks, rules, levels, scores and every task |
+| **Plan** | All 428 tasks from the CSV, week by week, filter by category, each week's checkpoint targets |
+| **Progress** | Consistency, overall totals, weekly bars, the categories with streaks and "you are here" markers, needs attention, milestones, outputs |
+| **Log** | Evidence log with the roadmap's 9 fields, the weekly ★, the 3 STAR stories (30 Nov, 30 Dec, 29 Jan); privacy warnings for PAN, GSTIN, IFSC, account and phone numbers; export as text |
+| Weekly review | The Sunday checkpoint table, mood average, nights with 7 h sleep, the 5 go-live numbers, spending total, next week's load |
+| Checks | French quizzes (this week's 6 words + last week's 6, the 20-word checks), your introduction, accounting MCQ and journal entries, calculations, Python, the 5-criterion rubric (Clarity, Structure, Accuracy, Audience, Delivery), SAP glossary score, checklists, demonstrations, LinkedIn replies |
+| Settings | Light / dark / system · colours from your wallpaper (Material You) · daily minimum · cue and reminder · backup, restore (with a safety copy), start fresh / bring back · plan CSV import |
 
 ### The rules, in short
-- **Follow the order, not the dates.** Numbered work shows the next task after where you are, on the weekdays that
-  area uses; a missed day moves it one slot later and never doubles up. Day-bound tasks belong to their day; dated
-  steps (STAR stories, money checks, trainings, reviews) wait until done.
-- **Completion isn't mastery.** Levels: 1 Not started · 2 In progress · 3 Completed · 4 Practised independently ·
-  5 Assessed · 6 Demonstrated independently · 7 Mastered, plus *Needs revision* when the latest check is below target.
-- **Streak:** a day counts when completed study reaches *your* minimum for that kind of day. Rest days and the reduced
-  routine never break it; one missed day a week is forgiven; the longest streak is never erased. Dates use
-  Africa/Kinshasa time.
+- **Follow the order, not the dates.** SAP Fridays, accounting, French, Python, career steps and Sunday recordings show
+  the next task you haven't done, on the weekdays that category uses; a missed day moves it one slot later and never
+  doubles up. Day-bound tasks (log line, work habits, SAP flashcards, health, practice) belong to their day; dated steps
+  wait until done.
+- **Category streaks.** A category's day counts when you complete any of its tasks that day (or its reduced-routine
+  action). Days it has nothing planned, rest days and days before your fresh start are neutral. Near-daily categories
+  forgive one miss a week; weekly ones (SAP, Career, Review) count every planned day. Forgot to tick? Mark it done for the
+  day you did it (up to 7 days back).
+- **Completion isn't mastery.** Levels 1–7 from the roadmap, plus *Needs revision* when the latest check is below target.
+- **Health and daily practice are habits**, tracked as "most days", never counted as study.
+- Dates use Africa/Kinshasa time.
 
 ## How it's built
 
-- Kotlin + Jetpack Compose (Material 3), minSdk 26, targetSdk 35; IBM Plex Sans/Mono (SIL OFL, see `licenses/`)
-- Room (SQLite) + DataStore. Version 2 adds 6 tables through `AutoMigration(1 → 2)`; every version-1 table is kept,
-  and version-1 evidence lines are copied into the new log. Schemas are saved in `app/schemas/`.
+- Kotlin + Jetpack Compose, **Material 3 / Material You**: dynamic colour from the wallpaper on Android 12+ (indigo
+  baseline otherwise), Roboto with the M3 type scale, M3 cards, chips, buttons and motion.
+- **Adaptive layout** by window size class: bottom navigation on phones (< 600 dp), a navigation rail on foldables
+  (600–839 dp) and tablets, and a two-pane Today on tablets (≥ 840 dp).
+- Room (SQLite) + DataStore; database version 2 (no schema change in v3: moods use the existing day log, go-live
+  numbers the weekly review). Schemas are in `app/schemas/`.
 - The plan is `app/src/main/assets/schedule.csv` (the roadmap's CSV, unchanged) plus `plan_meta.json`
-  (made by `tools/build_plan.py` from the roadmap PDF: areas, rubric, French words, checkpoints, question banks).
-- No internet permission. Backups go through Android's file picker (choose Google Drive).
-- Tests in `app/src/test` (run on every build): plan = CSV, today's list, streak engine, levels, question banks,
-  backup format, scenario tests, the 1 → 2 database migration, repository data integrity, and pictures of every screen.
+  (made by `tools/build_plan.py` from the roadmap PDF's text). The Eight-Area generator is kept as `tools/build_plan_drc.py`.
+- No internet permission. Backups go through Android's file picker (choose Google Drive). Practice data is fictional.
+- Tests in `app/src/test` (run on every build): plan = CSV, weekly minutes = the roadmap's load check, today's list,
+  category streaks and "done yesterday", streak engine, levels, question banks, backup, the database migration,
+  repository integrity, and pictures of every screen on a phone, a small phone, a foldable and a tablet.
 
 ## Releasing a new version (for Claude)
 
