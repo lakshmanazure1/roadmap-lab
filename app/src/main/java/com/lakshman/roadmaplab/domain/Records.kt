@@ -110,6 +110,18 @@ enum class DayKind(val key: String, val label: String) {
 data class DayMeta(val day: Long, val kind: DayKind?, val focusItemId: String?, val kindSetAt: Long?, val updatedAt: Long)
 
 /** The Sunday checkpoint table (roadmap section 11). */
+/**
+ * The week's 5 go-live numbers (section 12), kept in the weekly review's "actual" table under these keys,
+ * so older backups and the database need no change.
+ */
+val GO_LIVE_NUMBERS = listOf(
+    "golive:records" to "Records loaded",
+    "golive:rejected" to "Rows rejected, then fixed",
+    "golive:trained" to "Users trained",
+    "golive:closed" to "Issues closed",
+    "golive:hours" to "Hours saved",
+)
+
 data class WeeklyReview(
     val weekStart: Long,
     /** area id → the actual result you wrote. */

@@ -1,8 +1,8 @@
 package com.lakshman.roadmaplab.domain
 
-// The plan: every row of the roadmap's CSV (Eight_Area_Schedule_15Nov2026-31Jan2027.csv) is one task.
+// The plan: every row of the roadmap's CSV (Fresh_Start_Schedule_17Nov2026-31Jan2027.csv) is one task.
 // It is app content, never edited on the phone. Your own records (ticks, scores, evidence) point at
-// task ids (T001…T380) and live in the database, so a newer plan file keeps them.
+// task ids (T1001…T1428) and live in the database, so a newer plan file keeps them.
 
 data class Area(
     val id: String,
@@ -21,7 +21,7 @@ data class Area(
 
 /** How a task is scheduled. */
 enum class TaskKind {
-    /** Numbered work that follows the order, not the dates (accounting, French, Python, app, LinkedIn, recordings). */
+    /** Numbered work that follows the order, not the dates (SAP Fridays, accounting, French, Python, career, recordings). */
     SEQUENCE,
     /** Belongs to its own day (evidence line, work habits, health habits, weekly review). */
     DAILY,
@@ -96,8 +96,8 @@ data class PlanTask(
     val checks: List<CheckSpec>,
     val order: Int,
 ) {
-    /** Study time (health, family and money is tracked separately and never counts toward the study minimum). */
-    val study: Boolean get() = area != "life"
+    /** Study time (health and daily practice are habits, tracked separately: they never count toward the study minimum). */
+    val study: Boolean get() = !isHabit(area)
     val atWork: Boolean get() = minutes == 0 && area == "comms"
     val isMilestone: Boolean get() = milestone.isNotBlank()
     val minutesLabel: String get() = when {
@@ -109,7 +109,7 @@ data class PlanTask(
     }
     val gradedChecks: List<CheckSpec> get() = checks.filter { it !is CheckSpec.Outcome }
 
-    /** The optional lead-in (Sun 15 Nov, week 0). It never holds up the order: T029 covers it if skipped. */
+    /** An optional lead-in day (week 0), if a plan has one. It never holds up the order. */
     val optional: Boolean get() = week == 0
 }
 
@@ -165,24 +165,20 @@ data class PlanMeta(
 
 /** The whole plan: the CSV's tasks plus the roadmap's notes. */
 class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>, val freshStart: Long = 0) {
-    companion object {
-        /** The Python recap week added on your fresh start (PR1–PR7). */
-        const val RECAP = "recap"
-    }
-
     /** The same plan, counted from a fresh start: days before it are "nothing scheduled", never "missed". */
     fun withFreshStart(day: Long): DayPlan = if (day == freshStart) this else DayPlan(meta, tasks, day)
 
-    /** Tasks that come from the roadmap's CSV (not the recap you added). */
-    val csvTasks: List<PlanTask> get() = tasks.filter { it.seq != RECAP }
-
-    /** A sequence that waits for another to finish first: the plan's Python waits for your recap. */
-    val waitsFor: Map<String, String> = if (tasks.any { it.seq == RECAP }) mapOf("python" to RECAP) else emptyMap()
+    /** Tasks that come from the roadmap's CSV (all of them). */
+    val csvTasks: List<PlanTask> get() = tasks
     private val byId = tasks.associateBy { it.id }
     private val areaById = meta.areas.associateBy { it.id }
 
     val start: Long get() = meta.start
     val leadIn: Long get() = meta.leadIn
+    /** The Fresh Start plan has no lead-in: day 1 is its first day. */
+    val hasLeadIn: Boolean get() = leadIn < start
+    /** The first day that counts: the plan's start, or your fresh start if later. */
+    val firstDay: Long get() = maxOf(start, freshStart)
     val end: Long get() = meta.end
     val totalDays: Int get() = (end - start + 1).toInt()
 
@@ -197,19 +193,19 @@ class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>, val freshStart: Lon
 
     fun frenchWeek(week: Int): FrenchWeek? = meta.french.firstOrNull { it.week == week }
 
-    /** Plan week (1…11) of a day, 0 for the lead-in, or null outside the plan. */
+    /** Plan week (1…11) of a day, 0 for the lead-in, or null outside the plan. Weeks run Monday–Sunday, like the CSV's. */
     fun weekOf(day: Long): Int? = when {
-        day == leadIn -> 0
-        day in start..end -> ((day - start) / 7).toInt() + 1
+        hasLeadIn && day == leadIn -> 0
+        day in start..end -> ((day - Days.weekStart(start)) / 7).toInt() + 1
         else -> null
     }
 
-    fun weekStartOf(week: Int): Long = start + (week - 1) * 7L
+    /** The Monday of a plan week (week 1 of the Fresh Start plan begins Tue 17 Nov; its Monday is outside the plan). */
+    fun weekStartOf(week: Int): Long = Days.weekStart(start) + (week - 1) * 7L
 
     /** Each sequence's own weekdays: the weekdays it has 3 or more tasks on (e.g. Python: Sat and Sun). */
-    val slotDays: Map<String, Set<Int>> = tasks.filter { it.kind == TaskKind.SEQUENCE && !it.optional }.groupBy { it.seq }.mapValues { (seq, l) ->
-        // The recap is meant to be done fast, any day of its week (and after, if it runs over).
-        if (seq == RECAP) (1..7).toSet() else l.groupingBy { Days.dow(it.day) }.eachCount().filterValues { it >= 3 }.keys
+    val slotDays: Map<String, Set<Int>> = tasks.filter { it.kind == TaskKind.SEQUENCE && !it.optional }.groupBy { it.seq }.mapValues { (_, l) ->
+        l.groupingBy { Days.dow(it.day) }.eachCount().filterValues { it >= 3 }.keys
     }
 
     /** The sequences in order: next undone first. */
@@ -217,5 +213,11 @@ class DayPlan(val meta: PlanMeta, val tasks: List<PlanTask>, val freshStart: Lon
         .mapValues { (_, l) -> l.sortedWith(compareBy({ it.day }, { it.order })) }
 }
 
-/** Display order of the 8 areas (the weekly review is shown separately). */
-val AREA_ORDER = listOf("python", "accounting", "french", "comms", "linkedin", "evidence", "app", "life")
+/** Display order of the 9 areas (the weekly review is shown separately). */
+val AREA_ORDER = listOf("sap", "accounting", "python", "career", "french", "comms", "evidence", "life", "practice")
+
+/** All 10 categories of the plan, in the order the header shows them. */
+val CATEGORY_ORDER = AREA_ORDER + "review"
+
+/** Habits (health, family, money; daily practice): ticked and tracked as "most days", never counted as study. */
+fun isHabit(area: String): Boolean = area == "life" || area == "practice"

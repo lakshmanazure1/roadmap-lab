@@ -2,7 +2,7 @@ package com.lakshman.roadmaplab.domain
 
 sealed interface TodayRef {
     data class Task(val task: PlanTask) : TodayRef
-    /** A reduced-routine action (section 13), ticked per day. */
+    /** A reduced-routine action (section 14), ticked per day. */
     data class Reduced(val action: ReducedAction) : TodayRef
     /** Optional flashcard practice. */
     data object Flashcards : TodayRef
@@ -13,6 +13,8 @@ enum class Section {
     MAIN,
     /** Health, family and money: counted as habits, never part of the study minimum. */
     HEALTH,
+    /** Daily practice (mantra, silence, the day's remedy): a habit list of its own, never study. */
+    PRACTICE,
     /** Fine to skip: getting ahead, extra practice, dated steps during a reduced week. */
     OPTIONAL,
     /** You said "not today". It keeps its place in the order. */
@@ -43,13 +45,13 @@ data class TodayEntry(
     val section: Section,
 ) {
     val task: PlanTask? get() = (ref as? TodayRef.Task)?.task
-    val study: Boolean get() = area != "life"
+    val study: Boolean get() = !isHabit(area)
 }
 
 data class TodayPlan(
     val day: Long,
     val type: DayType,
-    /** 1…77 from Mon 16 Nov; null on the lead-in and outside the plan. */
+    /** 1…76 from Tue 17 Nov; null outside the plan. */
     val planDay: Int?,
     val week: Int?,
     val daysLeft: Int,
@@ -65,6 +67,7 @@ data class TodayPlan(
     fun section(s: Section): List<TodayEntry> = entries.filter { it.section == s }
     val main: List<TodayEntry> get() = section(Section.MAIN)
     val health: List<TodayEntry> get() = section(Section.HEALTH)
+    val practice: List<TodayEntry> get() = section(Section.PRACTICE)
     val qualified: Boolean get() = target > 0 && minutesDone >= target
     val mainDone: Int get() = main.count { it.done }
     val restDay: Boolean get() = type == DayType.REST
@@ -90,7 +93,8 @@ data class TodayInput(
  *    moves the next task one slot later; nothing is lost, and it never doubles up.
  *  - Day-bound rows (the evidence line, work habits, health habits) belong to their own day.
  *  - Dated steps (STAR stories, money checks, family steps, trainings, the weekly review) wait until done.
- *  - A reduced-routine day shows section 13's minimum actions; the rest waits, in order.
+ *  - Health and daily practice are habit lists of their own; they never count as study.
+ *  - A reduced-routine day shows section 14's minimum actions; the rest waits, in order.
  */
 object TodayEngine {
     const val FLASHCARDS = "flashcards"
@@ -107,9 +111,8 @@ object TodayEngine {
         fun planned(t: PlanTask) = effectiveDay(t, input.reducedWeeks)
 
         if (day < plan.leadIn) {
-            val first = plan.tasksOn(plan.leadIn)
-            entries += first.map { taskEntry(it, input, day, Section.PREVIEW, "Sun 15 Nov · optional lead-in") }
-            entries += plan.tasksOn(plan.start).filter { it.study }.map { taskEntry(it, input, day, Section.PREVIEW, "Mon 16 Nov · day 1") }
+            if (plan.hasLeadIn) entries += plan.tasksOn(plan.leadIn).map { taskEntry(it, input, day, Section.PREVIEW, "${Days.short(plan.leadIn)} · optional lead-in") }
+            entries += plan.tasksOn(plan.start).filter { it.study }.map { taskEntry(it, input, day, Section.PREVIEW, "${Days.short(plan.start)} · day 1") }
             return TodayPlan(day, type, null, null, (plan.end - day).toInt(), entries, input.minutesDone, 0, 0, input.meta?.focusItemId)
         }
 
@@ -117,26 +120,26 @@ object TodayEngine {
         for (t in plan.tasks) {
             val st = states[t.id] ?: continue
             if (st.progress == Progress.COMPLETED && st.doneDay == day) {
-                entries += taskEntry(t, input, day, if (t.area == "life") Section.HEALTH else Section.MAIN, "Done today")
+                entries += taskEntry(t, input, day, habitSection(t.area) ?: Section.MAIN, "Done today")
             }
         }
 
         when {
-            day == plan.leadIn -> {
+            plan.hasLeadIn && day == plan.leadIn -> {
                 plan.tasksOn(day).filter { !closed(it.id) }.forEach {
-                    entries += taskEntry(it, input, day, if (it.area == "life") Section.HEALTH else Section.MAIN, "Optional lead-in")
+                    entries += taskEntry(it, input, day, habitSection(it.area) ?: Section.MAIN, "Optional lead-in")
                 }
             }
             type == DayType.REST -> {
-                plan.tasksOn(day).filter { !closed(it.id) }.forEach { entries += taskEntry(it, input, day, Section.MAIN, "Planned rest day") }
+                // The rest itself, plus the morning practice if the plan keeps it that day (it isn't study).
+                plan.tasksOn(day).filter { !closed(it.id) || it.area == "practice" }.forEach {
+                    entries += taskEntry(it, input, day, if (it.area == "practice") Section.PRACTICE else Section.MAIN, "Planned rest day")
+                }
             }
             type == DayType.REDUCED -> reducedDay(input, day, dow, entries)
             else -> {
                 val catchup = type == DayType.CATCHUP
                 for ((seq, list) in plan.sequences) {
-                    // The plan's Python waits until your recap week (PR1–PR7) is done, then continues in order.
-                    val waitFor = plan.waitsFor[seq]
-                    if (waitFor != null && plan.sequences[waitFor].orEmpty().any { !closed(it.id) }) continue
                     val (ahead, earlier) = frontier(list) { closed(it) }
                     holes += earlier.filter { planned(it) <= day }
                     val undone = if (catchup) earlier + ahead else ahead
@@ -155,9 +158,6 @@ object TodayEngine {
                             entries += taskEntry(t, input, day, if (day in (states[t.id]?.laterDays ?: emptySet())) Section.LATER else Section.MAIN,
                                 reason, anchor = k == 0 && seq == anchor(dow))
                         }
-                    } else if (seq == DayPlan.RECAP && planned(next) > day) {
-                        // You said you'd redo Python fast: the next recap step is always one tap away.
-                        entries += taskEntry(next, input, day, Section.OPTIONAL, "Recap: keep going if you have energy · planned ${Days.short(planned(next))}")
                     } else if (dow in slots && planned(next) > day && planned(next) - day <= 6 && entries.none { it.area == next.area && it.done }) {
                         entries += taskEntry(next, input, day, Section.OPTIONAL, "You're ahead · planned ${Days.short(planned(next))}")
                     }
@@ -165,11 +165,8 @@ object TodayEngine {
                 for (t in plan.tasksOn(day)) {
                     if (t.kind != TaskKind.DAILY || closed(t.id) || t.optional) continue
                     val later = day in (states[t.id]?.laterDays ?: emptySet())
-                    entries += taskEntry(t, input, day, when {
-                        t.area == "life" -> Section.HEALTH
-                        later -> Section.LATER
-                        else -> Section.MAIN
-                    }, if (t.atWork) "At work today" else "Today")
+                    entries += taskEntry(t, input, day, habitSection(t.area) ?: if (later) Section.LATER else Section.MAIN,
+                        if (t.atWork) "At work today" else "Today")
                 }
                 carry(input, day, entries, Section.MAIN)
             }
@@ -226,8 +223,7 @@ object TodayEngine {
             if (p == Progress.COMPLETED || p == Progress.SKIPPED) continue
             val sec = when {
                 day in (input.states[t.id]?.laterDays ?: emptySet()) -> Section.LATER
-                t.area == "life" -> Section.HEALTH
-                else -> section
+                else -> habitSection(t.area) ?: section
             }
             entries += taskEntry(t, input, day, sec, if (t.day == day) "Today" else "Waiting since ${Days.short(t.day)}")
         }
@@ -249,6 +245,12 @@ object TodayEngine {
                     val next = plan.sequences["python"]?.let { l -> frontier(l) { id -> input.states[id]?.progress.let { p -> p == Progress.COMPLETED || p == Progress.SKIPPED } }.first.firstOrNull() }
                     if (next != null && effectiveDay(next, input.reducedWeeks) <= day) {
                         entries += taskEntry(next, input, day, Section.MAIN, "Reduced routine: 15-min revision + finish only this step")
+                    }
+                }
+                a.area == "sap" && todays.any { it.area == "sap" && it.kind == TaskKind.DAILY } -> {
+                    val cards = todays.first { it.area == "sap" && it.kind == TaskKind.DAILY }
+                    if (input.states[cards.id]?.progress != Progress.COMPLETED) {
+                        entries += taskEntry(cards, input, day, Section.MAIN, "Reduced routine: " + a.action)
                     }
                 }
                 a.area == "review" -> {
@@ -274,7 +276,7 @@ object TodayEngine {
     private fun reducedEntry(a: ReducedAction, input: TodayInput): TodayEntry {
         val done = input.checks[a.id]?.done == true
         return TodayEntry(a.id, TodayRef.Reduced(a), a.area, "", a.action, a.minutes, a.time, done, false, false, 0, false,
-            "Reduced routine (section 13)", if (a.area == "life") Section.HEALTH else Section.MAIN)
+            "Reduced routine (section 14)", habitSection(a.area) ?: Section.MAIN)
     }
 
     private fun taskEntry(t: PlanTask, input: TodayInput, day: Long, section: Section, reason: String, anchor: Boolean = false): TodayEntry {
@@ -310,12 +312,26 @@ object TodayEngine {
         return t.day + shift
     }
 
-    /** The sequence each day is built around. */
-    fun anchor(dow: Int): String = if (dow >= 6) "python" else "accounting"
+    /** Which habit list a category's tasks go to, or null for study. */
+    fun habitSection(area: String): Section? = when (area) {
+        "life" -> Section.HEALTH
+        "practice" -> Section.PRACTICE
+        else -> null
+    }
+
+    /** The sequence each day is built around (section 4: Friday is SAP Friday, the weekend is Python). */
+    fun anchor(dow: Int): String = when (dow) {
+        5 -> "sap"
+        6, 7 -> "python"
+        else -> "accounting"
+    }
 
     private fun areaRank(area: String, dow: Int): Int {
-        val order = if (dow >= 6) listOf("python", "app", "comms", "linkedin", "evidence", "review", "accounting", "french", "life")
-        else listOf("accounting", "french", "comms", "evidence", "python", "app", "linkedin", "review", "life")
+        val order = when (dow) {
+            5 -> listOf("sap", "comms", "evidence", "accounting", "french", "python", "career", "review", "life", "practice")
+            6, 7 -> listOf("python", "career", "comms", "evidence", "review", "sap", "accounting", "french", "life", "practice")
+            else -> listOf("accounting", "sap", "french", "comms", "evidence", "python", "career", "review", "life", "practice")
+        }
         return order.indexOf(area).let { if (it < 0) 99 else it }
     }
 }

@@ -45,6 +45,8 @@ class SettingsStore(context: Context) {
         val weeklyReminder = booleanPreferencesKey("weekly_reminder")
         val freshStartDay = longPreferencesKey("fresh_start_day")
         val freshStartAsked = booleanPreferencesKey("fresh_start_asked")
+        val freshStartPlan = stringPreferencesKey("fresh_start_plan")
+        val dynamicColor = booleanPreferencesKey("dynamic_color")
     }
 
     /** Older looks ("soft", "classic") are the light theme now. */
@@ -76,6 +78,8 @@ class SettingsStore(context: Context) {
             weeklyReminder = p[K.weeklyReminder] ?: d.weeklyReminder,
             freshStartDay = p[K.freshStartDay] ?: d.freshStartDay,
             freshStartAsked = p[K.freshStartAsked] ?: d.freshStartAsked,
+            freshStartPlan = p[K.freshStartPlan] ?: d.freshStartPlan,
+            dynamicColor = p[K.dynamicColor] ?: d.dynamicColor,
         )
     }
 
@@ -108,6 +112,8 @@ class SettingsStore(context: Context) {
             p[K.cue] = s.cue
             p[K.weeklyReminder] = s.weeklyReminder
             p[K.freshStartDay] = s.freshStartDay
+            p[K.freshStartPlan] = s.freshStartPlan
+            p[K.dynamicColor] = s.dynamicColor
             p[K.freshStartAsked] = s.freshStartAsked
             result = s
         }

@@ -137,9 +137,7 @@ fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
             item { SectionTitle("Plan file") }
             item {
                 LabCard {
-                    val recap = ui.plan.tasks.size - ui.plan.csvTasks.size
-                    KeyValue("Plan", "${ui.plan.meta.title}\n${ui.plan.csvTasks.size} tasks · ${if (backup.usingImportedPlan) "your imported CSV" else ui.plan.meta.csvName}" +
-                        if (recap > 0) "\n+ $recap Python recap tasks (your fresh start)" else "")
+                    KeyValue("Plan", "${ui.plan.meta.title}\n${ui.plan.csvTasks.size} tasks · ${if (backup.usingImportedPlan) "your imported CSV" else ui.plan.meta.csvName}")
                     Muted("Import a CSV with the same columns (for example a February–March plan). Your ticks and scores stay: they're linked by task id.")
                     SecondaryButton("Import a plan CSV", backup.importPlan, Modifier.fillMaxWidth().padding(top = 8.dp))
                     if (backup.usingImportedPlan) SecondaryButton("Use the bundled plan again", backup.useBundledPlan, Modifier.fillMaxWidth().padding(top = 8.dp))

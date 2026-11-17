@@ -74,7 +74,7 @@ fun PlanScreen(ui: UiState, act: Actions, nav: Nav) {
         item {
             Column(Modifier.padding(horizontal = ScreenPadding)) {
                 val title = if (week == 0) "Optional lead-in · Sun 15 Nov" else
-                    "Week $week · ${Days.short(ui.plan.weekStartOf(week))} – ${Days.short(ui.plan.weekStartOf(week) + 6)}"
+                    "Week $week · ${Days.short(maxOf(ui.plan.start, ui.plan.weekStartOf(week)))} – ${Days.short(ui.plan.weekStartOf(week) + 6)}"
                 Text(title, style = Type.section, color = p.text)
                 Muted(listOfNotNull(ui.plan.meta.weekFocus[week], "$done of ${tasks.size} done").joinToString(" · "))
             }

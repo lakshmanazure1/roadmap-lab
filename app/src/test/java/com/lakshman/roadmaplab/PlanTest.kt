@@ -3,97 +3,125 @@ package com.lakshman.roadmaplab
 import com.lakshman.roadmaplab.TestData.d
 import com.lakshman.roadmaplab.TestData.plan
 import com.lakshman.roadmaplab.domain.AREA_ORDER
+import com.lakshman.roadmaplab.domain.CATEGORY_ORDER
 import com.lakshman.roadmaplab.domain.CardType
 import com.lakshman.roadmaplab.domain.CheckSpec
 import com.lakshman.roadmaplab.domain.Days
 import com.lakshman.roadmaplab.domain.PlanCsv
 import com.lakshman.roadmaplab.domain.TaskKind
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The app's plan must be the roadmap's CSV: every row, nothing invented, nothing dropped. */
+/** The app's plan must be the Fresh Start roadmap's CSV: every row, nothing invented, nothing dropped. */
 class PlanTest {
     @Test
     fun everyCsvRowIsATask() {
         val rows = PlanCsv.parse(TestData.csv)
-        assertEquals(381, rows.size) // header + 380
-        assertEquals(380, plan.csvTasks.size)
-        assertEquals("T001", plan.csvTasks.first().id)
-        assertEquals("T380", plan.csvTasks.last().id)
-        // The app adds only the 7-step Python recap from your fresh start (16 Nov), never inside the CSV.
-        assertEquals(387, plan.tasks.size)
-        assertEquals((1..7).map { "PR$it" }, plan.tasks.filter { it.seq == "recap" }.map { it.id })
-        assertEquals(d("2026-11-15"), plan.leadIn)
-        assertEquals(d("2026-11-16"), plan.start)
+        assertEquals(429, rows.size) // header + 428
+        assertEquals(428, plan.tasks.size)
+        assertEquals("T1001", plan.tasks.first().id)
+        assertEquals("T1428", plan.tasks.last().id)
+        assertEquals(d("2026-11-17"), plan.start)
+        assertFalse(plan.hasLeadIn)
         assertEquals(d("2027-01-31"), plan.end)
-        assertEquals(AREA_ORDER, plan.meta.areas.map { it.id }.filter { it != "review" })
+        assertEquals(76, plan.totalDays)
+        assertEquals(CATEGORY_ORDER, plan.meta.areas.map { it.id })
+        assertEquals(10, CATEGORY_ORDER.size)
         // Fields come through exactly, including quoted commas.
-        val t005 = plan.task("T005")!!
-        assertEquals("Week 1 · Greetings and basics: words 1–5: bonjour, merci, s'il vous plaît, excusez-moi, je m'appelle", t005.learn)
-        assertEquals(10, t005.minutes)
-        assertEquals("5 sentences written", t005.doneWhen)
-        assertEquals("Validator update (22 Nov)", plan.task("T032")!!.milestone)
+        val t = plan.task("T1007")!!
+        assertEquals("Week 1 · Greetings and basics: bonjour, merci, s'il vous plaît, excusez-moi, je m'appelle, enchanté", t.learn)
+        assertEquals(10, t.minutes)
+        assertEquals("6 sentences written", t.doneWhen)
+        assertEquals("Validator finds all 10 errors", plan.task("T1027")!!.milestone)
     }
 
     @Test
-    fun areasMinutesAndRestDays() {
+    fun categoriesMinutesAndRestDays() {
         val byArea = plan.tasks.groupingBy { it.area }.eachCount()
-        assertEquals(53, byArea["accounting"]) // weekdays 16 Nov – 29 Jan minus 2 rest days
-        assertEquals(11, byArea["review"])
+        assertEquals(mapOf("life" to 76, "practice" to 76, "evidence" to 74, "comms" to 63, "accounting" to 43, "french" to 32,
+            "python" to 22, "sap" to 19, "career" to 12, "review" to 11), byArea)
         assertEquals(listOf(d("2026-12-25"), d("2027-01-01")), plan.restDays.keys.sorted())
-        assertEquals(TaskKind.REST, plan.task("T200")!!.kind)
-        // Week 1 study minutes: 5 weekdays × 45 + Sat 125 + Sun 165 = 515 (roadmap section 4).
-        val w1 = plan.csvTasks.filter { it.week == 1 && it.study }.sumOf { it.minutes }
-        assertEquals(515, w1)
+        assertEquals(TaskKind.REST, plan.task("T1219")!!.kind)
+        // Study minutes per week match the roadmap's load check (section 4). Health and practice are not study.
+        val study = (1..11).map { w -> plan.tasks.filter { it.week == w && it.study }.sumOf { it.minutes } }
+        assertEquals(listOf(445, 500, 520, 515, 500, 430, 460, 500, 515, 500, 510), study)
+        assertFalse(plan.task("T1005")!!.study) // practice
+        assertFalse(plan.task("T1004")!!.study) // health
     }
 
     @Test
     fun followTheOrderSequencesUseTheirOwnWeekdays() {
-        assertEquals(setOf(1, 2, 3, 4, 5), plan.slotDays["accounting"])
+        assertEquals(setOf(1, 2, 3, 4), plan.slotDays["accounting"])
+        assertEquals(setOf(5), plan.slotDays["sap"])           // SAP Friday
         assertEquals(setOf(6, 7), plan.slotDays["python"])
-        assertEquals(setOf(7), plan.slotDays["app"])
-        assertEquals(setOf(7), plan.slotDays["linkedin"])
+        assertEquals(setOf(7), plan.slotDays["career"])
         assertEquals(setOf(7), plan.slotDays["recording"])
-        assertTrue(plan.sequences.values.flatten().none { it.optional }) // the lead-in never blocks the order
-        assertEquals(TaskKind.CARRY, plan.task("T077")!!.kind) // STAR #1
-        assertEquals(TaskKind.CARRY, plan.task("T078")!!.kind) // money check #1
-        assertEquals(TaskKind.CARRY, plan.task("T126")!!.kind) // user training #1
-        assertEquals(TaskKind.DAILY, plan.task("T007")!!.kind) // a daily log line
+        assertEquals(setOf(1, 3, 4), plan.slotDays["french"])
+        assertEquals(TaskKind.DAILY, plan.task("T1041")!!.kind) // Tuesday SAP flashcards belong to their day
+        assertEquals(TaskKind.CARRY, plan.task("T1162")!!.kind) // the December conversation (a dated step)
+        assertEquals(TaskKind.CARRY, plan.task("T1077")!!.kind) // STAR #1
+        assertEquals(TaskKind.CARRY, plan.task("T1078")!!.kind) // money check #1
+        assertEquals(TaskKind.CARRY, plan.task("T1134")!!.kind) // user training #1
+        assertEquals(TaskKind.DAILY, plan.task("T1009")!!.kind) // a daily log line
+        assertEquals(TaskKind.DAILY, plan.task("T1011")!!.kind) // daily practice
+        assertEquals(AREA_ORDER, plan.meta.areas.map { it.id }.filter { it != "review" })
     }
 
     @Test
     fun checksComeFromTheDoneWhenColumn() {
         fun score(id: String) = plan.task(id)!!.checks.filterIsInstance<CheckSpec.Score>().single()
-        assertEquals(12 to 10, score("T014").let { it.max to it.target })   // "10 of 12 correct"
-        assertEquals(10 to 8, score("T039").let { it.max to it.target })    // "Quiz 8/10 or better"
-        assertEquals(20 to 16, score("T074").let { it.max to it.target })   // "16/20 or better"
-        assertEquals(100 to 80, score("T286").let { it.max to it.target })  // "80% or better"
-        assertEquals(12 to 10, score("T361").let { it.max to it.target })   // test #2
-        assertEquals(20 to 16, score("T169").let { it.max to it.target })   // RAG target 16/20
-        val test1 = plan.task("T164")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals(12 to 10, score("T1012").let { it.max to it.target })   // "10 of 12 correct"
+        assertEquals(10 to 8, score("T1034").let { it.max to it.target })    // "Quiz 8/10"
+        assertEquals(20 to 16, score("T1074").let { it.max to it.target })   // November check
+        assertEquals(100 to 80, score("T1327").let { it.max to it.target })  // "80% or better"
+        assertEquals(12 to 10, score("T1407").let { it.max to it.target })   // test #2
+        assertEquals(10 to 8, score("T1041").let { it.max to it.target })    // SAP flashcards: 8 of 10 without looking
+        val test1 = plan.task("T1195")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
         assertEquals("journal", test1.bank); assertEquals(10, test1.count); assertEquals(8, test1.target); assertEquals(20, test1.timedMinutes)
-        val rec = plan.task("T034")!!.checks.filterIsInstance<CheckSpec.Rubric>().single()
-        assertEquals(6, rec.target)
-        assertEquals(7, plan.task("T236")!!.checks.filterIsInstance<CheckSpec.Rubric>().single().target)
-        val fri = plan.task("T025")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
-        assertEquals("french", fri.bank); assertEquals(10, fri.count); assertEquals(8, fri.target); assertEquals(listOf(1), fri.weeks)
-        val nov = plan.task("T061")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
-        assertEquals(20, nov.count); assertEquals(16, nov.target); assertEquals(listOf(1, 2), nov.weeks)
-        val review = plan.task("T347")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
-        assertEquals(listOf(1, 2, 3, 4), review.weeks)
-        val wed = plan.task("T015")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
-        assertEquals("french-sentences", wed.bank); assertEquals(4, wed.target)
-        assertTrue(plan.task("T077")!!.checks.any { it is CheckSpec.Star })
-        assertTrue(plan.task("T070")!!.checks.any { it is CheckSpec.Outcome })
+        assertEquals(6, plan.task("T1029")!!.checks.filterIsInstance<CheckSpec.Rubric>().single().target)
+        assertEquals(7, plan.task("T1264")!!.checks.filterIsInstance<CheckSpec.Rubric>().single().target)
+        // SAP check 1: 25-term glossary quiz 20/25 and the rubric 7/10.
+        val sap = plan.task("T1413")!!.checks
+        assertEquals(25 to 20, sap.filterIsInstance<CheckSpec.Score>().single().let { it.max to it.target })
+        assertEquals(7, sap.filterIsInstance<CheckSpec.Rubric>().single().target)
+        // French: this week's 6 + last week's 6 (10/12); the December check 20 words from weeks 1–5 (16/20).
+        val thu = plan.task("T1053")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals("french", thu.bank); assertEquals(12, thu.count); assertEquals(10, thu.target); assertEquals(listOf(1, 2), thu.weeks)
+        val dec = plan.task("T1214")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals(20, dec.count); assertEquals(16, dec.target); assertEquals(listOf(1, 2, 3, 4, 5), dec.weeks)
+        val w6 = plan.task("T1196")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals(20, w6.count); assertEquals(listOf(1, 2, 3, 4, 5), w6.weeks)
+        val w11 = plan.task("T1390")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals(listOf(7, 8, 9, 10), w11.weeks)
+        val mon = plan.task("T1007")!!.checks.filterIsInstance<CheckSpec.Quiz>().single()
+        assertEquals(6, mon.count); assertEquals(listOf(1), mon.weeks)
+        assertEquals("french-sentences", plan.task("T1402")!!.checks.filterIsInstance<CheckSpec.Quiz>().single().bank)
+        assertTrue(plan.task("T1408")!!.checks.any { it is CheckSpec.Demonstrate })
+        assertTrue(plan.task("T1077")!!.checks.any { it is CheckSpec.Star })
+        assertTrue(plan.task("T1189")!!.checks.any { it is CheckSpec.Outcome }) // LinkedIn message 1 of 4
+        assertTrue(plan.task("T1005")!!.checks.isEmpty()) // practice is a tick, not a test
     }
 
     @Test
     fun frenchWordsMatchTheCsvAndHaveMeanings() {
-        assertEquals(100, plan.meta.french.sumOf { it.words.size })
-        assertTrue(plan.meta.french.all { it.sentences.size == 5 })
+        assertEquals(54, plan.meta.french.sumOf { it.words.size })
+        assertTrue(plan.meta.french.filter { it.week !in setOf(6, 11) }.all { it.words.size == 6 })
         assertTrue(plan.meta.french.flatMap { it.words }.all { it.en.isNotBlank() })
+        assertEquals(5, plan.frenchWeek(11)!!.sentences.size) // the introduction
+    }
+
+    @Test
+    fun theRoadmapNotesAreComplete() {
+        val m = plan.meta
+        assertEquals((1..11).toList(), m.checkpoints.keys.sorted())
+        assertEquals(listOf("Clarity", "Structure", "Accuracy", "Audience", "Delivery"), m.rubric.map { it.name })
+        assertEquals("Fresh start · the validator finds all 10 errors", m.weekFocus[1])
+        assertTrue(m.reduced.any { it.area == "sap" } && m.reduced.any { it.area == "practice" })
+        assertTrue(m.rules.first().startsWith("Fictional data only"))
+        assertEquals(7, m.levels.size)
     }
 
     @Test
@@ -105,7 +133,8 @@ class PlanTest {
             assertNotNull(task, plan.task(task))
         }
         assertTrue(TestData.cards.filter { it.type == CardType.MCQ }.all { it.answer in it.options })
-        assertTrue(plan.tasks.filter { it.area == "accounting" || it.area == "french" }.all { Days.dow(it.day) in 1..5 })
+        assertTrue(plan.tasks.filter { it.area == "accounting" || it.area == "french" }.all { Days.dow(it.day) in 1..4 })
+        assertTrue(plan.tasks.filter { it.area == "sap" }.all { Days.dow(it.day) in setOf(2, 5) })
     }
 
     @Test

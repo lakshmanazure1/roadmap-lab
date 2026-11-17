@@ -37,11 +37,12 @@ class LeitnerTest {
     @Test
     fun cardsUnlockWithTheirPlanTaskOnly() {
         val unlocks = TestData.plan.meta.cardUnlocks
-        val fresh = Leitner.unlockForItems(setOf("T004"), TestData.cards, unlocks, emptyList(), 200)
+        val fresh = Leitner.unlockForItems(setOf("T1023"), TestData.cards, unlocks, emptyList(), 200)
         assertTrue(fresh.isNotEmpty())
-        assertTrue(fresh.all { unlocks[it.cardId] == "T004" })
-        assertTrue(Leitner.unlockForItems(setOf("T004"), TestData.cards, unlocks, fresh, 201).isEmpty())
-        // SAP cards are for June–October 2027: they stay locked.
-        assertTrue(TestData.cards.filter { it.topic == "SAP" }.none { unlocks.containsKey(it.id) })
+        assertTrue(fresh.all { unlocks[it.cardId] == "T1023" })
+        assertTrue(Leitner.unlockForItems(setOf("T1023"), TestData.cards, unlocks, fresh, 201).isEmpty())
+        // SAP cards unlock with their SAP Friday; asset accounting and the exam come after this plan, so those stay locked.
+        assertEquals("T1058", unlocks["SAP-01"])
+        assertTrue(listOf("SAP-16", "SAP-17", "SAP-18").none { unlocks.containsKey(it) })
     }
 }

@@ -19,21 +19,21 @@ class QuestionsTest {
     private fun build(id: String, seed: Int = 1) = QuestionBank.build(plan, plan.task(id)!!, quiz(id), TestData.cards, seed)
 
     @Test
-    fun fridayFrenchQuizIsTheWeeksTenWordsBothDirections() {
-        val qs = build("T025")
-        assertEquals(10, qs.size)
-        val week1 = plan.meta.french.first { it.week == 1 }.words.map { it.fr }.toSet()
+    fun thursdayFrenchQuizIsThisWeeksAndLastWeeksWordsBothDirections() {
+        val qs = build("T1053")
+        assertEquals(12, qs.size)
+        val words = plan.meta.french.filter { it.week in 1..2 }.flatMap { it.words }.map { it.fr }.toSet()
         val asked = qs.map { (it as Question.Choice).let { c -> if (c.prompt.startsWith("What")) c.prompt.substringAfter("« ").substringBefore(" »") else c.answer } }
-        assertTrue(asked.all { it in week1 })
+        assertTrue(asked.all { it in words })
         assertTrue(qs.any { it.prompt.startsWith("What does") } && qs.any { it.prompt.startsWith("In French") })
     }
 
     @Test
     fun whichSideQuizAsksDebitOrCredit() {
-        val q = quiz("T109")
+        val q = quiz("T1154")
         assertEquals("side", q.bank)
         assertEquals(10, q.count)
-        val qs = build("T109")
+        val qs = build("T1154")
         assertEquals(10, qs.size)
         for (x in qs) {
             val c = x as Question.Choice
@@ -44,8 +44,8 @@ class QuestionsTest {
     }
 
     @Test
-    fun translateBackBuildsTheModelSentences() {
-        val qs = build("T015")
+    fun yourIntroductionIsBuiltFromItsSentences() {
+        val qs = build("T1402")
         assertEquals(5, qs.size)
         val o = qs.first() as Question.Order
         assertTrue(QuestionBank.isCorrect(o, o.answer.joinToString("\u0001")))
@@ -54,10 +54,10 @@ class QuestionsTest {
 
     @Test
     fun accountingChecksNeverAskAboutLaterTopics() {
-        val qs = build("T014") // week 1
+        val qs = build("T1012") // week 1
         assertEquals(5, qs.size)
         assertTrue(qs.none { it is Question.Journal }) // journal entries start in week 4
-        val test1 = build("T164") // cumulative test #1, week 5
+        val test1 = build("T1195") // cumulative test #1, week 6
         assertEquals(10, test1.size)
         assertTrue(test1.all { it is Question.Journal || it.prompt.contains("GST") || it.prompt.contains("settlement") })
         val j = test1.filterIsInstance<Question.Journal>().first()
@@ -68,8 +68,8 @@ class QuestionsTest {
 
     @Test
     fun sameSeedSameQuestionsNewSeedNewMix() {
-        assertEquals(build("T164", 3).map { it.id }, build("T164", 3).map { it.id })
-        assertTrue(build("T164", 3).map { it.id } != build("T164", 4).map { it.id })
+        assertEquals(build("T1195", 3).map { it.id }, build("T1195", 3).map { it.id })
+        assertTrue(build("T1195", 3).map { it.id } != build("T1195", 4).map { it.id })
     }
 
     @Test
@@ -88,7 +88,7 @@ class QuestionsTest {
 
     @Test
     fun pythonChecksUseOnlyUnlockedTopics() {
-        val qs = build("T029")
+        val qs = build("T1023")
         assertTrue(qs.isNotEmpty())
         assertTrue(qs.none { it.prompt.contains("RAG") || it.prompt.contains("chunk") || it.prompt.contains("SELECT") })
     }

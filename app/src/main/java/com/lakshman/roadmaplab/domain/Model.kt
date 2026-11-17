@@ -155,6 +155,11 @@ data class AppSettings(
     val freshStartDay: Long = 0,
     /** The one-time "start fresh?" card has been answered. */
     val freshStartAsked: Boolean = false,
+    // ---- version 3
+    /** The plan version your fresh start (or "keep my records") answered, so a new plan asks once again. */
+    val freshStartPlan: String = "",
+    /** Material You: colours from your wallpaper (Android 12 and later). */
+    val dynamicColor: Boolean = true,
 )
 
 data class DayPlanEntry(val day: Long, val taskId: String, val position: Int)

@@ -50,6 +50,7 @@ interface Actions {
     fun note(n: Note)
     /** Save a safety copy, clear every record, and count from today (Settings and the one-time card). */
     fun startFresh()
+    fun setMood(day: Long, mood: Int?)
 }
 
 class LabViewModel(app: Application) : AndroidViewModel(app), Actions {
@@ -104,10 +105,15 @@ class LabViewModel(app: Application) : AndroidViewModel(app), Actions {
     override fun review(cardId: String, rating: Rating, asMcq: Boolean) = safely { repo.review(cardId, rating, asMcq) }
     override fun addCard(topic: String, prompt: String, answer: String) = safely { repo.addCard(topic, prompt, answer) }
     override fun note(n: Note) { _notes.tryEmit(n) }
+    override fun setMood(day: Long, mood: Int?) = safely { repo.setMood(day, mood) }
     override fun startFresh() = safely {
-        repo.startFresh(com.lakshman.roadmaplab.BuildConfig.VERSION_NAME)
+        // In the plan's first week, day 1 is the plan's own first day (Tue 17 Nov), so the days since can still be ticked.
+        val today = Days.today()
+        val start = ui.value?.plan?.start
+        val day = if (start != null && today <= start + 6) start else today
+        repo.startFresh(com.lakshman.roadmaplab.BuildConfig.VERSION_NAME, day)
         refreshDay()
-        _notes.tryEmit(Note("Fresh start: today is your first day. A safety copy of the old records is kept in Settings."))
+        _notes.tryEmit(Note("Fresh start: ${Days.short(day)} is day 1. A safety copy of the old records is kept in Settings."))
     }
 
     override fun updateSettings(change: (AppSettings) -> AppSettings) {

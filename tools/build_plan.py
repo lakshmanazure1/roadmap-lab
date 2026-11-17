@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Builds app/src/main/assets/plan_meta.json for the "Eight-Area Career Development Roadmap: DRC Edition".
+Builds app/src/main/assets/plan_meta.json for the "Fresh Start Career Roadmap: SAP Finance Edition"
+(Tue 17 Nov 2026 – Sun 31 Jan 2027).
 
-The schedule itself is the companion CSV (Eight_Area_Schedule_15Nov2026-31Jan2027.csv), bundled unchanged as
-app/src/main/assets/schedule.csv: the app reads every row from it (380 tasks), so the task count always equals
-the CSV row count. This file adds what the CSV doesn't hold, copied from the roadmap PDF (sections 1, 4, 7, 8,
-10–14, 16): area goals, the 5-criterion rubric, French words and model sentences, weekly checkpoint targets,
-the reduced routine, success criteria, plus short titles and the question banks used for in-app checks.
+The schedule itself is the companion CSV (Fresh_Start_Schedule_17Nov2026-31Jan2027.csv), bundled unchanged as
+app/src/main/assets/schedule.csv: the app reads every row from it (428 tasks, T1001–T1428), so the task count
+always equals the CSV row count. This file adds what the CSV doesn't hold, copied from the roadmap PDF
+(text in tools/source/Fresh_Start_Career_Roadmap_SAP_Finance_Edition.txt): the 10 categories' goals, the
+5-criterion rubric, the French words, weekly checkpoint targets, the reduced routine, success criteria and rules,
+plus short titles and the question banks used for in-app checks (fictional data only).
 
 Nothing here adds a task or changes a date. Run: python3 tools/build_plan.py
 """
@@ -17,192 +19,180 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CSV = ROOT / "app/src/main/assets/schedule.csv"
-PDF_TEXT = ROOT / "tools/source/Eight_Area_Roadmap_DRC_Edition.txt"
+PDF_TEXT = ROOT / "tools/source/Fresh_Start_Career_Roadmap_SAP_Finance_Edition.txt"
 OUT = ROOT / "app/src/main/assets/plan_meta.json"
-VERSION = "drc-2026-11-14"
+VERSION = "fresh-start-sap-2026-11-17"
 
 rows = list(csv.DictReader(open(CSV, encoding="utf-8")))
-assert len(rows) == 380, len(rows)
+assert len(rows) == 428, len(rows)
 
-AREA_IDS = {"Python/AI": "python", "Accounting": "accounting", "French": "french", "Communication": "comms",
-            "LinkedIn": "linkedin", "Evidence log": "evidence", "App": "app", "Health/family/money": "life",
+AREA_IDS = {"SAP Finance": "sap", "Accounting": "accounting", "Python/AI": "python", "Career": "career", "French": "french",
+            "Communication": "comms", "Evidence log": "evidence", "Health/family/money": "life", "Practice": "practice",
             "Weekly review": "review"}
 
+# ------------------------------------------------------------------------------------------- the 10 categories (sections 1, 4–12, 15)
 AREAS = [
-    dict(id="python", name="Python and AI", short="Python / AI", objective="Go-live Data Kit: validator + coded RAG assistant",
-         byEnd="Demo #1 and Demo #2 sent; 16/20 then 20/25 test scores", budget="Sat 120 · Sun 90 min (210 a week)",
-         assessed="Write and explain a function without AI; the validator finds exactly the planted errors. RAG: explain chunking, "
-                  "retrieval and source attribution aloud; test score on fixed questions",
-         notEnough="Code that runs but you can't explain; one good-looking answer",
-         success="Demo #1 and Demo #2 sent; validator finds every planted error in both files; RAG 16/20, then 20/25",
-         targetLevel="5–6", stretch="Streamlit screen working",
-         rules=["Every session starts with revision (15 min Sat, 10 min Sun): rewrite last session's main code from memory, then compare.",
-                "Predict the output before you run anything. Type the code yourself. Stuck for 15 minutes? Ask for a hint, not the solution.",
-                "Fake data only. Save code to your private GitHub repo and to Drive after each session."]),
+    dict(id="sap", name="SAP Finance", short="SAP", objective="SAP vocabulary and processes from day one",
+         byEnd="10 SAP Fridays; 25-term glossary quiz 20/25; P2P explained in SAP words (7/10)",
+         budget="Friday 40 + Tuesday flashcards 10 (50 a week)",
+         assessed="Tuesday flashcards: 8 of 10 without looking. Check 1: 25-term glossary quiz 20/25, and P2P explained aloud "
+                  "in 2 minutes, 7/10 on the rubric",
+         notEnough="", success="10 SAP Fridays; glossary quiz 20/25; P2P explained in SAP words (7/10)", targetLevel="4–5",
+         stretch="Explain O2C and data migration in SAP words too",
+         rules=["Every Friday evening (40 min): one SAP topic from the free learning journeys on learning.sap.com, mapped to what "
+                "you already do in your current ERP.",
+                "Add 5 terms to your glossary deck every Friday. Every Tuesday (10 min): last Friday's 5 terms + 5 older ones, said "
+                "aloud; missed cards go to the front.",
+                "Download the next week's SAP pages during Sunday's review, so poor internet never blocks Friday.",
+                "Fri 25 Dec is a rest day, so there is no SAP Friday in week 6."]),
     dict(id="accounting", name="Accounting", short="Accounting", objective="Strong fundamentals for SAP Finance",
-         byEnd="Journal and ledger, tested cold: 10/12 on test #2", budget="5 × 30 min on weekdays (150 a week)",
-         assessed="Cold transactions with no answers in view; cumulative tests", notEnough="Watching the lecture",
-         success="1.2 to 3.8 done; test #2 10/12 cold", targetLevel="5", stretch="12/12, and you can explain each entry",
+         byEnd="NPTEL 1.2 to 3.8; journal and ledger; test #2 10/12 cold", budget="4 × 30 min, Mon–Thu (120 a week); Friday is SAP",
+         assessed="Monday cold quizzes, monthly checks and cumulative tests, with no answers in view",
+         notEnough="Watching a lecture", success="1.2 to 3.8 done; test #2 10/12 cold", targetLevel="5",
+         stretch="12/12, and you can explain each entry",
          rules=["Watching a lecture is not mastery. Every lecture is followed by work you do before seeing the answer.",
-                "Every Monday starts with a cold 10-card quiz on the previous week. Mistakes become new flashcards.",
+                "Monday starts with a cold 10-card quiz on the previous week. Mistakes become new flashcards.",
                 "Ravi Traders is your fictional business for all practice. Use made-up amounts.",
-                "Lecture numbers match the IIT Mandi course list. If your course run numbers differ, follow the same topic order."]),
-    dict(id="french", name="French", short="French", objective="Comfortable workplace French",
-         byEnd="100 work words; weekly quizzes; 1-minute introduction", budget="5 × 10 min on weekdays (50 a week)",
-         assessed="Quiz both directions; sentences you build; a 1-minute recording", notEnough="Duolingo streak alone",
-         success="100 words; 3 review quizzes 16/20; introduction 6/10", targetLevel="5", stretch="A 5-minute work chat in French",
-         rules=["Mon: words 1–5, one sentence each · Tue: words 6–10, listen 3 min · Wed: read the 5 model sentences, translate back · "
-                "Thu: say them aloud 3 times, record 1 min · Fri: use 2 words at work; 10-word quiz both directions.",
-                "Holiday weeks 6 and 7 have 4 days: Wednesday combines reading, speaking and recording; Thursday is the quiz."]),
+                "Lecture numbers follow the IIT Mandi NPTEL course list. If your run differs, keep the same topic order."]),
+    dict(id="python", name="Python and AI", short="Python / AI", objective="Go-live Data Kit: validator, retrieval assistant, SQL",
+         byEnd="Demo #1 and Demo #2 sent; retrieval 16/20 then 20/25; reconciliation report; template spec v0",
+         budget="Saturday 120 + Sunday 90 (210 a week)",
+         assessed="Monthly no-AI checks: functions written from a blank file and explained aloud; retrieval scored on fixed test questions",
+         notEnough="Code that runs but you can't explain",
+         success="Demo #1 and Demo #2 sent; validator finds every planted error; retrieval 16/20 then 20/25; reconciliation report",
+         targetLevel="5–6", stretch="Template spec drives several checks",
+         rules=["Every session starts with revision (15 min Saturday, 10 min Sunday): rewrite last session's main code from memory, "
+                "then compare.",
+                "Predict the output before you run anything. Type the code yourself. Stuck for 15 minutes? Ask for a hint, not the solution.",
+                "Fake data only. Save code to your private GitHub repo and to Drive after each session. Monthly checks are done with no AI.",
+                "Retrieval offline: keyword retrieval in plain Python, then TF-IDF; the answer is the top 3 chunks with their sources. "
+                "Online only with a company-approved API key, kept in a .env file, never in your code.",
+                "Describe it honestly: a “retrieval assistant with sources”, not advanced AI."]),
+    dict(id="career", name="Career", short="Career", objective="Salary case and job-search basics",
+         byEnd="Gap story; resume v0; salary targets; 4 LinkedIn conversations; role case sent", budget="Sunday 30",
+         assessed="Each step's “done when”; messages sent and replies", notEnough="",
+         success="Gap story said without notes; resume v0; salary targets; 4 conversations; role case sent", targetLevel="5",
+         stretch="Manager names clear criteria for April",
+         rules=["Keep official titles and dates; describe only what you really did. Use one calm, two-sentence answer for the gap.",
+                "Never invent SAP experience, titles or dates. Interviewers probe for it and background checks verify it.",
+                "December questions for your manager: What would I need to show to move up a level by April? Which results count "
+                "most? May I publish work built only on fake data?",
+                "Check your contract before publishing anything; build on personal time and devices.",
+                "Never resign without a written offer."]),
+    dict(id="french", name="French", short="French", objective="Workplace French for DRC",
+         byEnd="60 work words; weekly quizzes; 1-minute introduction 6/10", budget="3 × 10 min: Mon, Wed, Thu (30 a week)",
+         assessed="Thursday quizzes, both directions; the December and week-11 checks 16/20; your introduction on the rubric",
+         notEnough="", success="60 words; checks 16/20; introduction 6/10", targetLevel="4–5", stretch="A 5-minute work chat in French",
+         rules=["Monday: learn the week's 6 words and write a sentence with each.",
+                "Wednesday: say your sentences aloud 3 times, use 2 words at work, record 1 minute.",
+                "Thursday: quiz on this week's and last week's words."]),
     dict(id="comms", name="Communication", short="Comms", objective="Clear, confident professional communication",
-         byEnd="Habits most days; recordings 7/10; 2 user trainings", budget="Inside work · Sunday recording 10 min",
-         assessed="Rubric score; listener can repeat the point", notEnough="Feeling that it went well",
+         byEnd="Habits most days; Sunday recordings 7/10; 2 user trainings", budget="Habits inside work · Sunday recording 10",
+         assessed="Recordings, demos and trainings scored on the rubric (out of 10); each habit's “done when”", notEnough="",
          success="Habits on most days; recordings 7/10; 2 trainings delivered", targetLevel="5–6", stretch="Speaking early feels normal",
-         rules=["Mon: speak early · Tue: “So to confirm…” · Wed: same-day written summary · Thu: explain one process twice · "
-                "Fri: one concise update (done · next · blocker).",
-                "Recordings, demos and trainings are scored with the 5-criterion rubric (0–2 each, out of 10). "
-                "Targets: 6/10 in November–December, 7/10 in January. Listen once and write one thing to change next time."]),
-    dict(id="linkedin", name="LinkedIn", short="LinkedIn", objective="Relevant professional network",
-         byEnd="Profile updated; 9 thoughtful conversations started", budget="Sunday 15 min",
-         assessed="Conversations started and useful (2+ messages each)", notEnough="Number of connections",
-         success="Profile updated; 9 conversations started", targetLevel="5", stretch="3 useful conversations",
-         rules=["One person a week. Ask about their work, never for a job, and never send mass requests.",
-                "A conversation counts as started when you've sent a personal note with one real question; it counts as useful when "
-                "you've exchanged at least two messages.",
-                "If LinkedIn won't let you add a note, connect without one and message after they accept.",
-                "Note template (about 240 characters): Hi [Name], I work on ERP implementations (right now a go-live in DR Congo) and "
-                "I'm moving towards SAP finance. Your work on [X] caught my eye. Could I ask you one question about [their topic]? Thanks, Nani"]),
+         rules=["Mon: speak early, one question or point in a meeting's first 10 minutes · Tue: restate one request, “So to confirm…” · "
+                "Wed: same-day written summary, decided · who · by when · Thu: explain one process twice, simple then detail · "
+                "Fri: concise update, done · next · blocker, under 30 seconds.",
+                "Sunday: plan 3 points (problem → what you did → result), then record 2 minutes.",
+                "Rubric targets: 6/10 or better in November–December, 7/10 or better in January.",
+                "User trainings (10–15 min) if the go-live schedule allows; otherwise the next slot. Prepare the day before."]),
     dict(id="evidence", name="Evidence log", short="Evidence", objective="Verifiable evidence of growth",
-         byEnd="A line most working days; 3 STAR stories", budget="5 min a day (35 a week)",
-         assessed="Lines with a real result; STAR stories written", notEnough="Lines that say only “worked on X”",
-         success="Lines on 80% of working days; 3 STAR stories", targetLevel="5", stretch="Manager uses one of your stories",
-         rules=["One line at the end of each working day, even on bad days. Say “the client”, never a name; use rough numbers; nothing "
-                "confidential, and only what you're allowed to use.",
-                "Each Sunday, star the best line of the week (★). Three STAR stories, each from that month's starred lines: #1 Mon 30 Nov · "
-                "#2 Thu 31 Dec · #3 Fri 29 Jan. Situation (1 line) · Task (1) · Action (2–3) · Result (1, with a number), under 150 words."]),
-    dict(id="app", name="Tracker app", short="App", objective="A reliable app for all 8 areas",
-         byEnd="v1.0.1 on your phone with this plan imported; restore tested", budget="Sunday 30 min",
-         assessed="Features tested on the phone; data survives restart, update and restore", notEnough="A successful build",
-         success="v1.0.1 installed; this plan imported; restore drill passed", targetLevel="5", stretch="Used every day since 11 Jan",
-         rules=["30 minutes a step, on Sundays. If a step isn't finished at 40 minutes, stop and continue next Sunday: the order matters, "
-                "not the date. The app never takes time from accounting or Python.",
-                "Safety: private repo; no company or client data in the app; the signing key lives only in GitHub Secrets and your private Drive."]),
-    dict(id="life", name="Health, family and money", short="Health · family · money", objective="Sustainable progress in DRC",
-         byEnd="Sleep and exercise most days; 3 money checks; family steps", budget="Exercise 3 × 25 · alone time 2 × 15 · Sat 60 off · call 25",
-         assessed="Counts: sleep nights, exercise sessions, calls, money checks", notEnough="Perfection (not expected)",
-         success="Sleep 7 h on most nights; exercise 2–3 times most weeks; 3 money checks; dated family steps", targetLevel="4",
-         stretch="No week without a family call",
-         rules=["Every day: 7 hours of sleep with a fixed lights-out time; bottled or treated water; malaria prevention exactly as your "
-                "doctor prescribed (net and repellent too). Measured as nights with 7 h (target 5 of 7).",
-                "Mon · Wed · Fri: 20–30 min exercise (target 3 sessions; 2 is fine). Tue · Thu: 10–20 min good alone time. "
-                "Saturday: 60 minutes fully off. Sunday: call home; note the week's spending total in the review.",
-                "After a very long day: next evening, only the log line, then sleep. Nothing else is owed.",
-                "Never trade sleep, health or family for a streak. If you feel low most days for 2 weeks or more: tell someone you trust and "
-                "see a doctor (in DRC, through your company's medical contact). In India, Tele-MANAS is free and open 24×7: 14416 or "
-                "1-800-891-4416. It's an Indian number, so it may not connect from a Congolese SIM."]),
+         byEnd="A line every day with mood; weekly go-live numbers; 3 STAR stories", budget="About 5 a day (40 a week)",
+         assessed="A line has a real result with a number, not just “worked on X”", notEnough="“Worked on X”",
+         success="A line on 80% of days; weekly go-live numbers; 3 STAR stories", targetLevel="5",
+         stretch="Manager uses one of your stories",
+         rules=["One line every day with the 9 fields (date, area, task, problem, action, result, skill, evidence, lesson), plus a "
+                "mood score from 1 to 5.",
+                "Every Sunday, star the best line of the week (★) and write the week's 5 go-live numbers: records loaded · rows "
+                "rejected then fixed · users trained · issues closed · hours saved.",
+                "At month end, turn the starred lines into a STAR story (under 150 words): #1 Mon 30 Nov · #2 Wed 30 Dec · #3 Fri 29 Jan."]),
+    dict(id="life", name="Health · family · money · social", short="Health", objective="Sustainable progress and a life outside work",
+         byEnd="Sleep and exercise most days; savings automated; 3 money checks; doctor or counsellor conversation; marriage process agreed",
+         budget="Exercise 3 × 25 · alone time 2 × 15 · 60 off on Saturday · call home 25 (190 a week)",
+         assessed="Habits ticked; nights with 7 h of sleep", notEnough="",
+         success="Sleep 7 h most nights; exercise 2–3 times most weeks; savings automated; 3 money checks; health conversation held; "
+                 "marriage process agreed", targetLevel="4", stretch="No week without a family call or a social contact",
+         rules=["Every day: 7 hours of sleep with a fixed lights-out time · treated water · malaria prevention · 10 minutes of daylight.",
+                "Mon · Wed · Fri: exercise 20–30 min (2 is fine in busy weeks). Tue · Thu: 10–20 minutes alone time, no screen. "
+                "Wednesdays: one meal or walk with a colleague. Saturday: 60 minutes fully off. Sunday: call home, and one message "
+                "or call to someone on your list of 10.",
+                "Money plan: emergency fund of 6 × your essential monthly costs, before January 2028. Automatic transfers the day after "
+                "salary (from 6 Dec): one to the emergency fund, one to an exam and practice fund. Avoid rented “SAP server access” "
+                "and any “placement guarantee” courses.",
+                "If low mood or poor sleep lasts more than two weeks, see a doctor or counsellor, through your company's medical "
+                "contact in DRC. This is planned for 20 Dec, not left to chance. In India, Tele-MANAS is free and open 24×7: 14416 "
+                "or 1-800-891-4416 (an Indian number; it may not connect from a Congolese SIM).",
+                "Protect health, sleep and family responsibilities. No streak is worth losing them."]),
+    dict(id="practice", name="Daily practice", short="Practice", objective="Calm daily rhythm and simple remedies",
+         byEnd="Morning mantra and silence most days; weekly practices kept", budget="10–15 a day (75 a week)",
+         assessed="Done (y/n)", notEnough="", success="Morning practice on most days", targetLevel="4", stretch="Every day",
+         rules=["No gemstones and no paid pujas. About 10 minutes a day (15 on Mondays).",
+                "Every morning: Om Gam Ganapataye Namah ×11 · 5 minutes of silence · one line: what you will finish today.",
+                "Mon: Om Namah Shivaya ×108; a call or message to your mother · Tue: Hanuman Chalisa; hard exercise; no angry messages · "
+                "Fri: Om Shum Shukraya Namah ×27; tidy room and clothes; one small kindness · Sat: one act of service (monthly, 5 Dec "
+                "and 2 Jan: a gift in kind from a small fixed budget) · Sun: feed a stray dog or birds; write 3 things that went right.",
+                "Tracked as a habit (most days), never as study time."]),
     dict(id="review", name="Weekly review", short="Review", objective="Honest weekly checkpoint",
-         byEnd="11 checkpoint tables filled", budget="Sunday 15 min", assessed="Every area has an actual result written, not just ticks",
-         notEnough="Ticks without results", success="", targetLevel="", stretch="",
-         rules=["Be honest in the review. A ticked task with a weak result is written as weak. Two weeks in a row below target in one "
-                "area means the plan changes (fewer new topics, more practice), not that you try harder on less sleep."]),
+         byEnd="11 checkpoint tables filled", budget="Sunday 15",
+         assessed="Every area has an actual result written, not just a tick", notEnough="Ticks without results", success="",
+         targetLevel="", stretch="",
+         rules=["Fill in the checkpoint table during the Sunday review, writing what actually happened, not just ticks.",
+                "Spending total · mood average · nights with 7 h sleep · next week's load: normal or reduced · download next week's "
+                "lectures and SAP pages."]),
 ]
 
+# Section 9: the rubric for recordings, demos and trainings (0–2 each, out of 10).
 RUBRIC = dict(
     criteria=[
         dict(name="Clarity", levels=["Main point unclear", "Main point appears late", "Main point in the first 15 seconds"]),
-        dict(name="Structure", levels=["Jumps around", "Partly ordered", "Problem → action → result, in order"]),
-        dict(name="Confidence", levels=["Many fillers or apologies", "Some fillers", "Steady pace; 3 fillers a minute or fewer; no apologising"]),
+        dict(name="Structure", levels=["No order", "Some order", "Problem → what you did → result"]),
         dict(name="Accuracy", levels=["A technical error", "Small slip", "Every fact checked against your notes"]),
         dict(name="Audience", levels=["Jargon, no example", "One example", "A non-expert could repeat it; one concrete example"]),
+        dict(name="Delivery", levels=["Rushed or read out", "Some pauses", "Calm pace; eye contact or steady voice"]),
     ],
-    note="Listen once and write one thing to change next time.",
+    note="Targets: 6/10 or better in November–December, 7/10 or better in January.",
 )
 
-# ------------------------------------------------------------------------------------------- French (section 7)
+# ------------------------------------------------------------------------------------------- French (section 9)
 G = lambda *p: [dict(fr=f, en=e) for f, e in p]
 FRENCH = [
     dict(week=1, theme="Greetings and basics", words=G(("bonjour", "hello"), ("merci", "thank you"), ("s'il vous plaît", "please"),
-        ("excusez-moi", "excuse me, sorry"), ("je m'appelle", "my name is"), ("enchanté", "nice to meet you"), ("oui", "yes"), ("non", "no"),
-        ("d'accord", "OK, agreed"), ("à demain", "see you tomorrow")),
-         sentences=G(("Bonjour, je m'appelle Nani. Enchanté.", "Hello, I'm Nani. Nice to meet you."),
-                     ("Excusez-moi, vous pouvez répéter, s'il vous plaît ?", "Sorry, can you repeat, please?"),
-                     ("Je ne comprends pas. Plus lentement, s'il vous plaît.", "I don't understand. More slowly, please."),
-                     ("D'accord, merci beaucoup.", "OK, thank you very much."),
-                     ("Bonne journée, à demain !", "Have a good day, see you tomorrow!"))),
+         ("excusez-moi", "excuse me, sorry"), ("je m'appelle", "my name is"), ("enchanté", "nice to meet you")), sentences=[]),
     dict(week=2, theme="Meetings and time", words=G(("une réunion", "a meeting"), ("aujourd'hui", "today"), ("demain", "tomorrow"),
-        ("le matin", "the morning"), ("l'après-midi", "the afternoon"), ("une heure", "an hour, one o'clock"), ("lundi", "Monday"),
-        ("vendredi", "Friday"), ("la semaine", "the week"), ("commencer", "to start")),
-         sentences=G(("La réunion est à dix heures.", "The meeting is at ten."), ("On commence à neuf heures ?", "Shall we start at nine?"),
-                     ("On se voit demain matin.", "See you tomorrow morning."), ("Vendredi, je présente une démo.", "On Friday I'm presenting a demo."),
-                     ("Cette semaine, on finit les tests.", "This week we finish the tests."))),
+         ("le matin", "the morning"), ("l'après-midi", "the afternoon"), ("la semaine", "the week")), sentences=[]),
     dict(week=3, theme="The system", words=G(("le système", "the system"), ("l'écran", "the screen"), ("l'utilisateur", "the user"),
-        ("le champ obligatoire", "the mandatory field"), ("remplir", "to fill in"), ("enregistrer", "to save"), ("modifier", "to change, edit"),
-        ("supprimer", "to delete"), ("importer", "to import"), ("le mot de passe", "the password")),
-         sentences=G(("Ouvrez cet écran, s'il vous plaît.", "Please open this screen."), ("Ce champ est obligatoire.", "This field is mandatory."),
-                     ("Remplissez ce champ, puis cliquez sur « Enregistrer ».", "Fill in this field, then click “Save”."),
-                     ("On importe le fichier Excel.", "We're importing the Excel file."),
-                     ("Je ne peux pas me connecter : le mot de passe est incorrect.", "I can't log in: the password is wrong."))),
-    dict(week=4, theme="Purchasing", words=G(("un fournisseur", "a vendor, supplier"), ("un achat", "a purchase"),
-        ("un bon de commande", "a purchase order"), ("la quantité", "the quantity"), ("le prix", "the price"), ("la réception", "the goods receipt"),
-        ("la marchandise", "the goods"), ("l'entrepôt", "the warehouse"), ("une facture", "an invoice"), ("approuver", "to approve")),
-         sentences=G(("Le fournisseur est créé ?", "Is the vendor created?"), ("Le bon de commande est validé.", "The purchase order is approved."),
-                     ("La marchandise est arrivée à l'entrepôt.", "The goods have reached the warehouse."),
-                     ("Le montant de la facture est correct.", "The invoice amount is correct."),
-                     ("La facture est en attente d'approbation.", "The invoice is waiting for approval."))),
-    dict(week=5, theme="Sales", words=G(("un client", "a customer"), ("un devis", "a quote"), ("une commande", "an order"),
-        ("la livraison", "the delivery"), ("prévue", "planned"), ("une remise", "a discount"), ("le total", "the total"), ("en retard", "late"),
-        ("le paiement", "the payment"), ("payé", "paid")),
-         sentences=G(("Le client a accepté le devis.", "The customer accepted the quote."), ("La livraison est prévue jeudi.", "Delivery is planned for Thursday."),
-                     ("Il y a une remise de dix pour cent.", "There's a 10% discount."), ("La livraison est en retard.", "The delivery is late."),
-                     ("Le client a payé la facture.", "The customer has paid the invoice."))),
-    dict(week=6, theme="Accounting", words=G(("une écriture", "an accounting entry"), ("le débit", "the debit"), ("le crédit", "the credit"),
-        ("le grand livre", "the general ledger"), ("un compte", "an account"), ("le solde", "the balance"), ("la balance", "the trial balance"),
-        ("équilibrée", "balanced, agrees"), ("le bilan", "the balance sheet"), ("la TVA", "VAT, sales tax")),
-         sentences=G(("On passe une écriture comptable.", "We post an accounting entry."),
-                     ("Ce montant va au débit du compte.", "This amount goes on the debit side of the account."),
-                     ("Le solde du compte est correct.", "The account balance is correct."), ("La balance est équilibrée.", "The trial balance agrees."),
-                     ("Le montant de la TVA est correct.", "The VAT amount is correct."))),
+         ("le champ obligatoire", "the mandatory field"), ("enregistrer", "to save"), ("le mot de passe", "the password")), sentences=[]),
+    dict(week=4, theme="Purchasing", words=G(("un fournisseur", "a vendor, supplier"), ("un bon de commande", "a purchase order"),
+         ("la quantité", "the quantity"), ("le prix", "the price"), ("la réception", "the goods receipt"), ("une facture", "an invoice")),
+         sentences=[]),
+    dict(week=5, theme="Accounting", words=G(("une écriture", "an accounting entry"), ("le débit", "the debit"), ("le crédit", "the credit"),
+         ("un compte", "an account"), ("le solde", "the balance"), ("le grand livre", "the general ledger")), sentences=[]),
+    dict(week=6, theme="Review: the 30 words from weeks 1–5", words=[], sentences=[]),
     dict(week=7, theme="Support and problems", words=G(("un problème", "a problem"), ("un message d'erreur", "an error message"),
-        ("bloqué", "stuck, blocked"), ("une capture d'écran", "a screenshot"), ("envoyer", "to send"), ("vérifier", "to check"),
-        ("corrigé", "fixed, corrected"), ("résolu", "solved"), ("urgent", "urgent"), ("un ticket", "a (support) ticket")),
-         sentences=G(("J'ai un message d'erreur.", "I have an error message."), ("L'utilisateur est bloqué.", "The user is stuck."),
-                     ("Envoyez-moi une capture d'écran, s'il vous plaît.", "Please send me a screenshot."),
-                     ("C'est corrigé. Vous pouvez vérifier ?", "It's fixed. Can you check?"), ("Le problème est résolu.", "The problem is solved."))),
+         ("bloqué", "stuck, blocked"), ("une capture d'écran", "a screenshot"), ("vérifier", "to check"), ("corrigé", "fixed, corrected")),
+         sentences=[]),
     dict(week=8, theme="Training users", words=G(("une formation", "a training"), ("une étape", "a step"), ("d'abord", "first"),
-        ("ensuite", "next, then"), ("enfin", "finally"), ("un exemple", "an example"), ("montrer", "to show"), ("essayer", "to try"),
-        ("cliquer", "to click"), ("une question", "a question")),
-         sentences=G(("D'abord, on ouvre le module Achats.", "First, we open the Purchasing module."),
-                     ("Ensuite, on choisit le fournisseur.", "Next, we choose the vendor."), ("Je vous montre un exemple.", "I'll show you an example."),
-                     ("Maintenant, essayez, s'il vous plaît.", "Now you try, please."), ("Vous avez des questions ?", "Do you have any questions?"))),
+         ("ensuite", "next, then"), ("un exemple", "an example"), ("essayer", "to try")), sentences=[]),
     dict(week=9, theme="Numbers and money", words=G(("dix", "ten"), ("vingt", "twenty"), ("cinquante", "fifty"), ("cent", "a hundred"),
-        ("mille", "a thousand"), ("soixante-dix", "seventy"), ("quatre-vingts", "eighty"), ("quatre-vingt-dix", "ninety"),
-        ("le franc congolais", "the Congolese franc"), ("le taux de change", "the exchange rate")),
-         sentences=G(("Il y a cinquante lignes dans le fichier.", "There are fifty rows in the file."),
-                     ("Le total est de mille cinq cents dollars.", "The total is 1,500 dollars."),
-                     ("Soixante-dix, quatre-vingts, quatre-vingt-dix.", "Seventy, eighty, ninety."),
-                     ("Le prix est en francs congolais ou en dollars ?", "Is the price in Congolese francs or dollars?"),
-                     ("Quel est le taux de change aujourd'hui ?", "What's the exchange rate today?"))),
-    dict(week=10, theme="Go-live and data", words=G(("le démarrage", "the go-live"), ("la mise en production", "the move to production"),
-        ("les données de base", "master data"), ("un modèle", "a template"), ("une colonne", "a column"), ("un doublon", "a duplicate"),
-        ("le solde d'ouverture", "the opening balance"), ("un écart", "a difference, gap"), ("le plan de bascule", "the cutover plan"),
-        ("une sauvegarde", "a backup")),
-         sentences=G(("Le démarrage est prévu lundi.", "Go-live is planned for Monday."),
-                     ("Remplissez le modèle, colonne par colonne.", "Fill in the template, column by column."),
-                     ("Ce fournisseur est un doublon.", "This vendor is a duplicate."),
-                     ("Il y a un écart dans le solde d'ouverture.", "There's a difference in the opening balance."),
-                     ("Le plan de bascule est prêt.", "The cutover plan is ready."))),
+         ("mille", "a thousand"), ("le taux de change", "the exchange rate")), sentences=[]),
+    dict(week=10, theme="Go-live and data", words=G(("le démarrage", "the go-live"), ("les données de base", "master data"),
+         ("un modèle", "a template"), ("une colonne", "a column"), ("un doublon", "a duplicate"), ("une sauvegarde", "a backup")),
+         sentences=[]),
+    # Week 11: review + the 1-minute introduction (T1402), whose sentences are built in the app.
     dict(week=11, theme="Review and your introduction", words=[],
-         sentences=G(("Je m'appelle Nani.", "I'm Nani."), ("Je travaille sur le démarrage du système.", "I work on the system go-live."),
+         sentences=G(("Je m'appelle Nani.", "My name is Nani."),
+                     ("Je travaille sur le démarrage du système.", "I work on the system go-live."),
                      ("Je vérifie les données et je forme les utilisateurs.", "I check the data and train the users."),
-                     ("Je parle un peu français.", "I speak a little French."), ("J'apprends chaque semaine.", "I'm learning every week."))),
+                     ("Je parle un peu français.", "I speak a little French."),
+                     ("J'apprends chaque semaine.", "I'm learning every week."))),
 ]
 
 
-# ------------------------------------------------------------------------------------------- weekly checkpoints (section 11)
+# ------------------------------------------------------------------------------------------- weekly checkpoints (section 13)
 def checkpoints():
     lines = PDF_TEXT.read_text(encoding="utf-8").split("\n")
-    names = [("Python / AI", "python"), ("Accounting", "accounting"), ("French", "french"), ("Comms", "comms"), ("LinkedIn", "linkedin"),
-             ("Evidence log", "evidence"), ("Tracker app", "app"), ("Health ·", "life")]
+    names = [("SAP Finance", "sap"), ("Accounting", "accounting"), ("Python / AI", "python"), ("Career", "career"), ("French", "french"),
+             ("Comms", "comms"), ("Evidence log", "evidence"), ("Health ·", "life")]
     out = {}
     for i, l in enumerate(lines):
         m = re.search(r"Week (\d+) checkpoint · Sunday review", l)
@@ -212,63 +202,82 @@ def checkpoints():
         for x in lines[i + 3:]:
             if "Planned / done" in x:
                 break
-            if not x.strip() or "Eight-Area Career" in x or x.strip().startswith("Area "):
+            if not x.strip() or "Fresh Start Career Roadmap" in x or x.strip().startswith("Area "):
                 continue
             hit = next(((n, a) for n, a in names if x.lstrip().startswith(n)), None)
+            # The health row's name runs over 3 lines ("Health · / family · / money"): drop those words.
             if hit:
                 cur = hit[1]
-                res[cur] = x.strip()[len(hit[0]):].strip()
+                text = x.strip()[len(hit[0]):].strip()
+            else:
+                text = x.strip()
+            text = re.sub(r"^(?:family ·|money)(?:\s+|$)", "", text)
+            if hit:
+                res[cur] = text
             elif cur:
-                res[cur] = (res[cur] + " " + x.strip()).strip()
-        out[int(m.group(1))] = {a: re.sub(r"\s+", " ", re.sub(r"\s*family ·\s*|\bmoney\b(?=$)", " ", t)).strip() for a, t in res.items()}
+                res[cur] = (res[cur] + " " + text).strip()
+        out[int(m.group(1))] = {a: re.sub(r"\s+", " ", t).strip() for a, t in res.items()}
     return out
 
 
 CHECKPOINTS = checkpoints()
 assert sorted(CHECKPOINTS) == list(range(1, 12)) and all(len(v) == 8 for v in CHECKPOINTS.values()), CHECKPOINTS
-WEEK_FOCUS = {1: "Finish the validator", 2: "Manager update", 3: "RAG: chunks and keyword search", 4: "RAG: better retrieval and sources",
-              5: "RAG testing, 16/20", 6: "Demo #1 (holiday week)", 7: "Validator v2 (holiday week)", 8: "Error handling and regression",
-              9: "SQL", 10: "Extend the assistant", 11: "Demo #2"}
+# Section 4, "Load check, week by week".
+WEEK_FOCUS = {1: "Fresh start · the validator finds all 10 errors", 2: "Manager update", 3: "Retrieval begins · automatic savings",
+              4: "Better retrieval · user training #1", 5: "The December conversation · retrieval 16/20", 6: "Demo #1 (holiday week)",
+              7: "SQL and resume v0 (holiday week)", 8: "Validator v2 · salary targets", 9: "SQL joins and reconciliation · training #2",
+              10: "Migration template spec · role case draft", 11: "Demo #2 and the role case"}
 
-# Section 13: the reduced routine for busy go-live weeks (about 20 minutes a day).
+# Section 14: the reduced routine for busy go-live weeks (about 20 minutes a day). days: 1 = Monday … 7 = Sunday.
 REDUCED = [
-    dict(id="red-evidence", area="evidence", action="One line every day: busy weeks produce the best evidence", time="5 min/day", minutes=5,
-         days=[1, 2, 3, 4, 5, 6, 7]),
-    dict(id="red-accounting", area="accounting", action="Flashcards only, no new lecture", time="15 min/day", minutes=15, days=[1, 2, 3, 4, 5]),
-    dict(id="red-french", area="french", action="2 words used at work; Friday 10-word quiz", time="10 min/week", minutes=0, days=[1, 2, 3, 4, 5]),
+    dict(id="red-evidence", area="evidence", action="One line every day, with mood: busy weeks produce the best evidence", time="5 min/day",
+         minutes=5, days=[1, 2, 3, 4, 5, 6, 7]),
+    dict(id="red-accounting", area="accounting", action="Flashcards only, no new lecture", time="15 min/day", minutes=15, days=[1, 2, 3, 4]),
+    dict(id="red-sap", area="sap", action="Tuesday flashcards only; Friday topic moves to next week", time="10 min/week", minutes=10, days=[2]),
+    dict(id="red-french", area="french", action="2 words used at work; Thursday quiz", time="10 min/week", minutes=0, days=[1, 2, 3, 4]),
     dict(id="red-comms", area="comms", action="“So to confirm…” once a day (it saves you time)", time="at work", minutes=0, days=[1, 2, 3, 4, 5]),
-    dict(id="red-python", area="python", action="Saturday: 15-min revision + finish only the current step. Sunday off", time="60 min", minutes=60,
-         days=[6]),
-    dict(id="red-app", area="app", action="Pause building; just tick tasks", time="1 min/day", minutes=0, days=[]),
-    dict(id="red-linkedin", area="linkedin", action="Reply to messages only", time="5 min", minutes=5, days=[7]),
-    dict(id="red-life", area="life", action="Sleep first; two 10-min walks; Sunday call home", time="—", minutes=0, days=[1, 2, 3, 4, 5, 6, 7]),
+    dict(id="red-python", area="python", action="Saturday: 15-min revision + finish only the current step. Sunday off", time="60 min",
+         minutes=60, days=[6]),
+    dict(id="red-career", area="career", action="Only fixed-date steps (manager email, December conversation); everything else waits",
+         time="as needed", minutes=0, days=[]),
+    dict(id="red-life", area="life", action="Sleep first; two 10-minute walks; Sunday call home", time="—", minutes=0, days=[1, 2, 3, 4, 5, 6, 7]),
+    dict(id="red-practice", area="practice", action="Morning mantra and silence only", time="5 min/day", minutes=5, days=[1, 2, 3, 4, 5, 6, 7]),
     dict(id="red-review", area="review", action="10 min Sunday: which week to repeat", time="10 min", minutes=10, days=[7]),
 ]
 RECOVERY = ["Missed a day? Don't double up. Do the next task in order tomorrow.",
             "Missed a week? Repeat the Monday quiz first, then continue where you stopped.",
             "Two reduced weeks in a row? Shift every later date by one week. The sequence stays; only dates move.",
             "Missing a week is fine. Don't let it become a month."]
+# Section 16: rules that don't change.
 RULES = ["Fictional data only for all practice.",
          "Never put client names, PAN, GSTIN, bank details, invoices or confidential internal information into external AI tools or "
          "personal repositories, unless the company expressly approves it.",
+         "Check your contract before publishing anything; build on personal time and devices.",
          "Type and understand code; don't copy AI output blindly. Predict the output before running it.",
          "Stuck for 15 minutes? Ask for a hint, not a complete solution.",
+         "Never invent experience, titles or dates.",
+         "Never resign without a written offer.",
          "Keep the plan manageable during go-live periods: use the reduced routine without guilt.",
          "Recover after missed days by continuing in order, not by doubling up.",
          "Protect health, sleep and family responsibilities. No streak is worth losing them.",
          "No new subjects unless this plan is reviewed first.",
-         "Keep the original objectives unless there's a clear, written reason to change one.",
-         "Private GitHub repos; app signing key only in GitHub Secrets and your private Drive."]
+         "Private GitHub repos; the app's signing key only in GitHub Secrets and your private Drive."]
+# The dated checks of each month, collected from sections 5–12 (summary only; the tasks are the CSV's).
 MONTHLY = {
-    "python": ["Sat 28 Nov: validate_pan() from memory, no AI", "Sat 26 Dec: explain retrieval and sources, no notes",
-               "Sun 31 Jan: one check function from a blank file, no AI"],
-    "accounting": ["Mon 30 Nov: 20-card quiz, 16/20", "Fri 18 Dec test #1 8/10; Mon 4 Jan self-test 8/10", "Thu 28 Jan: test #2, 10/12"],
-    "french": ["Fri 27 Nov: 20 words, 16/20", "Thu 31 Dec: 20 words, 16/20", "25–27 Jan: three quizzes 16/20; Fri 29 Jan intro 6/10"],
-    "comms": ["Sun 29 Nov manager recording 6/10", "Demo #1 video 6/10; training #1", "Demo #2 video 7/10; training #2"],
-    "linkedin": ["Profile done; 1 message", "6 messages by 3 Jan", "9 messages; replies followed up"],
-    "evidence": ["STAR #1", "STAR #2", "STAR #3; 80% of working days logged"],
-    "app": ["Step 1; prompt ready", "Steps 2–4", "Steps 5–10; restore drill passed"],
-    "life": ["Money check #1", "Money check #2", "Money check #3"],
+    "sap": ["Fri 20 Nov: first SAP Friday", "SAP Fridays: organisation, master data, P2P, P2P accounting",
+            "Fri 29 Jan: SAP check 1 — glossary quiz 20/25; P2P aloud 7/10"],
+    "accounting": ["Mon 30 Nov: November check 16/20", "Mon 21 Dec: test #1 8/10 · Mon 4 Jan: self-test 8/10", "Thu 28 Jan: test #2 10/12"],
+    "python": ["Sun 22 Nov: validator finds all 10 errors · Sat 28 Nov: no-AI check #1",
+               "Sun 20 Dec: retrieval 16/20 · Sat 26 Dec: no-AI check #2 · Sun 27 Dec: Demo #1",
+               "Sun 24 Jan: retrieval 20/25 · Sat 30 Jan: no-AI check #3 · Sun 31 Jan: Demo #2"],
+    "career": ["LinkedIn headline and About; gap story; contract check", "December conversation; LinkedIn messages 1–2",
+               "Resume v0; salary targets; messages 3–4; role case sent (31 Jan)"],
+    "french": ["Thursday quizzes 10/12", "Thu 24 Dec: December check 16/20", "Mon 25 Jan: review 16/20 · Thu 28 Jan: introduction 6/10"],
+    "comms": ["Sunday recordings 6/10; manager update (29 Nov)", "Training #1 (10 Dec); Demo #1 video", "Training #2 (14 Jan); recordings 7/10; Demo #2 video"],
+    "evidence": ["STAR #1 (Mon 30 Nov)", "STAR #2 (Wed 30 Dec)", "STAR #3 (Fri 29 Jan); a line on 80% of days"],
+    "life": ["Lights-out time set · money check #1 (30 Nov)", "Automatic savings (6 Dec) · health conversation (20 Dec) · money check #2 (31 Dec)",
+             "Money check #3 (29 Jan) · marriage process agreed"],
+    "practice": ["Morning practice most days", "Gift in kind (5 Dec)", "Gift in kind (2 Jan)"],
 }
 LEVELS = [
     dict(level=1, name="Not started", meaning="Nothing done yet"),
@@ -279,90 +288,105 @@ LEVELS = [
     dict(level=6, name="Demonstrated independently", meaning="Shown or explained to someone else, unaided"),
     dict(level=7, name="Mastered", meaning="Consistent over time, after a gap"),
 ]
+# Section 4: your weekly routine. [day, morning, at work, evening study, study time]
 WEEK_ROUTINE = [
-    ["Mon", "Exercise 20–30 min", "Speak early (question or point)", "Accounting 30 · French 10 · Log 5", "45 min"],
-    ["Tue", "—", "“So to confirm…”", "Accounting 30 · French 10 · Log 5 · alone time 15", "45 min"],
-    ["Wed", "Exercise 20–30 min", "Same-day written summary", "Accounting 30 · French 10 · Log 5", "45 min"],
-    ["Thu", "—", "Explain one thing twice", "Accounting 30 · French 10 · Log 5 · alone time 15", "45 min"],
-    ["Fri", "Exercise 20–30 min", "3-sentence update · 2 French words", "Accounting 30 · French quiz 10 · Log 5", "45 min"],
-    ["Sat", "—", "—", "Python / AI 2 h (15 min revision first) · Log 5 · 60 min fully off", "2 h 05"],
-    ["Sun", "—", "—", "Python / AI 1.5 h · App 30 · Recording 10 · LinkedIn 15 · Log 5 · Review 15 · Call home", "2 h 45"],
+    ["Mon", "Mantra + silence · exercise 20–30 min", "Speak early in a meeting",
+     "Accounting 30 (cold quiz first) · French 10 · Log 5 · Om Namah Shivaya, call your mother", "45 min"],
+    ["Tue", "Mantra + silence", "“So to confirm…”", "Accounting 30 · SAP flashcards 10 · Log 5 · alone time · Hanuman Chalisa", "45 min"],
+    ["Wed", "Mantra + silence · exercise 20–30 min", "Same-day written summary",
+     "Accounting 30 · French 10 · Log 5 · meal or walk with a colleague this week", "45 min"],
+    ["Thu", "Mantra + silence", "Explain one thing twice", "Accounting 30 · French quiz 10 · Log 5 · alone time", "45 min"],
+    ["Fri", "Mantra + silence · exercise 20–30 min", "3-sentence update", "SAP Friday 40 · Log 5 · Venus mantra, tidy room, one kindness",
+     "45 min"],
+    ["Sat", "Mantra + silence · one act of service", "—", "Python / AI 2 h · Log 5 · 60 min fully off", "2 h 05"],
+    ["Sun", "Mantra + silence · feed animals", "—", "Python / AI 1.5 h · Career 30 · Recording 10 · Log 5 · Review 15", "2 h 30"],
 ]
 
 # ------------------------------------------------------------------------------------------- short titles for the bundled CSV
-PY_TITLES = {"T001": "Lead-in: validate_gstin() shape check", "T029": "PAN inside GSTIN: all 10 errors found",
-             "T032": "Error report: error_report.xlsx", "T065": "Monthly check: validate_pan() from memory · run_all()",
-             "T068": "User guide, go-live notes, manager update", "T099": "RAG 1: chunks with their source",
-             "T102": "RAG 2: keyword retrieval, top 3", "T134": "RAG 3: TF-IDF retrieval", "T137": "RAG 4: answers name the source",
-             "T169": "RAG test: 20 questions", "T172": "RAG 16/20 · validator + assistant", "T201": "Monthly check: explain retrieval · demo script",
-             "T204": "Demo #1: 3-minute video", "T231": "Validator v2 file · duplicate check", "T234": "IFSC and mobile checks",
-             "T266": "Email check · try / except", "T269": "Regression test on both files", "T301": "SQL with SQLite: 5 queries",
-             "T304": "SQL duplicates: GROUP BY … HAVING", "T336": "Extend the assistant: 20/25", "T339": "Simple screen (Streamlit or text menu)",
-             "T371": "Record Demo #2", "T374": "Monthly check · send Demo #2"}
+PY_TITLES = {"T1023": "Recap without AI · validate_gstin() shape check", "T1027": "PAN inside GSTIN: all 10 errors found",
+             "T1063": "No-AI check #1 · error_report.xlsx · run_all()", "T1067": "User guide, go-live notes, manager update",
+             "T1103": "Retrieval 1: chunks with their source", "T1107": "Retrieval 2: keyword retrieval, top 3",
+             "T1143": "Retrieval 3: TF-IDF retrieval", "T1147": "Retrieval 4: answers name the source",
+             "T1184": "Retrieval test: 20 questions", "T1188": "Retrieval 16/20 · validator + assistant",
+             "T1221": "No-AI check #2 · demo script", "T1225": "Demo #1: 3-minute Data Kit video",
+             "T1258": "SQL with SQLite: 5 queries", "T1262": "Duplicates in SQL and pandas · v2 file",
+             "T1298": "IFSC, mobile and email checks · try / except", "T1302": "Regression test on both files",
+             "T1338": "SQL joins: find orphan bank rows", "T1342": "Reconciliation report",
+             "T1378": "template_spec.csv v0", "T1382": "Extend the assistant: 20/25",
+             "T1418": "No-AI check #3 · record Demo #2", "T1422": "Send Demo #2 · tidy the repo"}
+SAP_TITLES = {"T1018": "SAP Friday: set up and the landscape", "T1058": "SAP Friday: organisation", "T1098": "SAP Friday: master data",
+              "T1138": "SAP Friday: P2P in SAP", "T1179": "SAP Friday: the accounting side of P2P",
+              "T1293": "SAP Friday: G/L accounts and a journal entry in SAP", "T1333": "SAP Friday: data migration in SAP",
+              "T1373": "SAP Friday: O2C in SAP", "T1413": "SAP check 1: glossary quiz · P2P aloud"}
 
 
 def clean(t):
-    t = re.sub(r"\s*\((?:rewatch|if short|answer|solve|training day|offline|online|section|10 min|15 min|25 min)[^)]*\)", "", t)
+    t = re.sub(r"\s*\((?:rewatch|answer|solve|training day|10 min|15 min|25 min)[^)]*\)", "", t)
     t = t.replace("NPTEL ", "")
     return re.sub(r"\s+", " ", t).strip(" ·")
 
 
 def title(r):
     tid, area, learn, build = r["task_id"], AREA_IDS[r["area"]], r["learn_practise"], r["build_deliver"]
+    learn = "" if learn == "—" else learn
+    build = "" if build == "—" else build
     if area == "python":
         return PY_TITLES[tid]
-    if area == "app":
-        return learn.split(":")[0].strip()
+    if area == "sap":
+        if learn.startswith("SAP flashcards"):
+            return "SAP flashcards: 5 new + 5 older terms"
+        return SAP_TITLES[tid]
     if area == "accounting":
-        if learn.startswith("Quiz:"):
-            parts = learn.split(" · ", 1)
-            return "Cold quiz" + (" · " + clean(parts[1]) if len(parts) > 1 else "")
         if learn.startswith("November check"):
-            return "November check: 20-card quiz · 2.0 Recap"
+            return "November check: 20-card quiz · 1.10 Income Statement"
+        if learn.startswith("December check"):
+            return "December check: 10-entry self-test"
         if learn.startswith("January check"):
             return "January check: mark test #2"
+        if learn.startswith("Quiz:"):
+            parts = learn.split(" · ", 1)
+            lead = "Which side? quiz" if "which side" in parts[0] else "Cold quiz"
+            return lead + (" · " + clean(parts[1]) if len(parts) > 1 else "")
         if learn == "Light day":
             return "Light day: 15 min flashcards"
         if learn == "Part 2":
             return "Test #2, part 2: post and balance"
-        if learn.startswith("No video"):
-            lead = learn.split(": ", 1)[1] if ": " in learn else build
-            if lead.startswith("(training day"):
-                lead = build
-            if len(lead.split()) <= 3 and lead != build:
-                lead = lead + ": " + build.replace(" in your own words with one example", "").split(";")[0]
-            lead = clean(lead)
-            return (lead[:1].upper() + lead[1:])[:72].rstrip(" ,")
+        if learn.startswith("No video: cumulative test #2"):
+            return "Test #2, part 1: 12 transactions → journal"
+        if learn.startswith("No video: "):
+            t = clean(learn.split(": ", 1)[1])
+            return t[:1].upper() + t[1:]
+        if learn.startswith("2.6 (second half)"):
+            return "2.6 Journal entries (second half)"
         return clean(learn)
+    if area == "career":
+        return re.sub(r"\s*\([^)]*\)", "", learn).strip()
     if area == "french":
-        m = re.match(r"Week (\d+) · ([^:]+): words 1–5", learn)
-        if m:
-            return f"Week {m.group(1)} · {m.group(2)}: words 1–5"
-        if learn.startswith("Words 6–10"):
-            return "Words 6–10 · listen 3 min"
-        if learn.startswith("Read the week's 5"):
-            return "Read the 5 model sentences, translate back"
-        if learn.startswith("Read and say"):
-            return "Read, say and record the 5 sentences"
-        if learn.startswith("Say the 5"):
-            return "Say the 5 sentences · record 1 min"
-        if learn.startswith("At work: use 2"):
-            return "November check: 20 words" if "November French check" in build else "Friday quiz: 10 words"
-        if learn.startswith("Quiz: 20 words"):
+        m = re.match(r"Week (\d+) · ([^:]+): (.+)", learn)
+        if m and "Review" not in m.group(2):
+            return f"Week {m.group(1)} · {m.group(2)}: 6 new words"
+        if learn.startswith("Week 6 · Review"):
+            return "Week 6 review: translate 20 words"
+        if learn.startswith("Week 11 · Review"):
+            return "Week 11 review: 20 words (weeks 7–10)"
+        if learn.startswith("Say your 6 sentences"):
+            return "Say your 6 sentences · record 1 min"
+        if learn.startswith("Say 5 sentences"):
+            return "Say 5 work sentences · record 1 min"
+        if learn.startswith("Quiz: this week's 6"):
+            return "Quiz: 12 words, both directions"
+        if learn.startswith("December French check"):
             return "December check: 20 words"
-        if learn.startswith("Quiz: 10 words"):
-            return "Quiz: 10 words (week 6)"
-        if learn.startswith("Review quiz"):
-            return "Review quiz: " + re.search(r"weeks \d+–\d+", learn).group(0)
         if learn.startswith("Your 1-minute"):
             return "Your 1-minute introduction"
-        if learn.startswith("At work: say your introduction"):
+        if learn.startswith("January French check"):
             return "January check: your introduction"
-        return clean(learn)
+        raise ValueError(tid)
     if area == "comms":
         if r["weekday"] == "Sun":
             topic = build.split(": ", 1)[1] if ": " in build else build
-            return "Recording: " + topic
+            topic = re.sub(r"\s*\([^)]*\)", "", topic).replace(" in 30 seconds", "")
+            return ("Recording: " + topic[:1].upper() + topic[1:])[:72].rstrip(" ,")
         if learn.startswith("User training"):
             return learn.split(" (")[0] + ": " + build.split(":")[0]
         if learn.startswith("Speak early"):
@@ -376,39 +400,41 @@ def title(r):
         if learn == "Concise update":
             return "Concise update: done · next · blocker"
         return clean(learn)
-    if area == "linkedin":
-        if learn.startswith("Projects section"):
-            return "Projects section · find someone who passed C_TS4FI"
-        if learn.startswith("Skills section"):
-            return "Skills section · find a data-migration consultant"
-        if learn.startswith("Follow-ups"):
-            return "Follow-ups: answer every reply"
-        return clean(learn.split(" · ")[0])
     if area == "evidence":
-        if tid == "T002":
-            return "Set up the log"
+        if learn.startswith("Set up the log"):
+            return "Set up the log · first line with mood"
         star = re.search(r"STAR #(\d)", build)
         if star:
-            return f"Today's log line · STAR #{star.group(1)}"
+            return f"Log line + mood · STAR #{star.group(1)}"
         if learn.startswith("Star the best"):
-            return "★ Star the week's best line · log line"
+            return "★ Star the week's best line · 5 go-live numbers"
         if "Python session" in build:
-            return "Log today's Python session"
-        return "Today's log line"
+            return "Log today's Python session + mood"
+        return "Today's log line + mood"
     if area == "life":
         if learn.startswith("Rest day"):
             return learn.split(":")[0]
-        if tid == "T003":
+        if "lights-out" in build:
             return "Choose a fixed lights-out time"
         if "MONEY:" in build:
-            return re.search(r"Money check #\d", build).group(0)
+            m = re.search(r"Money check #\d", build)
+            return (m.group(0) + " · " + build.split(" (")[0].split(" · ")[0].lower()) if m else "Call home · set up automatic savings"
+        if "HEALTH:" in build:
+            return "Call home · talk to a doctor or counsellor"
         if "FAMILY:" in build:
             return "Call home · family step"
         if learn == "Recovery":
-            return "60 min fully off"
-        if learn == "Family":
-            return "Call home"
-        return build.split(" (")[0]
+            return "60 min fully off" + (" · group activity" if "group activity" in build else "")
+        if learn.startswith("Family"):
+            return "Call home · list of 10 people" if "write a list" in build else "Call home · one reach-out"
+        return build.split(" (")[0].split(" · ")[0]
+    if area == "practice":
+        if learn.startswith("Tonight"):
+            return "First practice tonight · Hanuman Chalisa"
+        extra = {"Hanuman Chalisa": "Hanuman Chalisa", "Om Shum Shukraya": "Venus mantra, tidy room", "One act of service": "one act of service",
+                 "Feed a stray": "feed animals, 3 good things", "Evening: Om Namah Shivaya": "Om Namah Shivaya, call your mother"}
+        hit = next((v for k, v in extra.items() if build.startswith(k)), None)
+        return "Morning mantra + silence" + (" · " + hit if hit else "")
     if area == "review":
         return f"Weekly review · week {r['week']} checkpoint"
     raise ValueError(tid)
@@ -521,50 +547,59 @@ PY_Q = [
       "Fix the weakest notes and re-test (Sun 20 Dec)."),
 ]
 
-# Practice cards: the week each bundled card's topic is taught. It unlocks with that area's first task of the week.
-CARD_WEEKS = {}
-for i in range(1, 29): CARD_WEEKS[f"PY-{i:03d}"] = 1
-for i in (29, 30, 31, 36, 37, 38): CARD_WEEKS[f"PY-{i:03d}"] = 7
-for i in (32, 33, 34, 35, 39, 40, 41, 42, 43, 44): CARD_WEEKS[f"PY-{i:03d}"] = 8
-for i in (45, 46, 47): CARD_WEEKS[f"PY-{i:03d}"] = 10
-for i in list(range(1, 12)) + [23, 24]: CARD_WEEKS[f"ER-{i:02d}"] = 1
-for i in (12, 13, 14, 15, 16, 17): CARD_WEEKS[f"ER-{i:02d}"] = 7
-CARD_WEEKS["ER-18"] = 8
-for i in (19, 20, 21, 22): CARD_WEEKS[f"ER-{i:02d}"] = 11
-for i in range(1, 6): CARD_WEEKS[f"SQL-{i:02d}"] = 9
-AC_W = {1: 1, 2: 2, 3: 2, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 3, 10: 3, 11: 4, 12: 4, 13: 4, 14: 4, 15: 4, 16: 4, 17: 4, 18: 4, 19: 4, 20: 5,
-        21: 5, 22: 5, 23: 5, 24: 5, 25: 5, 26: 6, 27: 6, 28: 6, 29: 6, 30: 6, 31: 6, 32: 6, 33: 6, 34: 6, 35: 8, 36: 8, 37: 9, 38: 9}
-for k, w in AC_W.items(): CARD_WEEKS[f"AC-{k:02d}"] = w
-CARD_WEEKS.update({"CM-01": 2, "CM-03": 1, "CM-04": 1, "CM-05": 2, "CM-07": 2})
 
+# The banks above were written for the DRC Edition; the Fresh Start plan teaches some topics in a different week
+# (section 6: income statement and GAAP in week 3, the accounting equation in week 2). A check never asks about
+# a later week, so these move to the week the topic is now taught.
+ACC_WEEK = {"AQ11": 3, "AQ12": 3, "AQ13": 3}
+for q in ACC_Q:
+    q["week"] = ACC_WEEK.get(q["id"], q["week"])
+CALC_WEEK = {"equation": 2}
+for c in CALCS:
+    c["week"] = CALC_WEEK.get(c["kind"], c["week"])
 
+# Practice cards: the plan task whose topic each bundled card covers. The card unlocks when you complete that task.
+# Cards for topics this plan doesn't teach yet (trial balance, final accounts, Streamlit, asset accounting) stay locked.
 def first_task(area, week):
     ids = [r["task_id"] for r in rows if AREA_IDS[r["area"]] == area and int(r["week"]) == week]
     return ids[0] if ids else None
 
 
-AREA_OF_CARD = {"PY": "python", "ER": "python", "SQ": "python", "AC": "accounting", "CM": "comms"}
-CARD_UNLOCKS = {cid: first_task(AREA_OF_CARD[cid[:2]], w) for cid, w in CARD_WEEKS.items()}
-CARD_UNLOCKS.update({"CM-02": "T077", "CM-09": "T077", "CM-06": "T126"})  # STAR #1 line; user training #1
-# Fresh start (16 Nov): the week-1 Python cards unlock with the recap step that re-teaches them
-# (assets/python_recap.csv, PR1–PR7) instead of waiting for T029.
-RECAP_CARDS = {"PR1": [1, 2, 3, 4, 5, 6, 7, 8], "PR2": [9, 10, 11, 12, 13, 14, 15, 16], "PR3": [17, 18, 19, 20],
-               "PR4": [21, 22, 23, 24], "PR5": [25, 26, 27, 28]}
-for step, nums in RECAP_CARDS.items():
-    for i in nums: CARD_UNLOCKS[f"PY-{i:03d}"] = step
-for i in (1, 2, 3, 4, 5): CARD_UNLOCKS[f"ER-{i:02d}"] = "PR5"          # PAN
-for i in (6, 7, 8, 9, 10, 11, 23, 24): CARD_UNLOCKS[f"ER-{i:02d}"] = "PR6"  # GSTIN, duplicates, state codes
+CARD_UNLOCKS = {}
+for i in range(1, 29): CARD_UNLOCKS[f"PY-{i:03d}"] = "T1023"           # recap: basics, functions, pandas, PAN regex
+for i in (36, 37): CARD_UNLOCKS[f"PY-{i:03d}"] = "T1023"               # ^ $ and \d{10}: the PAN / GSTIN checks
+for i in (29, 30, 31): CARD_UNLOCKS[f"PY-{i:03d}"] = "T1262"           # duplicated(), to_excel, seen-set
+CARD_UNLOCKS["PY-032"] = "T1063"                                        # iterrows: error report row by row
+for i in (33, 34, 35, 38, 39, 40, 41, 42): CARD_UNLOCKS[f"PY-{i:03d}"] = "T1298"  # odd cells, +91, email, try / except
+for i in (43, 44): CARD_UNLOCKS[f"PY-{i:03d}"] = "T1302"               # regression testing
+for i in list(range(1, 12)) + [23, 24]: CARD_UNLOCKS[f"ER-{i:02d}"] = "T1027"  # PAN, GSTIN, state codes
+for i in (12, 13, 14, 15, 16, 17, 18): CARD_UNLOCKS[f"ER-{i:02d}"] = "T1298"   # IFSC, mobile, email
+CARD_UNLOCKS["ER-19"] = "T1138"                                         # P2P in order (SAP Friday: P2P)
+for i in (20, 21, 22): CARD_UNLOCKS[f"ER-{i:02d}"] = "T1418"           # agents in P2P (Demo #2 slide)
+CARD_UNLOCKS.update({"SQL-01": "T1258", "SQL-02": "T1258", "SQL-03": "T1262", "SQL-05": "T1262", "SQL-04": "T1338"})
+AC_W = {1: 2, 2: 3, 3: 3, 9: 3, 4: 4, 5: 4, 6: 4, 7: 4, 8: 4, 10: 4, 11: 4, 12: 4, 13: 4, 14: 4, 15: 4, 16: 4, 17: 4, 18: 4, 19: 4,
+        20: 4, 21: 4, 22: 5, 23: 5, 24: 5, 25: 5, 54: 5, 55: 5, 56: 5, 26: 6, 27: 6, 28: 6, 29: 6, 30: 6, 31: 6, 32: 6, 33: 6, 34: 7,
+        35: 8, 36: 8, 37: 9, 38: 9}
+for k, w in AC_W.items(): CARD_UNLOCKS[f"AC-{k:02d}"] = first_task("accounting", w)
+CARD_UNLOCKS.update({"AC-48": "T1138", "AC-49": "T1373"})               # 3-way match (P2P), O2C order (SAP Fridays)
+CARD_UNLOCKS.update({"SAP-02": "T1018", "SAP-01": "T1058", "SAP-04": "T1058", "SAP-07": "T1098", "SAP-14": "T1138", "SAP-15": "T1138",
+                     "SAP-03": "T1293", "SAP-05": "T1293", "SAP-06": "T1293", "SAP-08": "T1293", "SAP-09": "T1293", "SAP-10": "T1293",
+                     "SAP-11": "T1293", "SAP-12": "T1293", "SAP-13": "T1373"})
+CARD_UNLOCKS.update({"CM-03": "T1029", "CM-04": "T1029", "CM-07": "T1069", "CM-05": "T1189", "CM-02": "T1077", "CM-09": "T1077",
+                     "CM-06": "T1134", "CM-01": "T1221"})
 assert all(CARD_UNLOCKS.values()), [k for k, v in CARD_UNLOCKS.items() if not v]
 
 meta = dict(
     app="roadmap-lab", kind="plan-meta", version=VERSION,
-    title="Eight-Area Career Development Roadmap: DRC Edition",
-    subtitle="16 November 2026 – 31 January 2027 · follow the order, not the dates",
-    csvName="Eight_Area_Schedule_15Nov2026-31Jan2027.csv", taskCount=len(rows),
-    start="2026-11-16", leadIn="2026-11-15", end="2027-01-31", timeZone="Africa/Kinshasa",
-    bottomLine="One plan, eight areas, all moving every week, for about 8.5 hours of study a week plus exercise: 45 minutes on weekday "
-               "evenings, about 2 hours on Saturday and about 2¾ hours on Sunday. Busy go-live week? Switch to the reduced routine "
-               "(about 20 minutes a day). Follow the order, not the dates. A missed day moves the next task one slot later; nothing is lost.",
+    title="Fresh Start Career Roadmap: SAP Finance Edition",
+    subtitle="Tuesday 17 November 2026 – Sunday 31 January 2027 · follow the order, not the dates",
+    csvName="Fresh_Start_Schedule_17Nov2026-31Jan2027.csv", taskCount=len(rows),
+    # No lead-in in this plan: leadIn = start.
+    start="2026-11-17", leadIn="2026-11-17", end="2027-01-31", timeZone="Africa/Kinshasa",
+    bottomLine="A fresh start on Tuesday 17 November. One plan, all areas moving every week, for about 8.3 hours of study a week, "
+               "plus about 4 hours of exercise, recovery, family time and daily practice. Weekdays are about 45–55 minutes; Saturday "
+               "about 2 hours; Sunday about 2½ hours. Busy go-live week? Switch to the reduced routine. Follow the order, not the "
+               "dates. A missed day moves the next task one slot later; nothing is lost.",
     areas=AREAS, rubric=RUBRIC, levels=LEVELS, french=FRENCH, checkpoints={str(k): v for k, v in CHECKPOINTS.items()},
     weekFocus={str(k): v for k, v in WEEK_FOCUS.items()}, reduced=REDUCED, recovery=RECOVERY, rules=RULES, monthly=MONTHLY,
     weekRoutine=WEEK_ROUTINE, titles=TITLES, accountingQuestions=ACC_Q, journal=JOURNAL, accounts=ACCOUNTS, calcs=CALCS,
@@ -574,28 +609,35 @@ meta = dict(
 
 def check():
     ids = [r["task_id"] for r in rows]
-    assert len(set(ids)) == 380 and ids[0] == "T001" and ids[-1] == "T380"
+    assert len(set(ids)) == 428 and ids[0] == "T1001" and ids[-1] == "T1428"
     assert {r["area"] for r in rows} == set(AREA_IDS), {r["area"] for r in rows}
-    assert all(len(f["words"]) == 10 for f in FRENCH[:10]) and sum(len(f["words"]) for f in FRENCH) == 100
-    assert all(len(f["sentences"]) == 5 for f in FRENCH)
+    assert [a["id"] for a in AREAS] == list(AREA_IDS.values())
+    words = [w for f in FRENCH for w in f["words"]]
+    assert all(len(f["words"]) == 6 for f in FRENCH if f["week"] not in (6, 11)) and len({w["fr"] for w in words}) == len(words) == 54
     for q in ACC_Q + PY_Q:
         assert q["answer"] in q["options"] and len(set(q["options"])) == 4, q["id"]
     for j in JOURNAL:
         assert j["dr"] in ACCOUNTS and j["cr"] in ACCOUNTS, j["id"]
-    # Every French word list in the CSV matches section 7 of the PDF.
+    # Every French word list in the CSV matches section 9 of the PDF.
     for r in rows:
         if AREA_IDS[r["area"]] != "french":
             continue
-        m = re.search(r"words (1–5|6–10): (.+?)(?: · listen|$)", r["learn_practise"])
-        if m:
-            wk = FRENCH[int(r["week"]) - 1]["words"]
-            half = wk[:5] if m.group(1) == "1–5" else wk[5:]
+        m = re.match(r"Week (\d+) · [^:]+: (.+)", r["learn_practise"])
+        if m and "Review" not in r["learn_practise"]:
             csv_words = [w.strip() for w in m.group(2).split(",")]
-            assert csv_words == [w["fr"] for w in half], (r["task_id"], csv_words, [w["fr"] for w in half])
+            assert csv_words == [w["fr"] for w in FRENCH[int(m.group(1)) - 1]["words"]], (r["task_id"], csv_words)
+    # Every SAP Friday topic is the PDF's (section 5).
+    pdf = PDF_TEXT.read_text(encoding="utf-8")
+    for r in rows:
+        if r["area"] == "SAP Finance" and r["learn_practise"].startswith("SAP Friday · "):
+            topic = r["learn_practise"].split(" · ", 1)[1].split(":")[0]
+            assert topic.split()[0] in pdf, topic
     long = [(k, t) for k, t in TITLES.items() if not t or len(t) > 72]
     assert not long, long
+    unknown = [c for c in CARD_UNLOCKS.values() if c not in ids]
+    assert not unknown, unknown
     print(f"OK: {len(rows)} tasks · {len(TITLES)} titles · {len(ACC_Q)} accounting + {len(JOURNAL)} journal + {len(PY_Q)} python questions · "
-          f"{len(CARD_UNLOCKS)} card unlocks · {sum(len(f['words']) for f in FRENCH)} French words · {len(CHECKPOINTS)} checkpoints")
+          f"{len(CARD_UNLOCKS)} card unlocks · {len(words)} French words · {len(CHECKPOINTS)} checkpoints")
 
 
 check()

@@ -134,7 +134,7 @@ object Analytics {
         val exercise = life.filter { it.build.startsWith("Exercise") }
         val alone = life.filter { it.build.contains("alone time") }
         val off = life.firstOrNull { it.learn == "Recovery" }
-        val call = life.firstOrNull { it.learn == "Family" }
+        val call = life.firstOrNull { it.learn.startsWith("Family") }
         return HabitWeek(
             sleepNights = range.count { sleep[it] == true },
             sleepAsked = range.count { sleep.containsKey(it) },
@@ -153,9 +153,10 @@ object Analytics {
         daysSinceActive: Int?,
         today: Long,
     ): NextAction {
-        if (today < plan.leadIn) {
-            return NextAction(NextKind.BEFORE_START, "Your plan starts ${Days.long(plan.leadIn)}",
-                "Optional lead-in: T001 validate_gstin(), then Monday 16 Nov is day 1 (accounting 1.2, French week 1).", "T001")
+        if (today < plan.start) {
+            val first = plan.tasksOn(plan.start).firstOrNull { it.study }
+            return NextAction(NextKind.BEFORE_START, "Your plan starts ${Days.long(plan.start)}",
+                "Day 1: " + plan.tasksOn(plan.start).filter { it.study }.joinToString(" · ") { it.title }, first?.id)
         }
         if (todayPlan.type == DayType.REST) {
             return NextAction(NextKind.REST, "Rest day", "No study today. Call home or a friend; sleep in. It never breaks your streak.", null)
@@ -214,7 +215,7 @@ object Analytics {
         val scored = wc.filter { it.type in Mastery.SCORED_TYPES && it.max > 0 }
         val byArea = (AREA_ORDER + "review").associateWith { a -> planned.count { it.area == a && p(it) == Progress.COMPLETED } to planned.count { it.area == a } }
             .filterValues { it.second > 0 }
-        val weakest = byArea.filterKeys { it != "review" && it != "life" }.minByOrNull { (_, v) -> v.first.toDouble() / v.second }?.key
+        val weakest = byArea.filterKeys { it != "review" && !isHabit(it) }.minByOrNull { (_, v) -> v.first.toDouble() / v.second }?.key
         val end = minOf(today, ws + 6)
         val missed = plan.tasks.filter { t ->
             val st = states[t.id]
@@ -253,16 +254,16 @@ object Analytics {
         )
     }
 
-    /** LinkedIn: conversations started (messages sent) and useful (they replied: 2+ messages). */
+    /** Career: LinkedIn conversations started (messages sent) and answered (they replied). */
     fun conversations(plan: DayPlan, states: Map<String, ItemState>, checks: List<Assessment>): Pair<Int, Int> {
-        val sent = plan.tasks.filter { it.area == "linkedin" && it.doneWhen.contains("Message") && states[it.id]?.progress == Progress.COMPLETED }
+        val sent = plan.tasks.filter { it.area == "career" && it.doneWhen.contains("Message") && states[it.id]?.progress == Progress.COMPLETED }
         val useful = sent.count { t -> checks.filter { it.itemId == t.id && it.type == "outcome" }.maxByOrNull { it.createdAt }?.passed == true }
         return sent.size to useful
     }
 
     /** Evidence: share of working days (Mon–Fri, not rest days) up to today with a log line ticked. Target 80 %. */
     fun loggedWorkingDays(plan: DayPlan, states: Map<String, ItemState>, today: Long): Pair<Int, Int> {
-        val rows = plan.tasks.filter { it.area == "evidence" && it.day <= today && it.day >= plan.start && Days.dow(it.day) <= 5 }
+        val rows = plan.tasks.filter { it.area == "evidence" && it.day <= today && it.day >= plan.firstDay && Days.dow(it.day) <= 5 }
         return rows.count { states[it.id]?.progress == Progress.COMPLETED } to rows.size
     }
 }

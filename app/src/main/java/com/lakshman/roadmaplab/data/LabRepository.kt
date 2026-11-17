@@ -99,11 +99,11 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
         val load = try {
             val meta = asset("plan_meta.json")
             val csv = if (importedCsv.exists()) importedCsv.readText() else asset("schedule.csv")
-            PlanLoad(PlanMetaJson.plan(meta, csv, recapCsv()), null)
+            PlanLoad(PlanMetaJson.plan(meta, csv), null)
         } catch (e: Exception) {
             // Never lose data over a bad plan file: fall back to the bundled plan and say what went wrong.
             try {
-                PlanLoad(PlanMetaJson.plan(asset("plan_meta.json"), asset("schedule.csv"), recapCsv()), "Your imported plan couldn't be read: ${e.message}")
+                PlanLoad(PlanMetaJson.plan(asset("plan_meta.json"), asset("schedule.csv")), "Your imported plan couldn't be read: ${e.message}")
             } catch (e2: Exception) {
                 PlanLoad(null, e2.message)
             }
@@ -235,6 +235,14 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
     }
 
     /** The end-of-day review: a short note. */
+    /** Mood 1–5 for a day (the evidence log's mood score); null clears it. It doesn't count as the day's log. */
+    suspend fun setMood(day: Long, mood: Int?) {
+        db.withTransaction {
+            val old = dao.dayLog(day)?.toDomain() ?: DayLog(day)
+            dao.upsertDayLog(old.copy(mood = mood?.coerceIn(1, 5)).toEntity())
+        }
+    }
+
     suspend fun saveDayNote(day: Long, note: String) {
         db.withTransaction {
             val old = dao.dayLog(day)?.toDomain() ?: DayLog(day)
@@ -314,8 +322,6 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
         )
     }
 
-    /** The Python recap added on your fresh start (PR1–PR7). */
-    private fun recapCsv(): String? = runCatching { asset("python_recap.csv") }.getOrNull()
 
     /**
      * Before a restore or a fresh start, a copy of what's on the phone now is saved privately
@@ -357,14 +363,15 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
      *  - Kept: the plan, the bundled flashcards (locked again until their tasks), and your settings
      *    (cue, reminder, daily minimums, theme).
      */
-    suspend fun startFresh(appVersion: String): File = withContext(Dispatchers.IO) {
+    suspend fun startFresh(appVersion: String, day: Long = Days.today()): File = withContext(Dispatchers.IO) {
         val copy = safetyCopy(appVersion, "before-fresh-start")
         db.withTransaction {
             dao.clearTaskEvents(); dao.clearAssessments(); dao.clearDayTicks(); dao.clearEvidence(); dao.clearDayMeta()
             dao.clearWeeklyReviews(); dao.clearCardStates(); dao.clearReviewLogs(); dao.deleteUserCards()
             dao.clearTaskLogs(); dao.clearDayLogs(); dao.clearDayPlans(); dao.clearPhases(); dao.clearTasks(); dao.clearMilestones()
         }
-        settings.update { it.copy(freshStartDay = Days.today(), freshStartAsked = true, lastBackupDay = 0) }
+        val version = planFlow.value?.plan?.meta?.version.orEmpty()
+        settings.update { it.copy(freshStartDay = day, freshStartAsked = true, freshStartPlan = version, lastBackupDay = 0) }
         copy
     }
 
@@ -400,7 +407,9 @@ class LabRepository(private val context: Context, val db: LabDatabase, val setti
             dao.upsertDayMetaList(s.dayMeta.map { it.toEntity() })
             dao.upsertWeeklyReviews(s.weeklyReviews.map { it.toEntity() })
         }
-        settings.update { s.settings.copy(onboarded = true, v2Intro = true, freshStartAsked = true) }
+        // A restored backup is the records you chose to keep: don't offer a fresh start on top of them.
+        val version = planFlow.value?.plan?.meta?.version.orEmpty()
+        settings.update { s.settings.copy(onboarded = true, v2Intro = true, freshStartAsked = true, freshStartPlan = version) }
         if (dao.cardCount() == 0) loadPlan()
     }
 

@@ -4,6 +4,8 @@ import com.lakshman.roadmaplab.data.LabState
 import com.lakshman.roadmaplab.domain.Analytics
 import com.lakshman.roadmaplab.domain.AreaProgress
 import com.lakshman.roadmaplab.domain.Assessment
+import com.lakshman.roadmaplab.domain.CategoryStats
+import com.lakshman.roadmaplab.domain.Streaks
 import com.lakshman.roadmaplab.domain.Consistency
 import com.lakshman.roadmaplab.domain.ConsistencyInfo
 import com.lakshman.roadmaplab.domain.DayKind
@@ -47,8 +49,12 @@ data class UiState(
     val logged: Pair<Int, Int>,
     val habitsThisWeek: HabitWeek,
     val sleep: Map<Long, Boolean>,
-    /** Show the one-time "Start fresh from today?" card: there are records and you haven't answered yet. */
+    /** Show the one-time "Start fresh?" card: records from an earlier plan, and you haven't answered for this plan. */
     val offerFreshStart: Boolean = false,
+    /** Each of the 10 categories' streak and percentages. */
+    val categories: Map<String, CategoryStats> = emptyMap(),
+    /** Yesterday's planned tasks you haven't ticked: "I did it, I just didn't tick it". */
+    val yesterday: List<PlanTask> = emptyList(),
 ) {
     val totalDone: Int get() = states.values.count { it.progress == Progress.COMPLETED && plan.task(it.itemId) != null }
     val dueByToday: Int get() = plan.tasks.count {
@@ -57,12 +63,20 @@ data class UiState(
     }
     fun level(id: String): Level = levels[id] ?: Level.NOT_STARTED
 
-    /** The week's focus; while your Python recap (PR1–PR7) is open, that's the focus. */
-    fun weekFocus(week: Int): String? =
-        if (plan.tasks.any { it.seq == DayPlan.RECAP && states[it.id]?.progress != Progress.COMPLETED }) "Python recap + accounting"
-        else plan.meta.weekFocus[week]
+    /** The week's focus (section 4's load check). */
+    fun weekFocus(week: Int): String? = plan.meta.weekFocus[week]
     fun checks(id: String): List<Assessment> = checksByItem[id].orEmpty()
+    fun category(id: String): CategoryStats? = categories[id]
+    /** Mood 1–5 for a day, if you gave one. */
+    fun mood(day: Long): Int? = s.dayLogs[day]?.mood
+    /** Average mood over a week (Mon–Sun), or null with no moods. */
+    fun moodAverage(weekStart: Long): Double? = (weekStart..weekStart + 6).mapNotNull { mood(it) }.takeIf { it.isNotEmpty() }?.average()
 }
+
+/** Records made with an earlier plan (other task ids, version-1 logs, or a fresh start before this plan began). */
+fun hasEarlierRecords(s: LabState, plan: DayPlan): Boolean =
+    s.events.any { plan.task(it.itemId) == null } || s.assessments.any { it.itemId != null && plan.task(it.itemId) == null } ||
+        s.legacyTaskLogs > 0 || s.settings.freshStartDay in 1 until plan.start
 
 fun derive(s: LabState, today: Long): UiState? {
     // After a fresh start, days before it are "nothing scheduled", never "missed".
@@ -96,8 +110,8 @@ fun derive(s: LabState, today: Long): UiState? {
         logged = Analytics.loggedWorkingDays(plan, states, today),
         habitsThisWeek = Analytics.habits(plan, Days.weekStart(today), states, sleep, today),
         sleep = sleep,
-        offerFreshStart = !s.settings.freshStartAsked && s.settings.freshStartDay == 0L &&
-            (s.events.isNotEmpty() || s.assessments.isNotEmpty() || s.evidence.isNotEmpty() || s.cardStates.isNotEmpty() ||
-                s.ticks.isNotEmpty() || s.dayLogs.isNotEmpty() || s.legacyTaskLogs > 0),
+        offerFreshStart = s.settings.freshStartPlan != plan.meta.version && hasEarlierRecords(s, plan),
+        categories = Streaks.all(plan, states, s.ticks, s.dayMeta, reducedWeeks, today),
+        yesterday = if (plan.inPlan(today - 1)) Streaks.untickedRecent(plan, states, today) else emptyList(),
     )
 }

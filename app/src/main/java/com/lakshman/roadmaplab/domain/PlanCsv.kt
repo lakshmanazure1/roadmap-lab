@@ -12,9 +12,11 @@ object PlanCsv {
     )
 
     val AREA_IDS = mapOf(
-        "Python/AI" to "python", "Accounting" to "accounting", "French" to "french", "Communication" to "comms",
-        "LinkedIn" to "linkedin", "Evidence log" to "evidence", "App" to "app", "Health/family/money" to "life",
+        "SAP Finance" to "sap", "Accounting" to "accounting", "Python/AI" to "python", "Career" to "career", "French" to "french",
+        "Communication" to "comms", "Evidence log" to "evidence", "Health/family/money" to "life", "Practice" to "practice",
         "Weekly review" to "review",
+        // Earlier plans' categories, so an older plan file still opens.
+        "LinkedIn" to "career", "App" to "app",
     )
 
     class CsvException(message: String) : Exception(message)
@@ -88,7 +90,11 @@ object PlanCsv {
     }
 
     fun kindOf(area: String, weekday: String, learn: String, build: String, milestone: String): TaskKind = when (area) {
-        "accounting", "french", "python", "app", "linkedin" -> TaskKind.SEQUENCE
+        "accounting", "french", "python", "app" -> TaskKind.SEQUENCE
+        // SAP Friday topics follow the order; Tuesday flashcards belong to their day.
+        "sap" -> if (learn.startsWith("SAP flashcards")) TaskKind.DAILY else TaskKind.SEQUENCE
+        // Sunday career steps follow the order; a step on another day (the December conversation) is dated and waits until done.
+        "career" -> if (weekday == "Sun") TaskKind.SEQUENCE else TaskKind.CARRY
         "comms" -> when {
             weekday == "Sun" -> TaskKind.SEQUENCE
             learn.contains("User training") || build.contains("prepare training") -> TaskKind.CARRY
@@ -97,10 +103,11 @@ object PlanCsv {
         "evidence" -> if (build.contains("STAR #")) TaskKind.CARRY else TaskKind.DAILY
         "life" -> when {
             learn.startsWith("Rest day") -> TaskKind.REST
-            build.contains("MONEY:") || build.contains("FAMILY:") || milestone.isNotBlank() -> TaskKind.CARRY
+            build.contains("MONEY:") || build.contains("FAMILY:") || build.contains("HEALTH:") || milestone.isNotBlank() -> TaskKind.CARRY
             else -> TaskKind.DAILY
         }
         "review" -> TaskKind.CARRY
+        // Practice is a daily habit, like health: it belongs to its own day.
         else -> TaskKind.DAILY
     }
 
@@ -166,10 +173,26 @@ object PlanCsv {
                 out += CheckSpec.Quiz("Quick check (Python and RAG)", "python", 4)
                 if (all.contains("Demo", ignoreCase = true) || all.contains("manager")) out += CheckSpec.Demonstrate("Shown to your manager")
             }
-            "linkedin" -> {
-                out += CheckSpec.Checklist("Done when", listOf(dw) + if (dw.startsWith("Message")) listOf(
-                    "Asked about their work, never for a job", "Personal note under 300 characters") else emptyList())
-                if (dw.startsWith("Message") || dw.contains("message")) out += CheckSpec.Outcome("Did they reply? (useful = 2+ messages)")
+            "sap" -> {
+                val score = scoreFrom(dw)
+                when {
+                    dw.contains("rubric") -> {
+                        out += CheckSpec.Score("25-term glossary quiz, cold", "terms", 25, score?.target ?: 20)
+                        out += CheckSpec.Rubric("P2P in SAP words, aloud in 2 min", Regex("""rubric (\d+)/10""").find(dw)?.groupValues?.get(1)?.toInt() ?: 7)
+                    }
+                    score != null -> out += score.copy(title = "Flashcards said aloud, without looking", label = "terms")
+                    else -> {
+                        out += CheckSpec.Checklist("Done when", listOf(dw).filter { it.isNotBlank() } +
+                            if (t.build.contains("5 terms")) listOf("5 new terms in your glossary deck") else emptyList())
+                        out += CheckSpec.Explain("Explain today's topic aloud, mapped to your current ERP", t.learn.substringAfter(" · "))
+                    }
+                }
+            }
+            "career", "linkedin" -> {
+                val crit = dw.split(";").map { it.trim() }.filter { it.isNotBlank() }
+                out += CheckSpec.Checklist("Done when", crit)
+                if (dw.contains("aloud") || dw.contains("Rehearsed")) out += CheckSpec.Explain("Say it aloud, without notes", t.build.ifBlank { t.learn })
+                if (dw.contains("Message") || dw.contains("message")) out += CheckSpec.Outcome("Did they reply?")
             }
             "evidence" -> {
                 out += CheckSpec.Checklist("Done when", listOf(dw.split(";").first().trim()))
@@ -179,7 +202,7 @@ object PlanCsv {
                 val test = t.build.removePrefix("Test:").trim().takeIf { it.isNotBlank() && it != "—" }
                 out += CheckSpec.Checklist("Tested on the phone", listOfNotNull(test, dw.takeIf { it.isNotBlank() }))
             }
-            "life", "review" -> {}
+            "life", "review", "practice" -> {}
         }
         return out
     }
@@ -213,29 +236,30 @@ object PlanCsv {
         }
         val target = scoreFrom(dw)
         when {
-            Regex("""Quiz: (\d+) words|Review quiz: (\d+) words""").containsMatchIn(all) -> {
-                val n = Regex("""(\d+) words""").find(all)!!.groupValues[1].toInt()
+            // "Quiz: this week's 6 words + last week's 6, both directions" (10/12).
+            all.contains("this week's 6 words + last week's 6") -> {
+                out += CheckSpec.Quiz("12-word quiz, both directions", "french", 12, target = target?.target ?: 0,
+                    weeks = listOf(t.week - 1, t.week).filter { it >= 1 })
+                if (target != null) out += target
+            }
+            // Week 6 review, the December check and the week-11 review: 20 words, both directions (16/20).
+            Regex("""Translate (\d+) English → French and (\d+) French → English|(\d+) words from weeks""").containsMatchIn(all) -> {
+                val m = Regex("""Translate (\d+) English → French and (\d+) French → English""").find(all)
+                val n = m?.let { it.groupValues[1].toInt() + it.groupValues[2].toInt() }
+                    ?: Regex("""(\d+) words from weeks""").find(all)!!.groupValues[1].toInt()
                 out += CheckSpec.Quiz("$n-word quiz, both directions", "french", n, target = target?.target ?: 0, weeks = weeks)
                 if (target != null) out += target
             }
-            all.contains("words 1–5") -> {
-                out += CheckSpec.Quiz("Check the 5 new words", "french", 5, weeks = listOf(t.week), half = 0)
+            all.contains("Write one sentence with each word") -> {
+                out += CheckSpec.Quiz("Check the week's 6 new words", "french", 6, weeks = listOf(t.week))
                 out += CheckSpec.Checklist("Done when", listOf(dw))
-            }
-            all.contains("Words 6–10") -> {
-                out += CheckSpec.Quiz("Check the 5 new words", "french", 5, weeks = listOf(t.week), half = 1)
-                out += CheckSpec.Checklist("Done when", listOf(dw))
-            }
-            all.contains("model sentences") && (all.contains("translate back") || all.contains("Translate back")) -> {
-                out += CheckSpec.Quiz("Translate back: the 5 model sentences", "french-sentences", 5, target = target?.target ?: 4, weeks = listOf(t.week))
-                if (all.contains("record")) out += CheckSpec.Checklist("Done when", listOf("Recording saved"))
             }
             all.contains("Rubric") || all.contains("rubric") -> {
                 out += CheckSpec.Rubric("Score your introduction with the rubric", RUBRIC.find(dw)?.groupValues?.get(1)?.toInt() ?: 6)
                 out += CheckSpec.Demonstrate("Said to a colleague, unaided")
             }
             all.contains("introduction") -> {
-                out += CheckSpec.Quiz("Build your introduction", "french-sentences", 5, weeks = listOf(11))
+                out += CheckSpec.Quiz("Build your introduction", "french-sentences", 5, weeks = listOf(t.week))
                 out += CheckSpec.Checklist("Done when", listOf(dw))
             }
             else -> out += CheckSpec.Checklist("Done when", listOf(dw))

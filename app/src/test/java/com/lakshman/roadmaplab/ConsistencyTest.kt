@@ -20,7 +20,7 @@ import java.time.Clock
 import java.time.Instant
 
 class ConsistencyTest {
-    private val mon = d("2026-11-16")
+    private val mon = d("2026-11-23") // a Monday in week 2
 
     private fun minutes(vararg days: Pair<Long, Int>): Map<Long, Int> = days.toMap()
 
@@ -29,7 +29,7 @@ class ConsistencyTest {
 
     @Test
     fun onlyRealStudyCountsNotOpeningTheAppOrHealthTicks() {
-        val states = Mastery.states(listOf(ev("T008", mon), ev("T007", mon))) // exercise (health) + log line 5 min
+        val states = Mastery.states(listOf(ev("T1038", mon), ev("T1037", mon))) // exercise (health) + log line 5 min
         val m = Consistency.minutesByDay(plan, states.values, listOf(tick(Consistency.SLEEP, mon, 0)))
         assertEquals(5, m[mon])
         val info = Consistency.evaluate(plan, emptyMap(), m, Targets(), mon + 1)
@@ -90,8 +90,9 @@ class ConsistencyTest {
     fun theDayFollowsKinshasaNotThePhone() {
         // 23:30 UTC on 15 Nov is already 00:30 on 16 Nov in Kinshasa (UTC+1).
         Days.clock = Clock.fixed(Instant.parse("2026-11-15T23:30:00Z"), java.time.ZoneId.of("Asia/Kolkata"))
-        assertEquals(mon, Days.today())
-        assertEquals(mon, Days.dayOf(Instant.parse("2026-11-15T23:30:00Z").toEpochMilli()))
-        assertTrue(Days.dow(mon) == 1)
+        val nov16 = d("2026-11-16")
+        assertEquals(nov16, Days.today())
+        assertEquals(nov16, Days.dayOf(Instant.parse("2026-11-15T23:30:00Z").toEpochMilli()))
+        assertTrue(Days.dow(nov16) == 1)
     }
 }

@@ -2,7 +2,7 @@ package com.lakshman.roadmaplab
 
 import com.lakshman.roadmaplab.TestData.d
 import com.lakshman.roadmaplab.TestData.ev
-import com.lakshman.roadmaplab.TestData.csvPlan as plan
+import com.lakshman.roadmaplab.TestData.plan
 import com.lakshman.roadmaplab.domain.DayKind
 import com.lakshman.roadmaplab.domain.DayMeta
 import com.lakshman.roadmaplab.domain.DayType
@@ -29,116 +29,119 @@ class TodayEngineTest {
     private fun ids(t: TodayPlan, s: Section) = t.section(s).map { it.key }.toSet()
 
     @Test
-    fun day1ShowsMondaysRows() {
-        val t = today(d("2026-11-16"))
+    fun day1ShowsTuesday17NovembersRows() {
+        val t = today(d("2026-11-17"))
         assertEquals(1, t.planDay)
         assertEquals(DayType.WEEKDAY, t.type)
-        assertEquals(setOf("T004", "T005", "T006", "T007"), ids(t, Section.MAIN))
-        assertEquals(setOf("T008"), ids(t, Section.HEALTH))
-        assertEquals(45, t.minutesPlanned) // accounting 30 + French 10 + log 5 (comms is at work)
-        assertEquals(76, t.daysLeft)
+        assertEquals(setOf("T1001", "T1002", "T1003"), ids(t, Section.MAIN))
+        assertEquals(setOf("T1004"), ids(t, Section.HEALTH))
+        assertEquals(setOf("T1005"), ids(t, Section.PRACTICE)) // practice: its own list, never study
+        assertEquals(35, t.minutesPlanned) // accounting 30 + log 5 (comms is at work)
+        assertEquals(75, t.daysLeft)
     }
 
     @Test
     fun aMissedDayMovesTheNextTaskOneSlotLaterWithoutDoublingUp() {
-        // Nothing done on Monday: on Tuesday accounting shows T004 (not T009), only one of it.
-        val t = today(d("2026-11-17"))
+        // Nothing done on Tuesday: on Wednesday accounting shows T1001 (not T1006), only one of it.
+        val t = today(d("2026-11-18"))
         val acc = t.main.filter { it.area == "accounting" }
-        assertEquals(listOf("T004"), acc.map { it.key })
+        assertEquals(listOf("T1001"), acc.map { it.key })
         assertEquals(1, acc.single().lateDays)
-        // The daily rows belong to Tuesday itself.
-        assertTrue("T012" in ids(t, Section.MAIN)) // Tuesday's log line
-        assertFalse("T007" in ids(t, Section.MAIN)) // Monday's log line doesn't carry over
+        assertTrue("T1007" in ids(t, Section.MAIN)) // French week 1 starts on Wednesday
+        assertTrue("T1009" in ids(t, Section.MAIN)) // Wednesday's log line
+        assertFalse("T1003" in ids(t, Section.MAIN)) // Tuesday's log line doesn't carry over (the Yesterday card has it)
     }
 
     @Test
     fun aSkippedOldTaskNeverBlocksYouCarryOnFromWhereYouAre() {
-        // Tuesday's T009 done, Monday's T004 never ticked: Wednesday shows T014, and T004 is listed quietly as earlier.
-        val t = today(d("2026-11-18"), listOf(ev("T009", d("2026-11-17"))))
-        assertEquals(listOf("T014"), t.main.filter { it.area == "accounting" }.map { it.key })
-        assertEquals(listOf("T004"), t.holes.filter { it.area == "accounting" }.map { it.id })
-        // Already ahead: ticking the app steps you've done moves the next one on.
-        val sun = today(d("2026-12-06"), listOf(ev("T103", d("2026-11-29")), ev("T138", d("2026-11-29"))))
-        assertFalse(sun.entries.any { it.key == "T103" && it.section == Section.MAIN })
-        assertTrue(sun.entries.none { it.key == "T033" && it.section == Section.MAIN })
+        val t = today(d("2026-11-19"), listOf(ev("T1006", d("2026-11-18"))))
+        assertEquals(listOf("T1012"), t.main.filter { it.area == "accounting" }.map { it.key })
+        assertEquals(listOf("T1001"), t.holes.filter { it.area == "accounting" }.map { it.id })
     }
 
     @Test
     fun aheadAndDoneTodayAreShownQuietly() {
-        val mon = d("2026-11-16")
-        val t = today(mon, listOf(ev("T004", mon)))
-        assertTrue(t.main.single { it.key == "T004" }.done)
-        assertFalse(t.entries.any { it.key == "T009" && it.section == Section.MAIN })
+        val tue = d("2026-11-17")
+        val t = today(tue, listOf(ev("T1001", tue)))
+        assertTrue(t.main.single { it.key == "T1001" }.done)
+        assertFalse(t.entries.any { it.key == "T1006" && it.section == Section.MAIN })
     }
 
     @Test
-    fun weekendsArePythonAppRecordingsLinkedInAndTheReview() {
+    fun fridayIsSapFridayAndWeekendsArePythonCareerRecordingsAndTheReview() {
+        val fri = today(d("2026-11-20"))
+        assertEquals("T1018", fri.main.first { it.study }.key)
         val sat = today(d("2026-11-21"))
-        assertTrue("T029" in ids(sat, Section.MAIN)) // the lead-in T001 was skipped: it never blocks T029
+        assertTrue("T1023" in ids(sat, Section.MAIN))
         assertFalse(sat.entries.any { it.area == "accounting" && it.section == Section.MAIN })
-        val sun = today(d("2026-11-22"), listOf(ev("T029", d("2026-11-21"))))
-        assertEquals(setOf("T032", "T033", "T034", "T035", "T036", "T038"), ids(sun, Section.MAIN))
+        val sun = today(d("2026-11-22"), listOf(ev("T1023", d("2026-11-21"))))
+        assertEquals(setOf("T1027", "T1028", "T1029", "T1030", "T1033"), ids(sun, Section.MAIN))
+        assertEquals(setOf("T1004", "T1031"), ids(sun, Section.HEALTH)) // the lights-out step (17 Nov) waits until done
     }
 
     @Test
     fun datedStepsWaitUntilDone() {
         val dec2 = d("2026-12-02")
         val t = today(dec2)
-        assertTrue("T077" in ids(t, Section.MAIN)) // STAR #1 from Mon 30 Nov
-        assertTrue("T078" in ids(t, Section.HEALTH)) // money check #1
-        val done = today(dec2, listOf(ev("T077", d("2026-12-01"))))
-        assertFalse(done.entries.any { it.key == "T077" })
+        assertTrue("T1077" in ids(t, Section.MAIN)) // STAR #1 from Mon 30 Nov
+        assertTrue("T1078" in ids(t, Section.HEALTH)) // money check #1
+        val done = today(dec2, listOf(ev("T1077", d("2026-12-01"))))
+        assertFalse(done.entries.any { it.key == "T1077" })
     }
 
     @Test
-    fun restDaysShowOnlyRest() {
+    fun restDaysShowRestAndTheMorningPractice() {
         val t = today(d("2026-12-25"))
         assertEquals(DayType.REST, t.type)
-        assertEquals(listOf("T200"), t.entries.map { it.key })
+        assertEquals(listOf("T1219"), t.main.map { it.key })
+        assertEquals(listOf("T1220"), t.practice.map { it.key })
         assertEquals(0, t.target)
     }
 
     @Test
-    fun reducedDayShowsSection13AndPausesTheRest() {
+    fun reducedDayShowsSection14AndPausesTheRest() {
         val wed = d("2026-12-09")
         val t = today(wed, kind = DayKind.REDUCED)
         assertEquals(DayType.REDUCED, t.type)
         val main = ids(t, Section.MAIN)
-        assertTrue("T122" in main) // the day's log line
+        assertTrue("T1129" in main) // the day's log line
         assertTrue("red-accounting" in main) // flashcards only
         assertTrue("red-comms" in main)
+        assertTrue("red-practice" in ids(t, Section.PRACTICE))
         assertTrue(t.section(Section.PAUSED).any { it.area == "accounting" })
         assertEquals(15, t.target)
+        // Tuesday of a reduced week: the real SAP flashcards task stays.
+        assertTrue("T1121" in ids(today(d("2026-12-08"), kind = DayKind.REDUCED), Section.MAIN))
     }
 
     @Test
     fun catchUpDayShowsOverdueWorkFromEveryArea() {
-        // Nothing done for a week; Saturday 28 Nov marked as a catch-up day.
         val t = today(d("2026-11-28"), kind = DayKind.CATCHUP)
         val main = ids(t, Section.MAIN)
-        assertTrue("T004" in main && "T009" in main) // up to two per sequence
-        assertTrue("T029" in main)
+        assertTrue("T1001" in main && "T1006" in main) // up to two per sequence
+        assertTrue("T1023" in main)
     }
 
     @Test
     fun twoReducedWeeksInARowShiftLaterDatesByAWeek() {
         val w3 = d("2026-11-30"); val w4 = d("2026-12-07")
-        val t = plan.task("T164")!! // test #1, Fri 18 Dec
+        val t = plan.task("T1195")!! // test #1, Mon 21 Dec
         assertEquals(t.day, TodayEngine.effectiveDay(t, setOf(w3)))
         assertEquals(t.day + 7, TodayEngine.effectiveDay(t, setOf(w3, w4)))
     }
 
     @Test
-    fun beforeTheLeadInShowsAPreview() {
-        val t = today(d("2026-11-14"))
+    fun beforeTheStartShowsAPreview() {
+        val t = today(d("2026-11-16"))
         assertTrue(t.entries.all { it.section == Section.PREVIEW })
-        assertTrue(t.entries.any { it.key == "T001" } && t.entries.any { it.key == "T004" })
+        assertTrue(t.entries.any { it.key == "T1001" })
+        assertTrue(t.entries.first().reason.contains("day 1"))
     }
 
     @Test
     fun deferredTasksMoveToNotToday() {
-        val mon = d("2026-11-16")
-        val t = today(mon, listOf(ev("T005", mon, EventType.LATER)))
-        assertTrue("T005" in ids(t, Section.LATER))
+        val tue = d("2026-11-17")
+        val t = today(tue, listOf(ev("T1001", tue, EventType.LATER)))
+        assertTrue("T1001" in ids(t, Section.LATER))
     }
 }
