@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
  * Material You. On Android 12 and later the colours come from your wallpaper (dynamic colour; Settings can turn
  * it off); otherwise a calm indigo baseline. Everything on screen reads its colours from the Material colour
  * scheme through this small [Palette]. The 10 categories use the Okabe–Ito palette (designed to be told apart
- * with colour-blindness), gently shifted towards the theme's colour so they sit well with any wallpaper, and are
- * always paired with a label, never colour alone.
+ * with colour-blindness) unchanged, and are always paired with a label, never colour alone. The done / warning
+ * colours are gently shifted towards the theme's colour so they sit well with any wallpaper.
  */
 @Immutable
 data class Palette(
@@ -110,7 +110,9 @@ fun harmonize(color: Color, primary: Color): Color {
 
 fun paletteOf(c: ColorScheme, dark: Boolean): Palette {
     val h = { x: Color -> harmonize(x, c.primary) }
-    val cats = (if (dark) CATEGORY_DARK else CATEGORY_LIGHT).mapValues { h(it.value) }
+    // Category colours stay exactly Okabe–Ito: shifting their hue would make some pairs hard to tell apart
+    // (orange accounting turned olive next to the yellow evidence log). Only the status colours follow the theme.
+    val cats = if (dark) CATEGORY_DARK else CATEGORY_LIGHT
     return Palette(
         isDark = dark,
         bg = c.surface, surface = c.surfaceContainerLow, surface2 = c.surfaceContainerHighest, border = c.outlineVariant,

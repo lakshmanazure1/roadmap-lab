@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -84,25 +85,39 @@ fun UiState.tileLabel(id: String): String = when (id) {
 fun CategoryHeader(ui: UiState, nav: Nav) {
     val p = LocalPalette.current
     LabCard(padding = PaddingValues(start = 8.dp, end = 8.dp, top = 12.dp, bottom = 8.dp)) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Your 10 categories", style = Type.section, color = p.text, modifier = Modifier.weight(1f))
-            Icon(Icons.Outlined.LocalFireDepartment, null, Modifier.size(14.dp), tint = p.text2)
-            Text(" streak · ring = % done", style = Type.caption, color = p.text2)
-        }
-        CATEGORY_ORDER.chunked(5).forEach { row ->
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp)) {
-                row.forEach { id -> CategoryTile(ui, id, Modifier.weight(1f)) { nav.open(Screen.Area(id)) } }
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            // Small phones: the legend goes under the title and long names are shortened, so all 10 still fit.
+            val narrow = maxWidth < 330.dp
+            Column {
+                val legend: @Composable () -> Unit = {
+                    Icon(Icons.Outlined.LocalFireDepartment, null, Modifier.size(14.dp), tint = p.text2)
+                    Text(" streak · ring = % done", style = Type.caption, color = p.text2)
+                }
+                if (narrow) {
+                    Text("Your 10 categories", style = Type.section, color = p.text, modifier = Modifier.padding(horizontal = 8.dp))
+                    Row(Modifier.padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) { legend() }
+                } else {
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text("Your 10 categories", style = Type.section, color = p.text, modifier = Modifier.weight(1f))
+                        legend()
+                    }
+                }
+                CATEGORY_ORDER.chunked(5).forEach { row ->
+                    Row(Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                        row.forEach { id -> CategoryTile(ui, id, Modifier.weight(1f), narrow) { nav.open(Screen.Area(id)) } }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun CategoryTile(ui: UiState, id: String, modifier: Modifier, onClick: () -> Unit) {
+private fun CategoryTile(ui: UiState, id: String, modifier: Modifier, narrow: Boolean = false, onClick: () -> Unit) {
     val p = LocalPalette.current
     val c = ui.category(id) ?: return
     val color = p.area(id)
-    val label = ui.tileLabel(id)
+    val label = if (narrow && id == "accounting") "Acctg." else ui.tileLabel(id)
     val state = when {
         c.hitToday -> "done today"
         c.plannedToday -> "planned today, not done yet"
@@ -190,22 +205,33 @@ private fun BackfillRow(ui: UiState, act: Actions, t: PlanTask) {
 fun MoodRow(ui: UiState, act: Actions, day: Long, modifier: Modifier = Modifier) {
     val p = LocalPalette.current
     val mood = ui.mood(day)
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Text("Mood today", style = Type.bodyStrong, color = p.text)
-            Muted("1 low · 5 great", style = Type.caption)
+    val buttons: @Composable () -> Unit = {
+        (1..5).forEach { m ->
+            val on = mood == m
+            val bg by animateColorAsState(if (on) p.accent else Color.Transparent, label = "mood")
+            Box(
+                Modifier.size(40.dp).clip(CircleShape).background(bg)
+                    .border(1.dp, if (on) Color.Transparent else p.text3, CircleShape)
+                    .clickable(role = Role.RadioButton) { act.setMood(day, if (on) null else m) }
+                    .semantics { contentDescription = "Mood $m of 5"; stateDescription = if (on) "Selected" else "Not selected" },
+                contentAlignment = Alignment.Center,
+            ) { Text("$m", style = Type.smallStrong, color = if (on) p.onAccent else p.text) }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            (1..5).forEach { m ->
-                val on = mood == m
-                val bg by animateColorAsState(if (on) p.accent else Color.Transparent, label = "mood")
-                Box(
-                    Modifier.size(40.dp).clip(CircleShape).background(bg)
-                        .border(1.dp, if (on) Color.Transparent else p.text3, CircleShape)
-                        .clickable(role = Role.RadioButton) { act.setMood(day, if (on) null else m) }
-                        .semantics { contentDescription = "Mood $m of 5"; stateDescription = if (on) "Selected" else "Not selected" },
-                    contentAlignment = Alignment.Center,
-                ) { Text("$m", style = Type.smallStrong, color = if (on) p.onAccent else p.text) }
+    }
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxWidth < 300.dp) {
+            // Small phones: the label above, the five buttons spread across the card.
+            Column {
+                Text("Mood today · 1 low, 5 great", style = Type.bodyStrong, color = p.text)
+                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) { buttons() }
+            }
+        } else {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("Mood today", style = Type.bodyStrong, color = p.text)
+                    Muted("1 low · 5 great", style = Type.caption)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) { buttons() }
             }
         }
     }
