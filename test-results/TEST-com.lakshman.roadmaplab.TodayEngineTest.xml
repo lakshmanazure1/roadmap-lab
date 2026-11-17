@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakshman.roadmaplab.TodayEngineTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-17T14:33:15" hostname="runnervmccnms" time="0.041">
+  <properties/>
+  <testcase name="aheadAndDoneTodayAreShownQuietly" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.002"/>
+  <testcase name="fridayIsSapFridayAndWeekendsArePythonCareerRecordingsAndTheReview" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.027"/>
+  <testcase name="aMissedDayMovesTheNextTaskOneSlotLaterWithoutDoublingUp" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.0"/>
+  <testcase name="datedStepsWaitUntilDone" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.003"/>
+  <testcase name="reducedDayShowsSection14AndPausesTheRest" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.003"/>
+  <testcase name="restDaysShowRestAndTheMorningPractice" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.0"/>
+  <testcase name="deferredTasksMoveToNotToday" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.001"/>
+  <testcase name="beforeTheStartShowsAPreview" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.0"/>
+  <testcase name="aSkippedOldTaskNeverBlocksYouCarryOnFromWhereYouAre" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.0"/>
+  <testcase name="day1ShowsTuesday17NovembersRows" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.001"/>
+  <testcase name="twoReducedWeeksInARowShiftLaterDatesByAWeek" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.0"/>
+  <testcase name="catchUpDayShowsOverdueWorkFromEveryArea" classname="com.lakshman.roadmaplab.TodayEngineTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

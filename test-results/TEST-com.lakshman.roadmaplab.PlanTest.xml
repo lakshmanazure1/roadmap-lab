@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakshman.roadmaplab.PlanTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T14:33:15" hostname="runnervmccnms" time="0.01">
+  <properties/>
+  <testcase name="everyCsvRowIsATask" classname="com.lakshman.roadmaplab.PlanTest" time="0.004"/>
+  <testcase name="frenchWordsMatchTheCsvAndHaveMeanings" classname="com.lakshman.roadmaplab.PlanTest" time="0.0"/>
+  <testcase name="titlesAndCardsAreConsistent" classname="com.lakshman.roadmaplab.PlanTest" time="0.001"/>
+  <testcase name="followTheOrderSequencesUseTheirOwnWeekdays" classname="com.lakshman.roadmaplab.PlanTest" time="0.0"/>
+  <testcase name="categoriesMinutesAndRestDays" classname="com.lakshman.roadmaplab.PlanTest" time="0.002"/>
+  <testcase name="checksComeFromTheDoneWhenColumn" classname="com.lakshman.roadmaplab.PlanTest" time="0.001"/>
+  <testcase name="csvWithQuotesCommasAndLineBreaksParses" classname="com.lakshman.roadmaplab.PlanTest" time="0.0"/>
+  <testcase name="theRoadmapNotesAreComplete" classname="com.lakshman.roadmaplab.PlanTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,48 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:mergeDebugResources
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:javaPreCompileDebug
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:processDebugResources
+> Task :app:packageDebugUnitTestForUnitTest
+> Task :app:generateDebugUnitTestConfig
+> Task :app:kspDebugKotlin
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/roadmap-lab/roadmap-lab/app/src/main/java/com/lakshman/roadmaplab/ui/PlanScreen.kt:95:43 'val Icons.Outlined.FactCheck: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FactCheck.
+w: file:///home/runner/work/roadmap-lab/roadmap-lab/app/src/main/java/com/lakshman/roadmaplab/ui/ProgressScreen.kt:66:93 'val Icons.Outlined.HelpOutline: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.HelpOutline.
+w: file:///home/runner/work/roadmap-lab/roadmap-lab/app/src/main/java/com/lakshman/roadmaplab/ui/ProgressScreen.kt:173:141 'val Icons.Outlined.FactCheck: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FactCheck.
+w: file:///home/runner/work/roadmap-lab/roadmap-lab/app/src/main/java/com/lakshman/roadmaplab/ui/TodayScreen.kt:89:112 'val Icons.Outlined.EventNote: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.EventNote.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:kspDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+> Task :app:testDebugUnitTest
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/tests-1794925935128.json
+
+BUILD SUCCESSFUL in 1m 39s
+30 actionable tasks: 30 executed

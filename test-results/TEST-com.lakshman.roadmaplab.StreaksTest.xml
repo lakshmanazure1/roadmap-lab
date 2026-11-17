@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakshman.roadmaplab.StreaksTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T14:33:15" hostname="runnervmccnms" time="0.029">
+  <properties/>
+  <testcase name="eachCategoryHasItsOwnStreak" classname="com.lakshman.roadmaplab.StreaksTest" time="0.002"/>
+  <testcase name="restDaysAndReducedDaysWithoutAnActionAreNeutral" classname="com.lakshman.roadmaplab.StreaksTest" time="0.006"/>
+  <testcase name="weeklyCategoriesHaveNoGrace" classname="com.lakshman.roadmaplab.StreaksTest" time="0.003"/>
+  <testcase name="percentagesShowDoneOfAllAndDoneOfDue" classname="com.lakshman.roadmaplab.StreaksTest" time="0.003"/>
+  <testcase name="daysBeforeAFreshStartAreNeutral" classname="com.lakshman.roadmaplab.StreaksTest" time="0.008"/>
+  <testcase name="iDidItYesterdayCountsForYesterday" classname="com.lakshman.roadmaplab.StreaksTest" time="0.005"/>
+  <testcase name="allTenCategoriesAreTracked" classname="com.lakshman.roadmaplab.StreaksTest" time="0.002"/>
+  <testcase name="yesterdaysListOnlyHasTheNextStepOfNumberedWork" classname="com.lakshman.roadmaplab.StreaksTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakshman.roadmaplab.DayHistoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-17T14:33:15" hostname="runnervmccnms" time="0.064">
+  <properties/>
+  <testcase name="aTaskDoneLateShowsOnBothDates" classname="com.lakshman.roadmaplab.DayHistoryTest" time="0.011"/>
+  <testcase name="dayKindAndOnlyYourOwnTaskNotes" classname="com.lakshman.roadmaplab.DayHistoryTest" time="0.004"/>
+  <testcase name="everyPlannedDateIsListedWithItsTasks" classname="com.lakshman.roadmaplab.DayHistoryTest" time="0.039"/>
+  <testcase name="notesBelongToTheirDay" classname="com.lakshman.roadmaplab.DayHistoryTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
