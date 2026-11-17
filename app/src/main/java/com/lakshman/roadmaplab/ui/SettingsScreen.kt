@@ -67,6 +67,15 @@ fun SettingsScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
                         Chip("Dark", s.theme == "dark", { act.updateSettings { it.copy(theme = "dark") } })
                         Chip("Same as phone", s.theme == "system", { act.updateSettings { it.copy(theme = "system") } })
                     }
+                    val supported = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                    Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Colours from my wallpaper", style = Type.bodyStrong, color = LocalPalette.current.text)
+                            Muted(if (supported) "Material You: the app takes its colours from your wallpaper." else "Needs Android 12 or later.")
+                        }
+                        Switch(checked = s.dynamicColor && supported, onCheckedChange = { v -> act.updateSettings { it.copy(dynamicColor = v) } },
+                            enabled = supported)
+                    }
                 }
             }
             item { SectionTitle("Daily minimum", trailing = "what makes a day count") }
@@ -185,15 +194,16 @@ fun HowItWorksScreen(ui: UiState, nav: Nav) {
             item {
                 LabCard {
                     Text("Follow the order, not the dates", style = Type.section, color = LocalPalette.current.text)
-                    Muted("Accounting, French, Python, app steps, LinkedIn and Sunday recordings each show the next task you haven't done, on the days that " +
-                        "area uses. A missed day moves the next task one slot later; nothing is lost, and it never doubles up. Day-bound tasks (the log line, " +
-                        "work habits, health) belong to their day. Dated steps (STAR stories, money checks, trainings, reviews) wait until done.")
+                    Muted("SAP Fridays, accounting, French, Python, career steps and Sunday recordings each show the next task you haven't done, on the days " +
+                        "that category uses. A missed day moves the next task one slot later; nothing is lost, and it never doubles up. Day-bound tasks (the " +
+                        "log line, work habits, SAP flashcards, health, daily practice) belong to their day. Dated steps (STAR stories, money checks, " +
+                        "trainings, the December conversation, reviews) wait until done.")
                     ui.plan.meta.recovery.forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
                 }
             }
             item {
                 LabCard {
-                    Text("The 7 levels (section 12)", style = Type.section, color = LocalPalette.current.text)
+                    Text("The 7 levels (section 3)", style = Type.section, color = LocalPalette.current.text)
                     ui.plan.meta.levels.forEachIndexed { i, (name, meaning) -> Muted("${i + 1} $name: $meaning", Modifier.padding(top = 4.dp)) }
                     Muted("Needs revision: your latest marked check is below its target. Retaking it adds a new attempt; the old ones stay so you can see improvement. " +
                         "Mastered needs a passing check again at least 14 days after the first pass.", Modifier.padding(top = 6.dp))
@@ -213,6 +223,20 @@ fun HowItWorksScreen(ui: UiState, nav: Nav) {
                     ).forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
                 }
             }
+            item {
+                LabCard {
+                    Text("Category streaks", style = Type.section, color = LocalPalette.current.text)
+                    listOf(
+                        "Each of the 10 categories has its own streak: the days in a row you did at least one of its tasks.",
+                        "Days a category has nothing planned don't break its streak (accounting has no Friday; SAP has only Tuesday and Friday).",
+                        "Rest days, days before your fresh start and reduced-routine days without an action for it are neutral.",
+                        "Near-daily categories forgive one missed day a week. Weekly ones (SAP, career, review) count each planned day.",
+                        "Forgot to tick? The Yesterday card on Today, and each category's page (last 7 days), let you tick a task for the day it was planned. " +
+                            "Marking a task done also lets you pick the day you did it.",
+                        "% done = tasks done ÷ all its tasks. On track = done ÷ due by today. Health and daily practice are habits: never counted as study.",
+                    ).forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
+                }
+            }
         }
     }
 }
@@ -225,14 +249,15 @@ fun IntroScreen(ui: UiState, act: Actions) {
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(ScreenPadding), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Column(Modifier.padding(top = 32.dp)) {
-                Text("Your Eight-Area plan is ready", style = Type.display, color = p.text)
-                Muted("${ui.plan.meta.title} · ${ui.plan.tasks.size} tasks, 15 Nov – 31 Jan", Modifier.padding(top = 4.dp))
+                Text("Your Fresh Start plan is ready", style = Type.display, color = p.text)
+                Muted("${ui.plan.meta.title} · ${ui.plan.tasks.size} tasks, ${Days.short(ui.plan.start)} – ${Days.short(ui.plan.end)}", Modifier.padding(top = 4.dp))
             }
         }
         item {
             LabCard {
                 listOf(
                     "Today shows what to do, in order. A missed day just moves the next task; nothing is lost.",
+                    "All 10 categories sit at the top of Today, each with its own streak and % done. Forgot to tick yesterday? Tick it there: it counts for yesterday.",
                     "Done isn't the same as learned: record scores, take cold checks, and watch each task climb the 7 levels.",
                     "A day counts when your study reaches a small minimum you set. Rest days and reduced weeks never break it.",
                     "Every Sunday, a 15-minute checkpoint review. The evidence log keeps your 9-field lines and STAR stories.",

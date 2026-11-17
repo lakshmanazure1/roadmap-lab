@@ -26,7 +26,7 @@ object DemoData {
 
     fun empty(theme: String = "light") = LabState(
         settings = AppSettings(onboarded = true, v2Intro = true, theme = theme, reminderOn = true, reminderHour = 20, reminderMinute = 30,
-            freshStartAsked = true),
+            freshStartAsked = true, freshStartPlan = TestData.plan.meta.version),
         plan = plan, planError = null, cards = TestData.cards.associateBy { it.id }, cardStates = emptyList(), reviewLogs = emptyList(),
         dayLogs = emptyMap(), events = emptyList(), assessments = emptyList(), ticks = emptyList(), evidence = emptyList(),
         dayMeta = emptyMap(), weeklyReviews = emptyMap(), legacyTaskLogs = 0,
@@ -72,21 +72,24 @@ object DemoData {
         }
         // One ★ per finished week, a STAR story, two completed weekly reviews, and one weak quiz.
         val starred = evidence.groupBy { com.lakshman.roadmaplab.domain.Days.weekStart(it.day) }.values.map { it.first().id }.toSet()
-        val ev = evidence.map { if (it.id in starred) it.copy(starred = true) else it } + Evidence(id++, plan.start + 14, "evidence", "T077", "star",
+        val ev = evidence.map { if (it.id in starred) it.copy(starred = true) else it } + Evidence(id++, plan.start + 14, "evidence", "T1077", "star",
             "", "", "", "", "", "", "", null, false, "Go-live vendor upload was failing for the client.", "Get the vendor master loaded before cutover.",
             "Sorted rejected rows by blank columns. Found missing tax IDs. Sent a clear fix list to the client team.", "Second upload had 0 errors; 40 rows saved.",
             0, 0)
-        checks += Assessment(id++, "T109", "accounting", "Journal entries", "quiz", 5.0, 10.0, false, true, "{}", until - 3, (until - 3) * 100_000, 400)
+        checks += Assessment(id++, "T1154", "accounting", "Journal entries", "quiz", 5.0, 10.0, false, true, "{}", until - 3, (until - 3) * 100_000, 400)
         val reviews = (1..2).associate { w ->
             val ws = plan.weekStartOf(w)
             ws to WeeklyReview(ws, mapOf("python" to "All 10 errors found"), emptyMap(), emptyMap(), "Go-live ran late twice", listOf("Go-live work ran late"),
-                "Error report works", "French", "1. RAG 1 2. Cold quiz 3. Sleep", "normal", "\$120", ws * 86_400_000 + 7 * 86_400_000, 0)
+                "Error report works", "French", "1. Retrieval 1 2. Cold quiz 3. Sleep", "normal", "\$120", ws * 86_400_000 + 7 * 86_400_000, 0)
         }
         val cardStates = TestData.cards.filter { plan.meta.cardUnlocks[it.id]?.let { t -> plan.task(t)!!.day < until } == true }
             .map { Leitner.newState(it.id, until - 1) }
+        // A mood most days (1–5).
+        val moods = (plan.start until until).filter { rnd.nextDouble() > 0.2 }
+            .associateWith { com.lakshman.roadmaplab.domain.DayLog(it, mood = 2 + rnd.nextInt(0, 4)) }
         val meta = if (reducedToday) (0L..4L).associate { k -> (until + k) to DayMeta(until + k, DayKind.REDUCED, null, 0, 0) } else emptyMap()
         return empty(theme).copy(events = events, assessments = checks, ticks = ticks, evidence = ev, weeklyReviews = reviews,
-            cardStates = cardStates, dayMeta = meta)
+            cardStates = cardStates, dayMeta = meta, dayLogs = moods)
     }
 }
 
@@ -107,4 +110,5 @@ object NoActions : com.lakshman.roadmaplab.ui.Actions {
     override fun updateSettings(change: (AppSettings) -> AppSettings) {}
     override fun note(n: com.lakshman.roadmaplab.ui.Note) {}
     override fun startFresh() {}
+    override fun setMood(day: Long, mood: Int?) {}
 }

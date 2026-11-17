@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lakshman.roadmaplab.domain.AREA_ORDER
+import com.lakshman.roadmaplab.domain.GO_LIVE_NUMBERS
 import com.lakshman.roadmaplab.domain.Analytics
 import com.lakshman.roadmaplab.domain.Days
 import com.lakshman.roadmaplab.domain.WeeklyReview
@@ -44,7 +45,7 @@ import com.lakshman.roadmaplab.ui.theme.Type
 private val OBSTACLES = listOf("Go-live work ran late", "Low energy", "No internet", "Travel", "Family", "Unwell", "Task unclear", "Too much planned")
 
 /**
- * The Sunday checkpoint table (roadmap section 11): the week's numbers are filled in for you; you write
+ * The Sunday checkpoint table (roadmap section 13): the week's numbers are filled in for you; you write
  * what actually happened per area, what got in the way, and next week's load. Honest, not just ticks.
  */
 @Composable
@@ -84,8 +85,28 @@ fun WeeklyReviewScreen(ui: UiState, act: Actions, nav: Nav, week: Int) {
                         Stat("Checks", if (sum.avgScore != null) "%.0f%%".format(sum.avgScore) else "—", Modifier.weight(1f), sub = "${sum.checks} this week")
                     }
                     val h = sum.habits
-                    Muted("Study ${sum.minutes} min · slept 7 h on ${h.sleepNights} nights · exercise ${h.exercise}/${h.exercisePlanned}" +
+                    Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Stat("Mood average", ui.moodAverage(ws)?.let { "%.1f".format(it) } ?: "—", Modifier.weight(1f), sub = "out of 5")
+                        Stat("Nights with 7 h", "${h.sleepNights}", Modifier.weight(1f), sub = "target 5")
+                        Stat("Study", "${sum.minutes}", Modifier.weight(1f), sub = "minutes")
+                    }
+                    Muted("Exercise ${h.exercise}/${h.exercisePlanned}" +
                         (h.calledHome?.let { if (it) " · called home" else " · no call ticked" } ?: ""), Modifier.padding(top = 8.dp))
+                }
+            }
+            item {
+                LabCard {
+                    Text("The week's 5 go-live numbers", style = Type.section, color = p.text)
+                    Muted("Section 12: they go into your evidence log too. Counts only, no client data.", Modifier.padding(top = 2.dp, bottom = 4.dp))
+                    GO_LIVE_NUMBERS.chunked(2).forEach { row ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 6.dp)) {
+                            row.forEach { (key, label) ->
+                                Field(actual[key] ?: "", { v -> actual[key] = v.filter { it.isDigit() || it == '.' }.take(7) }, label,
+                                    Modifier.weight(1f), singleLine = true, number = true)
+                            }
+                            if (row.size == 1) Spacer(Modifier.weight(1f))
+                        }
+                    }
                 }
             }
             if (sum.suggestions.isNotEmpty()) item {
@@ -129,7 +150,7 @@ fun WeeklyReviewScreen(ui: UiState, act: Actions, nav: Nav, week: Int) {
             item { Field(best, { best = it }, "Best achievement of the week", minLines = 2) }
             item { Field(weakest, { weakest = it }, "Weakest area" + (sum.weakestArea?.let { " (by the numbers: ${plan.area(it)?.short})" } ?: "")) }
             item { Field(priorities, { priorities = it }, "Top 3 priorities next week", minLines = 3) }
-            item { Field(spending, { spending = it }, "The week's spending total", singleLine = true) }
+            item { Field(spending, { spending = it }, "The week's spending total", singleLine = true, supporting = "Your own money only: a total, no account details") }
             item {
                 Text("Next week's load", style = Type.section, color = p.text)
                 ChipRow {

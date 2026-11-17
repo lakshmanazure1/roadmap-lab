@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val ui by vm.ui.collectAsStateWithLifecycle()
-            RoadmapLabTheme(ui?.s?.settings?.theme ?: "light") {
+            RoadmapLabTheme(ui?.s?.settings?.theme ?: "light", ui?.s?.settings?.dynamicColor ?: true) {
                 val dark = LocalPalette.current.isDark
                 DisposableEffect(dark) {
                     val transparent = android.graphics.Color.TRANSPARENT

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EventNote
@@ -63,8 +64,6 @@ import com.lakshman.roadmaplab.ui.theme.Type
  */
 @Composable
 fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
-    val p = LocalPalette.current
-    val t = ui.todayPlan
     var dayOptions by remember { mutableStateOf(false) }
     var dayReview by remember { mutableStateOf(false) }
     fun open(e: TodayEntry) = when (val r = e.ref) {
@@ -72,54 +71,19 @@ fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
         TodayRef.Flashcards -> nav.open(Screen.Practice)
         is TodayRef.Reduced -> toggleEntry(ui, act, e)
     }
-
-    LazyColumn(
-        Modifier.fillMaxSize().statusBarsPadding(),
-        contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
+    val pad = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 24.dp)
+    val gap = Arrangement.spacedBy(12.dp)
+    val top: LazyListScope.() -> Unit = {
         item { Header(ui, onSettings = { nav.open(Screen.Settings) }) }
-        if (ui.offerFreshStart) item { FreshStartCard(act) }
+        if (ui.offerFreshStart) item { FreshStartCard(ui, act) }
+        item { CategoryHeader(ui, nav) }
         item { DayBanners(ui, act) }
-        item { TodayCard(ui) }
+        if (ui.yesterday.isNotEmpty()) item { YesterdayCard(ui, act) }
+        item { TodayCard(ui, act) }
         item { NextActionCard(ui, act, nav) }
-
-        val main = t.section(Section.MAIN)
-        val preview = t.section(Section.PREVIEW)
-        if (preview.isNotEmpty()) {
-            item { SectionTitle("Coming up") }
-            item { EntryCard(ui, preview, act, ::open) }
-        }
-        if (main.isNotEmpty()) {
-            item { SectionTitle(if (t.type == DayType.REDUCED) "Today's minimum (reduced routine)" else "Today",
-                trailing = if (t.minutesPlanned > 0) "${t.minutesPlanned} min planned" else null) }
-            item { EntryCard(ui, main, act, ::open) }
-        }
-        if (t.holes.isNotEmpty()) item {
-            Muted("Earlier, not ticked: ${t.holes.take(5).joinToString(" · ") { it.id }}${if (t.holes.size > 5) " …" else ""}. " +
-                "Tick them in Plan if you did them, or pick them up on a catch-up day. Don't double up.")
-        }
-        val health = t.section(Section.HEALTH)
-        if (health.isNotEmpty() || (ui.plan.inPlan(ui.today) && t.type != DayType.REST)) {
-            item { SectionTitle("Health · family · money", trailing = "not counted as study") }
-            item {
-                LabCard(padding = PaddingValues(0.dp)) {
-                    SleepQuestion(ui, act)
-                    health.forEachIndexed { i, e ->
-                        Divider(Modifier.padding(start = 56.dp))
-                        EntryRow(ui, e, { toggleEntry(ui, act, e) }, { open(e) })
-                    }
-                }
-            }
-        }
-        for ((section, title) in listOf(Section.OPTIONAL to "Optional", Section.LATER to "Not today (keeps its place)",
-            Section.PAUSED to "Paused during the reduced routine")) {
-            val list = t.section(section)
-            if (list.isNotEmpty()) {
-                item { SectionTitle(title) }
-                item { EntryCard(ui, list, act, ::open) }
-            }
-        }
+    }
+    val lists: LazyListScope.() -> Unit = {
+        todayLists(ui, act, ::open)
         item {
             Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SecondaryButton("Review day", { dayReview = true }, Modifier.weight(1f), icon = Icons.Outlined.EventNote)
@@ -127,8 +91,67 @@ fun TodayScreen(ui: UiState, act: Actions, nav: Nav) {
             }
         }
     }
+    if (LocalWidthClass.current == WidthClass.EXPANDED) {
+        // Tablets: the day's overview on the left, the lists on the right.
+        Row(Modifier.fillMaxSize().statusBarsPadding(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(Modifier.weight(0.45f).fillMaxSize(), contentPadding = pad, verticalArrangement = gap) { top() }
+            LazyColumn(Modifier.weight(0.55f).fillMaxSize(), contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding,
+                top = 12.dp, bottom = 24.dp), verticalArrangement = gap) { lists() }
+        }
+    } else {
+        LazyColumn(Modifier.fillMaxSize().statusBarsPadding(), contentPadding = pad, verticalArrangement = gap) {
+            top()
+            lists()
+        }
+    }
     if (dayOptions) DayOptionsDialog(ui, act) { dayOptions = false }
     if (dayReview) DayReviewDialog(ui, act, nav) { dayReview = false }
+}
+
+/** The day's lists: study, health, practice, then optional and waiting work. */
+private fun LazyListScope.todayLists(ui: UiState, act: Actions, open: (TodayEntry) -> Unit) {
+    val t = ui.todayPlan
+    val main = t.section(Section.MAIN)
+    val preview = t.section(Section.PREVIEW)
+    if (preview.isNotEmpty()) {
+        item { SectionTitle("Coming up") }
+        item { EntryCard(ui, preview, act, open) }
+    }
+    if (main.isNotEmpty()) {
+        item { SectionTitle(if (t.type == DayType.REDUCED) "Today's minimum (reduced routine)" else "Today",
+            trailing = if (t.minutesPlanned > 0) "${t.minutesPlanned} min planned" else null) }
+        item { EntryCard(ui, main, act, open) }
+    }
+    if (t.holes.isNotEmpty()) item {
+        Muted("Earlier, not ticked: ${t.holes.take(5).joinToString(" · ") { it.id }}${if (t.holes.size > 5) " …" else ""}. " +
+            "Tick them in Plan if you did them, or pick them up on a catch-up day. Don't double up.")
+    }
+    val health = t.section(Section.HEALTH)
+    if (health.isNotEmpty() || (ui.plan.inPlan(ui.today) && t.type != DayType.REST)) {
+        item { SectionTitle("Health · family · money", trailing = "not study") }
+        item {
+            LabCard(padding = PaddingValues(0.dp)) {
+                SleepQuestion(ui, act)
+                health.forEach { e ->
+                    Divider(Modifier.padding(start = 56.dp))
+                    EntryRow(ui, e, { toggleEntry(ui, act, e) }, { open(e) })
+                }
+            }
+        }
+    }
+    val practice = t.section(Section.PRACTICE)
+    if (practice.isNotEmpty()) {
+        item { SectionTitle("Daily practice", trailing = "most days · not study") }
+        item { EntryCard(ui, practice, act, open) }
+    }
+    for ((section, title) in listOf(Section.OPTIONAL to "Optional", Section.LATER to "Not today (keeps its place)",
+        Section.PAUSED to "Paused during the reduced routine")) {
+        val list = t.section(section)
+        if (list.isNotEmpty()) {
+            item { SectionTitle(title) }
+            item { EntryCard(ui, list, act, open) }
+        }
+    }
 }
 
 @Composable
@@ -140,8 +163,8 @@ private fun Header(ui: UiState, onSettings: () -> Unit) {
             Text(Days.long(ui.today), style = Type.display, color = p.text)
             val week = t.week
             val sub = when {
-                ui.today < ui.plan.leadIn -> "Plan starts ${Days.short(ui.plan.leadIn)} · ${t.daysLeft} days to 31 Jan"
-                ui.today == ui.plan.leadIn -> "Optional lead-in · day 1 is tomorrow"
+                ui.today < ui.plan.start -> "Plan starts ${Days.short(ui.plan.start)} · ${t.daysLeft} days to 31 Jan"
+                ui.plan.hasLeadIn && ui.today == ui.plan.leadIn -> "Optional lead-in · day 1 is tomorrow"
                 t.planDay != null -> "Day ${t.planDay} of ${ui.plan.totalDays} · Week $week" +
                     (week?.let { ui.weekFocus(it) }?.let { " · $it" } ?: "") + " · ${t.daysLeft} days left"
                 else -> "Plan finished on 31 Jan"
@@ -152,26 +175,29 @@ private fun Header(ui: UiState, onSettings: () -> Unit) {
     }
 }
 
-/** One-time offer after the update: clear old records and count from today (a safety copy is kept). */
+/** One-time offer when the plan changes: clear the earlier plan's records and start at day 1 (a safety copy is kept). */
 @Composable
-private fun FreshStartCard(act: Actions) {
+private fun FreshStartCard(ui: UiState, act: Actions) {
     val p = LocalPalette.current
     var confirm by remember { mutableStateOf(false) }
+    val version = ui.plan.meta.version
     LabCard(border = p.accent) {
-        Text("Start fresh from today?", style = Type.title, color = p.text)
-        Muted("Clears your old ticks, scores, streak days, log lines and flashcard progress, so today counts as your first day. " +
-            "A safety copy is saved on the phone first, and Settings can bring it back.", Modifier.padding(top = 4.dp))
+        Text("New plan: start fresh?", style = Type.title, color = p.text)
+        Muted("${ui.plan.meta.title} replaces the earlier plan. Start fresh to clear the old ticks, scores, streaks, log lines and " +
+            "flashcard progress, so day 1 is ${Days.short(ui.plan.start)}. A safety copy is saved on the phone first; Settings can bring it back.",
+            Modifier.padding(top = 4.dp))
         PrimaryButton("Start fresh", { confirm = true }, Modifier.fillMaxWidth().padding(top = 12.dp))
-        SecondaryButton("Keep my records", { act.updateSettings { it.copy(freshStartAsked = true) } }, Modifier.fillMaxWidth().padding(top = 8.dp))
+        SecondaryButton("Keep my records", { act.updateSettings { it.copy(freshStartAsked = true, freshStartPlan = version) } },
+            Modifier.fillMaxWidth().padding(top = 8.dp))
     }
     if (confirm) FreshStartDialog({ confirm = false; act.startFresh() }, { confirm = false })
 }
 
 @Composable
 fun FreshStartDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) = com.lakshman.roadmaplab.ui.components.ConfirmDialog(
-    "Start fresh from today?",
-    "Everything you recorded is cleared: task ticks, scores, streak days, log lines, STAR stories, weekly reviews, flashcard progress " +
-        "and the old version-1 records. The plan and your settings stay.\n\nA safety copy is saved on this phone first. " +
+    "Start fresh?",
+    "Everything you recorded is cleared: task ticks, scores, streak days, moods, log lines, STAR stories, weekly reviews, flashcard " +
+        "progress and the old version-1 records. The plan and your settings stay.\n\nA safety copy is saved on this phone first. " +
         "To undo, go to Settings → Bring back.",
     "Start fresh", onConfirm, onDismiss, danger = true,
 )
@@ -194,7 +220,7 @@ private fun DayBanners(ui: UiState, act: Actions) {
 }
 
 @Composable
-private fun TodayCard(ui: UiState) {
+private fun TodayCard(ui: UiState, act: Actions) {
     val p = LocalPalette.current
     val t = ui.todayPlan
     LabCard {
@@ -210,8 +236,8 @@ private fun TodayCard(ui: UiState) {
             Column(Modifier.weight(1f)) {
                 val headline = when {
                     t.type == DayType.REST -> "Rest day"
-                    t.type == DayType.NONE && ui.today < ui.plan.leadIn -> "The plan starts ${Days.relative(ui.plan.leadIn, ui.today)}"
-                    t.type == DayType.NONE && ui.today == ui.plan.leadIn -> "Optional lead-in today"
+                    t.type == DayType.NONE && ui.today < ui.plan.start -> "The plan starts ${Days.relative(ui.plan.start, ui.today)}"
+                    t.type == DayType.NONE && ui.plan.hasLeadIn && ui.today == ui.plan.leadIn -> "Optional lead-in today"
                     t.type == DayType.NONE -> "Outside the plan"
                     t.qualified -> "Today's minimum is met"
                     else -> "${(t.target - t.minutesDone).coerceAtLeast(0)} min to today's minimum"
@@ -225,6 +251,10 @@ private fun TodayCard(ui: UiState) {
                 Muted("Your cue: ${ui.s.settings.cue}" + if (ui.s.settings.reminderOn) " · reminder ${"%02d:%02d".format(ui.s.settings.reminderHour, ui.s.settings.reminderMinute)}" else "",
                     Modifier.padding(top = 2.dp), maxLines = 2)
             }
+        }
+        if (ui.plan.inPlan(ui.today)) {
+            Divider(Modifier.padding(vertical = 12.dp))
+            MoodRow(ui, act, ui.today)
         }
     }
 }
@@ -296,12 +326,11 @@ private fun DayOptionsDialog(ui: UiState, act: Actions, onClose: () -> Unit) {
     var restPick by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onClose,
-        containerColor = p.surface,
         title = { Text(if (restPick) "Plan a rest day" else "Day options", style = Type.title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (!restPick) {
-                    Option("Reduced routine this week", "Section 13: about 20 minutes a day for a busy go-live week. Reduced days never break your streak.",
+                    Option("Reduced routine this week", "Section 14: about 20 minutes a day for a busy go-live week. Reduced days never break your streak.",
                         kind == DayKind.REDUCED) { act.setReducedWeek(ui.today, kind != DayKind.REDUCED); onClose() }
                     Option("Catch-up day", "Shows overdue tasks from every area (up to two each). Don't double up on other days.",
                         kind == DayKind.CATCHUP) { act.setDayKind(ui.today, if (kind == DayKind.CATCHUP) null else DayKind.CATCHUP); onClose() }
@@ -339,7 +368,6 @@ private fun DayReviewDialog(ui: UiState, act: Actions, nav: Nav, onClose: () -> 
     val hasLine = ui.s.evidence.any { it.day == ui.today && !it.isStory }
     AlertDialog(
         onDismissRequest = onClose,
-        containerColor = p.surface,
         title = { Text("Review the day", style = Type.title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

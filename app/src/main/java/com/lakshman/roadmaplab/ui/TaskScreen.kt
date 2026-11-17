@@ -182,13 +182,14 @@ private fun CompleteDialog(ui: UiState, act: Actions, id: String, onClose: () ->
     var alone by remember { mutableStateOf(st?.independent ?: false) }
     var note by remember { mutableStateOf("") }
     var day by remember { mutableStateOf(st?.doneDay ?: ui.today) }
-    val days = listOf(ui.today, ui.today - 1, t.day).filter { it <= ui.today && it >= ui.today - 7 }.distinct()
+    // Forgot to tick? Pick the day you really did it (up to a week back, not before your fresh start).
+    val days = (0L..6L).map { ui.today - it }.filter { it >= ui.plan.firstDay || it == ui.today }
     AlertDialog(
-        onDismissRequest = onClose, containerColor = p.surface,
+        onDismissRequest = onClose,
         title = { Text("Mark ${t.id} done", style = Type.title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Done on", style = Type.smallStrong, color = p.text2)
+                Text("Done on (it counts for that day's streaks)", style = Type.smallStrong, color = p.text2)
                 com.lakshman.roadmaplab.ui.components.ChipRow {
                     days.forEach { d ->
                         com.lakshman.roadmaplab.ui.components.Chip(when (d) { ui.today -> "Today"; ui.today - 1 -> "Yesterday"; else -> Days.short(d) },
@@ -211,13 +212,13 @@ private fun CompleteDialog(ui: UiState, act: Actions, id: String, onClose: () ->
                 act.setTask(id, EventType.DONE, minutes, alone, note, day)
                 act.note(Note("${t.id} done" + if (t.gradedChecks.isNotEmpty()) ". Next: record how it went below." else ""))
                 onClose()
-            }) { Text("Save", style = Type.bodyStrong, color = p.accent) }
+            }) { Text("Save", style = Type.smallStrong, color = p.accent) }
         },
         dismissButton = { TextButton(onClick = onClose) { Text("Cancel", style = Type.bodyStrong, color = p.text2) } },
     )
 }
 
-/** The 7 levels from the roadmap (section 12), with this task's position. */
+/** The 7 levels from the roadmap (section 3), with this task's position. */
 @Composable
 private fun LevelLadder(level: Level) {
     val p = LocalPalette.current

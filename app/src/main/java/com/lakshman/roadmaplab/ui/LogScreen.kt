@@ -87,10 +87,10 @@ fun LogScreen(ui: UiState, act: Actions, nav: Nav, backup: BackupHooks) {
                 Banner("Say “the client”, never a name. Rough numbers. No PAN, GSTIN, bank details, invoices or anything confidential: the app warns you if it sees one.",
                     Tone.NEUTRAL)
             }
-            item { SectionTitle("STAR stories", trailing = "#1 30 Nov · #2 31 Dec · #3 29 Jan") }
+            item { SectionTitle("STAR stories", trailing = "#1 30 Nov · #2 30 Dec · #3 29 Jan") }
             item {
                 LabCard(padding = PaddingValues(0.dp)) {
-                    listOf("T077" to 1, "T228" to 2, "T369" to 3).forEachIndexed { i, (taskId, n) ->
+                    listOf("T1077" to 1, "T1247" to 2, "T1415" to 3).forEachIndexed { i, (taskId, n) ->
                         if (i > 0) Divider()
                         val s = stories.firstOrNull { it.itemId == taskId }
                         Row(Modifier.fillMaxWidth().clickable {

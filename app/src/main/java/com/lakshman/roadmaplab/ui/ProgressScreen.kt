@@ -47,7 +47,7 @@ import com.lakshman.roadmaplab.ui.theme.Type
 
 private fun pct(x: Double?) = if (x == null) "—" else "%.0f%%".format(x)
 
-/** Overall progress, consistency, the 8 areas, what needs attention and what's next. */
+/** Overall progress, consistency, the categories, what needs attention and what's next. */
 @Composable
 fun ProgressScreen(ui: UiState, nav: Nav) {
     val p = LocalPalette.current
@@ -115,7 +115,7 @@ fun ProgressScreen(ui: UiState, nav: Nav) {
             }
         }
         // ---- Areas
-        item { SectionTitle("The 8 areas", trailing = "bar = done · line = planned by today") }
+        item { SectionTitle("Categories", trailing = "bar = done · line = due by today") }
         item {
             LabCard(padding = PaddingValues(0.dp)) {
                 ui.areas.forEachIndexed { i, a ->
@@ -162,7 +162,7 @@ fun ProgressScreen(ui: UiState, nav: Nav) {
                 val (sent, useful) = ui.conversations
                 val (lines, days) = ui.logged
                 val h = ui.habitsThisWeek
-                KeyValue("LinkedIn", "$sent of 9 conversations started · $useful useful (2+ messages)")
+                KeyValue("LinkedIn (Career)", "$sent of 4 messages sent · $useful replied")
                 KeyValue("Evidence log", "$lines of $days working days logged" + if (days > 0) " (${100 * lines / days}%, target 80%)" else "")
                 KeyValue("Health this week", "Slept 7 h: ${h.sleepNights} nights (target 5) · exercise ${h.exercise} of ${h.exercisePlanned} (2 is fine)" +
                     (h.calledHome?.let { if (it) " · called home" else "" } ?: ""))
@@ -184,7 +184,9 @@ private fun AreaRow(ui: UiState, a: AreaProgress, onClick: () -> Unit) {
             Text("${a.completed}/${a.total}", style = Type.smallStrong, color = p.text)
         }
         ProgressLine((a.pct / 100).toFloat(), Modifier.padding(top = 6.dp), color = p.area(a.area.id), marker = (a.duePct / 100).toFloat())
+        val c = ui.category(a.area.id)
         val bits = buildList {
+            if (c != null) add("streak ${c.current} (best ${c.longest})")
             if (a.behind > 0) add("${a.behind} waiting") else if (a.dueByToday > 0) add("on track")
             a.avgScore?.let { add("scores ${pct(it)}") }
             val adv = a.atLeast(Level.ASSESSED)
@@ -196,73 +198,6 @@ private fun AreaRow(ui: UiState, a: AreaProgress, onClick: () -> Unit) {
             Muted(bits.joinToString(" · "), Modifier.weight(1f), maxLines = 1)
             androidx.compose.material3.TextButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 6.dp)) {
                 Text("Details", style = Type.smallStrong, color = p.accent)
-            }
-        }
-    }
-}
-
-/** One area: its goal by 31 Jan, what counts as assessed, levels, scores and tasks. */
-@Composable
-fun AreaScreen(ui: UiState, nav: Nav, id: String) {
-    val p = LocalPalette.current
-    val area = ui.plan.area(id) ?: return
-    val prog = ui.areas.firstOrNull { it.area.id == id }
-    val tasks = ui.plan.tasks.filter { it.area == id }
-    val checks = ui.s.assessments.filter { it.area == id }.sortedByDescending { it.createdAt }
-    Column(Modifier.fillMaxSize()) {
-        TopBar(area.name, nav.back)
-        LazyColumn(contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            item {
-                LabCard {
-                    KeyValue("Main objective", area.objective)
-                    KeyValue("By 31 Jan", area.byEnd)
-                    if (area.success.isNotBlank()) KeyValue("Success (must have)", area.success + if (area.targetLevel.isNotBlank()) " · target level ${area.targetLevel}" else "")
-                    if (area.stretch.isNotBlank()) KeyValue("Stretch", area.stretch)
-                    KeyValue("Time", area.budget)
-                }
-            }
-            item {
-                LabCard {
-                    KeyValue("What counts as assessed", area.assessed)
-                    KeyValue("Not enough on its own", area.notEnough)
-                    ui.plan.meta.monthly[id]?.let { m -> KeyValue("Monthly checks", m.joinToString("\n")) }
-                }
-            }
-            if (prog != null) item {
-                LabCard {
-                    Text("Levels", style = Type.section, color = p.text)
-                    Level.entries.filter { (prog.levels[it] ?: 0) > 0 }.forEach { l ->
-                        Row(Modifier.padding(top = 4.dp)) {
-                            Text(if (l.number > 0) "${l.number} ${l.label}" else l.label, style = Type.small, color = p.text, modifier = Modifier.weight(1f))
-                            Text("${prog.levels[l]}", style = Type.smallStrong, color = p.text)
-                        }
-                    }
-                }
-            }
-            if (area.rules.isNotEmpty()) item {
-                LabCard { area.rules.forEach { Muted("• $it", Modifier.padding(vertical = 2.dp)) } }
-            }
-            if (checks.isNotEmpty()) {
-                item { SectionTitle("Scores", trailing = "${checks.size} attempts") }
-                item {
-                    LabCard {
-                        checks.take(12).forEach { a ->
-                            Text("${a.itemId ?: ""} · ${ui.plan.task(a.itemId ?: "")?.title ?: a.topic}", style = Type.caption, color = p.text3,
-                                modifier = Modifier.padding(top = 6.dp), maxLines = 1)
-                            AttemptLine(a)
-                        }
-                    }
-                }
-            }
-            item { SectionTitle("Tasks", trailing = "${tasks.count { ui.states[it.id]?.progress == Progress.COMPLETED }}/${tasks.size} done") }
-            item {
-                LabCard(padding = PaddingValues(0.dp)) {
-                    val upcoming = tasks.sortedBy { TodayEngine.effectiveDay(it, ui.reducedWeeks) }
-                    upcoming.forEachIndexed { i, t ->
-                        if (i > 0) Divider(Modifier.padding(start = 56.dp))
-                        TaskLine(ui, t, { nav.open(Screen.Task(t.id)) }, null, showDate = true)
-                    }
-                }
             }
         }
     }

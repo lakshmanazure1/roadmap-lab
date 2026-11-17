@@ -1,6 +1,8 @@
 package com.lakshman.roadmaplab.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -36,6 +38,8 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -73,7 +77,7 @@ import com.lakshman.roadmaplab.ui.theme.Type
 // The building blocks every screen uses, so spacing, shapes and colours stay consistent.
 
 val ScreenPadding = 16.dp
-val CardShape = RoundedCornerShape(16.dp)
+val CardShape = RoundedCornerShape(20.dp)
 
 @Composable
 fun LabCard(
@@ -85,13 +89,15 @@ fun LabCard(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val p = LocalPalette.current
+    // Material 3 card: a tonal surface; an outline only when it marks something (e.g. the fresh-start offer).
     Column(
         modifier
             .fillMaxWidth()
             .clip(CardShape)
             .background(tint ?: p.surface)
-            .border(1.dp, border ?: p.border, CardShape)
+            .then(if (border != null) Modifier.border(1.dp, border, CardShape) else Modifier)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .animateContentSize(spring(stiffness = 600f))
             .padding(padding),
         content = content,
     )
@@ -143,7 +149,7 @@ fun Tag(text: String, tone: Tone = Tone.NEUTRAL, modifier: Modifier = Modifier) 
         Tone.DANGER -> p.dangerSoft to p.danger
     }
     Text(text, style = Type.caption, color = fg, maxLines = 1,
-        modifier = modifier.clip(RoundedCornerShape(6.dp)).background(bg).padding(horizontal = 7.dp, vertical = 3.dp))
+        modifier = modifier.clip(RoundedCornerShape(8.dp)).background(bg).padding(horizontal = 8.dp, vertical = 3.dp))
 }
 
 @Composable
@@ -188,7 +194,7 @@ fun CheckCircle(checked: Boolean, onClick: (() -> Unit)?, label: String, skipped
 /** Ring progress: the day's minutes against the minimum. */
 @Composable
 fun ProgressRing(fraction: Float, modifier: Modifier = Modifier, size: Dp = 72.dp, stroke: Dp = 7.dp, color: Color? = null,
-                 center: @Composable () -> Unit = {}) {
+                 track: Color? = null, center: @Composable () -> Unit = {}) {
     val p = LocalPalette.current
     val f by animateFloatAsState(fraction.coerceIn(0f, 1f), tween(400), label = "ring")
     val c = color ?: p.accent
@@ -197,7 +203,7 @@ fun ProgressRing(fraction: Float, modifier: Modifier = Modifier, size: Dp = 72.d
             val sw = stroke.toPx()
             val arc = Size(this.size.width - sw, this.size.height - sw)
             val tl = Offset(sw / 2, sw / 2)
-            drawArc(p.surface2, -90f, 360f, false, tl, arc, style = Stroke(sw))
+            drawArc(track ?: p.surface2, -90f, 360f, false, tl, arc, style = Stroke(sw))
             if (f > 0f) drawArc(c, -90f, 360f * f, false, tl, arc, style = Stroke(sw, cap = StrokeCap.Round))
         }
         center()
@@ -284,10 +290,11 @@ fun DayStrip(days: List<DayResult>, modifier: Modifier = Modifier) {
 @Composable
 fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, icon: ImageVector? = null) {
     val p = LocalPalette.current
-    Button(onClick, modifier.heightIn(min = 48.dp), enabled = enabled, shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = p.accent, contentColor = p.onAccent)) {
+    Button(onClick, modifier.heightIn(min = 48.dp), enabled = enabled, shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(containerColor = p.accent, contentColor = p.onAccent),
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp)) {
         if (icon != null) { Icon(icon, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)) }
-        Text(text, style = Type.bodyStrong, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text, style = Type.smallStrong, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -295,10 +302,11 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
 fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, icon: ImageVector? = null,
                     color: Color? = null) {
     val p = LocalPalette.current
-    OutlinedButton(onClick, modifier.heightIn(min = 48.dp), enabled = enabled, shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, p.border), colors = ButtonDefaults.outlinedButtonColors(contentColor = color ?: p.text)) {
+    OutlinedButton(onClick, modifier.heightIn(min = 48.dp), enabled = enabled, shape = CircleShape,
+        border = BorderStroke(1.dp, p.text3), colors = ButtonDefaults.outlinedButtonColors(contentColor = color ?: p.accent),
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp)) {
         if (icon != null) { Icon(icon, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)) }
-        Text(text, style = Type.bodyStrong, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text, style = Type.smallStrong, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -332,27 +340,31 @@ fun Field(
         keyboardOptions = if (number) KeyboardOptions(keyboardType = KeyboardType.Number) else KeyboardOptions.Default,
         supportingText = supporting?.let { { Text(it, style = Type.caption, color = if (isError) p.warning else p.text2) } },
         isError = false, shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = p.accent, unfocusedBorderColor = p.border,
-            focusedContainerColor = p.surface, unfocusedContainerColor = p.surface),
+        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = p.accent, unfocusedBorderColor = p.text3,
+            focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent),
     )
 }
 
 @Composable
 fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, dot: String? = null) {
     val p = LocalPalette.current
-    Row(
-        modifier.clip(RoundedCornerShape(10.dp))
-            .background(if (selected) p.accentSoft else p.surface)
-            .border(1.dp, if (selected) p.accent else p.border, RoundedCornerShape(10.dp))
-            .clickable(role = Role.RadioButton, onClick = onClick)
-            .heightIn(min = 40.dp)
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .semantics { stateDescription = if (selected) "Selected" else "Not selected" },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (dot != null) { AreaDot(dot); Spacer(Modifier.width(6.dp)) }
-        Text(text, style = Type.smallStrong, color = if (selected) p.accent else p.text, maxLines = 1)
+    // Material 3 filter chip: a check appears when selected (a category chip keeps its colour dot).
+    val lead: (@Composable () -> Unit)? = when {
+        dot != null -> { { AreaDot(dot) } }
+        selected -> { { Icon(Icons.Outlined.Check, null, Modifier.size(18.dp)) } }
+        else -> null
     }
+    FilterChip(
+        selected = selected, onClick = onClick, modifier = modifier,
+        label = { Text(text, style = Type.smallStrong, maxLines = 1) },
+        leadingIcon = lead,
+        shape = RoundedCornerShape(8.dp),
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = p.accentSoft, selectedLabelColor = p.onAccentSoft, selectedLeadingIconColor = p.onAccentSoft,
+            labelColor = p.text2,
+        ),
+        border = FilterChipDefaults.filterChipBorder(true, selected, borderColor = p.text3, selectedBorderColor = Color.Transparent),
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -371,7 +383,7 @@ fun Banner(text: String, tone: Tone = Tone.ACCENT, action: String? = null, onAct
         Tone.NEUTRAL -> p.surface2 to p.text2
         Tone.ACCENT -> p.accentSoft to p.accent
     }
-    Column(Modifier.fillMaxWidth().clip(CardShape).background(bg).padding(horizontal = 14.dp, vertical = 12.dp)) {
+    Column(Modifier.fillMaxWidth().clip(CardShape).background(bg).animateContentSize().padding(horizontal = 16.dp, vertical = 12.dp)) {
         if (title != null) Text(title, style = Type.bodyStrong, color = p.text)
         Text(text, style = Type.small, color = p.text)
         if (action != null && onAction != null) TextButton(onClick = onAction, contentPadding = PaddingValues(0.dp)) {
@@ -387,9 +399,8 @@ fun ConfirmDialog(title: String, text: String, confirm: String, onConfirm: () ->
         onDismissRequest = onDismiss,
         title = { Text(title, style = Type.title) },
         text = { Text(text, style = Type.body, color = p.text2) },
-        confirmButton = { TextButton(onClick = onConfirm) { Text(confirm, style = Type.bodyStrong, color = if (danger) p.danger else p.accent) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel", style = Type.bodyStrong, color = p.text2) } },
-        containerColor = p.surface,
+        confirmButton = { TextButton(onClick = onConfirm) { Text(confirm, style = Type.smallStrong, color = if (danger) p.danger else p.accent) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel", style = Type.smallStrong, color = p.accent) } },
     )
 }
 

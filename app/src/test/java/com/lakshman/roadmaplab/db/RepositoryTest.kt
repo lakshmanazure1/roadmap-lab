@@ -36,11 +36,11 @@ class RepositoryTest {
     private lateinit var db: LabDatabase
     private lateinit var repo: LabRepository
     private val ctx: Context get() = ApplicationProvider.getApplicationContext()
-    private val mon = Days.of("2026-11-16")
+    private val tue = Days.of("2026-11-17") // day 1 of the Fresh Start plan
 
     @Before
     fun setUp() {
-        Days.clock = Clock.fixed(Instant.parse("2026-11-16T19:00:00Z"), Days.ZONE) // Mon 16 Nov, 20:00 in Kinshasa
+        Days.clock = Clock.fixed(Instant.parse("2026-11-17T19:00:00Z"), Days.ZONE) // Tue 17 Nov, 20:00 in Kinshasa
         db = Room.inMemoryDatabaseBuilder(ctx, LabDatabase::class.java).allowMainThreadQueries().build()
         repo = LabRepository(ctx, db, SettingsStore(ctx))
         runBlocking { repo.loadPlan() }
@@ -52,7 +52,7 @@ class RepositoryTest {
         Days.clock = Clock.system(Days.ZONE)
     }
 
-    private fun line(id: Long = 0, result: String = "2nd upload: 0 errors") = Evidence(id, mon, "evidence", null, "line", "Vendor upload",
+    private fun line(id: Long = 0, result: String = "2nd upload: 0 errors") = Evidence(id, tue, "evidence", null, "line", "Vendor upload",
         "About 40 rows rejected", "Sorted by blanks", result, "Check mandatory fields first", "Data checking", "Upload report", 4, false,
         "", "", "", "", 0, 0)
 
@@ -64,20 +64,20 @@ class RepositoryTest {
         val all = db.dao().evidence()
         assertEquals(1, all.size)
         assertEquals("2nd upload: 0 errors, 40 rows saved (checked)", all.single().result)
-        // Monday's log-line task (T007) is ticked once, not once per save.
-        val t007 = db.dao().taskEventsFor("T007")
-        assertEquals(1, t007.size)
-        assertEquals(Progress.COMPLETED, Mastery.states(t007.map { it.toDomain() })["T007"]!!.progress)
+        // Tuesday's log-line task (T1003) is ticked once, not once per save.
+        val log = db.dao().taskEventsFor("T1003")
+        assertEquals(1, log.size)
+        assertEquals(Progress.COMPLETED, Mastery.states(log.map { it.toDomain() })["T1003"]!!.progress)
     }
 
     @Test
     fun undoKeepsHistoryAndTheLatestStateWins() = runBlocking {
-        repo.setTask("T004", EventType.DONE, 30)
-        repo.setTask("T004", EventType.RESET)
-        repo.setTask("T004", EventType.DONE, 25, independent = true)
-        val events = db.dao().taskEventsFor("T004").map { it.toDomain() }
+        repo.setTask("T1001", EventType.DONE, 30)
+        repo.setTask("T1001", EventType.RESET)
+        repo.setTask("T1001", EventType.DONE, 25, independent = true)
+        val events = db.dao().taskEventsFor("T1001").map { it.toDomain() }
         assertEquals(3, events.size)
-        val st = Mastery.states(events)["T004"]!!
+        val st = Mastery.states(events)["T1001"]!!
         assertEquals(Progress.COMPLETED, st.progress)
         assertEquals(25, st.doneMinutes)
         assertTrue(st.independent)
@@ -85,31 +85,32 @@ class RepositoryTest {
 
     @Test
     fun weeklyReviewIsOneRowAndSetsNextWeeksLoad() = runBlocking {
-        val ws = mon
+        val ws = Days.of("2026-11-16") // the Monday of week 1
         val r = WeeklyReview(ws, mapOf("python" to "All 10 found"), emptyMap(), emptyMap(), "", emptyList(), "", "", "", "reduced", "\$100", null, 0)
         repo.saveWeeklyReview(r, complete = false)
         repo.saveWeeklyReview(r, complete = true)
         repo.saveWeeklyReview(r.copy(spending = "\$110"), complete = true)
         assertEquals(1, db.dao().weeklyReviews().size)
         assertEquals("\$110", db.dao().weeklyReviews().single().spending)
-        assertEquals(1, db.dao().taskEventsFor("T038").size) // the week-1 review task, ticked once
+        assertEquals(1, db.dao().taskEventsFor("T1033").size) // the week-1 review task, ticked once
         val next = (ws + 7..ws + 13).map { db.dao().dayMetaOn(it)?.toDomain()?.kind }
         assertTrue(next.all { it == DayKind.REDUCED })
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun restDaysMustBePlannedAhead() = runBlocking {
-        repo.setDayKind(mon - 1, DayKind.REST)
+        repo.setDayKind(tue - 1, DayKind.REST)
     }
 
     @Test
     fun backupThenRestoreKeepsEverythingAndMakesASafetyCopy() = runBlocking {
-        repo.setTask("T004", EventType.DONE, 30)
-        repo.addAssessment(Assessment(0, "T014", "accounting", "Basics", "score", 10.0, 12.0, true, false, "{}", mon, 0, 0))
+        repo.setTask("T1001", EventType.DONE, 30)
+        repo.addAssessment(Assessment(0, "T1012", "accounting", "Basics", "score", 10.0, 12.0, true, false, "{}", tue, 0, 0))
         repo.saveEvidence(line())
-        repo.tick(mon, "sleep7", true, 0)
+        repo.tick(tue, "sleep7", true, 0)
+        repo.setMood(tue, 4)
         repo.addCard("Accounting", "Who uses accounts?", "Owners, banks, the tax office")
-        val text = LabJson.encodeBackup(repo.snapshot(), "2.0.0", "2026-11-16T20:00:00")
+        val text = LabJson.encodeBackup(repo.snapshot(), "3.0.0", "2026-11-17T20:00:00")
 
         // A fresh phone: empty database, then restore.
         val db2 = Room.inMemoryDatabaseBuilder(ctx, LabDatabase::class.java).allowMainThreadQueries().build()
@@ -121,6 +122,7 @@ class RepositoryTest {
         assertEquals(a.assessments, b.assessments)
         assertEquals(a.evidence, b.evidence)
         assertEquals(a.ticks, b.ticks)
+        assertEquals(4, b.dayLogs.single { it.day == tue }.mood)
         assertEquals(a.cards.size, b.cards.size)
         assertTrue(b.cards.any { it.id.startsWith("U-") }) // your own card came back
         assertTrue(repo2.safetyCopies().isNotEmpty())
@@ -136,10 +138,10 @@ class RepositoryTest {
 
     @Test
     fun startFreshClearsEveryRecordKeepsASafetyCopyAndCanBeUndone() = runBlocking {
-        repo.setTask("T004", EventType.DONE, 30)
+        repo.setTask("T1001", EventType.DONE, 30)
         repo.saveEvidence(line())
-        repo.addAssessment(Assessment(0, "T014", "accounting", "Basics", "score", 10.0, 12.0, true, false, "{}", mon, 0, 0))
-        repo.setDayKind(mon + 3, DayKind.REST)
+        repo.addAssessment(Assessment(0, "T1012", "accounting", "Basics", "score", 10.0, 12.0, true, false, "{}", tue, 0, 0))
+        repo.setDayKind(tue + 3, DayKind.REST)
         repo.addCard("Accounting", "Capital is…", "What the owner put in")
         val before = db.dao().taskEvents().size to db.dao().evidence().size
         val bundledCards = db.dao().cards().count { !it.id.startsWith("U-") }
@@ -154,21 +156,42 @@ class RepositoryTest {
         assertEquals(0, db.dao().cardStates().size)
         assertEquals(bundledCards, db.dao().cards().size) // your own card is gone, the bundled deck stays
         val s = repo.settings.current()
-        assertEquals(mon, s.freshStartDay)
+        assertEquals(tue, s.freshStartDay)
         assertTrue(s.freshStartAsked)
+        assertEquals("fresh-start-sap-2026-11-17", s.freshStartPlan) // this plan's question is answered
         assertTrue(repo.latestSafetyCopyLabel()!!.contains("before your fresh start"))
 
         // Undo: "Bring back" restores exactly what was there.
         repo.restoreLatestSafetyCopy("test")
         assertEquals(before, db.dao().taskEvents().size to db.dao().evidence().size)
         assertEquals(1, db.dao().assessments().size)
-        assertEquals(DayKind.REST, db.dao().dayMetaOn(mon + 3)!!.toDomain().kind)
+        assertEquals(DayKind.REST, db.dao().dayMetaOn(tue + 3)!!.toDomain().kind)
     }
 
     @Test
-    fun theRecapIsLoadedWithThePlanAndTheCsvStaysWhole() = runBlocking {
+    fun theFreshStartPlanIsLoadedWhole() = runBlocking {
         val plan = repo.state.first { it.plan != null }.plan!!
-        assertEquals(380, plan.csvTasks.size)
-        assertEquals(listOf("PR1", "PR2", "PR3", "PR4", "PR5", "PR6", "PR7"), plan.tasks.filter { it.seq == "recap" }.map { it.id })
+        assertEquals(428, plan.tasks.size)
+        assertEquals("T1001", plan.tasks.first().id)
+        assertEquals(10, plan.meta.areas.size)
+    }
+
+    @Test
+    fun aTaskTickedLaterCountsForTheDayYouDidIt() = runBlocking {
+        repo.setTask("T1001", EventType.DONE, 30, day = tue - 1)
+        val e = db.dao().taskEventsFor("T1001").single().toDomain()
+        assertEquals(tue - 1, e.day)
+        assertEquals(tue - 1, Mastery.states(listOf(e))["T1001"]!!.doneDay)
+    }
+
+    @Test
+    fun moodIsOneTapAndDoesNotCountAsTheDaysLog() = runBlocking {
+        repo.setMood(tue, 3)
+        repo.setMood(tue, 5)
+        val log = db.dao().dayLog(tue)!!.toDomain()
+        assertEquals(5, log.mood)
+        assertTrue(!log.counts)
+        repo.setMood(tue, null)
+        assertEquals(null, db.dao().dayLog(tue)!!.toDomain().mood)
     }
 }
