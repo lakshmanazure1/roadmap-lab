@@ -234,6 +234,8 @@ fun HowItWorksScreen(ui: UiState, nav: Nav) {
                         "Forgot to tick? The Yesterday card on Today, and each category's page (last 7 days), let you tick a task for the day it was planned. " +
                             "Marking a task done also lets you pick the day you did it.",
                         "% done = tasks done ÷ all its tasks. On track = done ÷ due by today. Health and daily practice are habits: never counted as study.",
+                        "Tap a category to see its Days: every date with what was planned, how it went, and that day's notes, evidence, scores and day note. " +
+                            "Tap a date in its calendar to go straight to it.",
                     ).forEach { Muted("• $it", Modifier.padding(top = 4.dp)) }
                 }
             }

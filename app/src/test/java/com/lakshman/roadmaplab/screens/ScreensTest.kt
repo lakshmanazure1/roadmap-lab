@@ -2,22 +2,28 @@ package com.lakshman.roadmaplab.screens
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.lakshman.roadmaplab.TestData
 import com.lakshman.roadmaplab.TestData.d
 import com.lakshman.roadmaplab.data.LabState
+import com.lakshman.roadmaplab.domain.DayHistory
+import com.lakshman.roadmaplab.domain.DayLog
+import com.lakshman.roadmaplab.domain.EventType
+import com.lakshman.roadmaplab.domain.ItemEvent
 import com.lakshman.roadmaplab.ui.AppRoot
 import com.lakshman.roadmaplab.ui.AreaScreen
 import com.lakshman.roadmaplab.ui.BackupHooks
 import com.lakshman.roadmaplab.ui.CheckScreen
 import com.lakshman.roadmaplab.ui.DayBlock
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
 import com.lakshman.roadmaplab.ui.EvidenceScreen
 import com.lakshman.roadmaplab.ui.HowItWorksScreen
 import com.lakshman.roadmaplab.ui.IntroScreen
@@ -89,16 +95,26 @@ class ScreensTest {
     @Test fun b01_progress() = shot("13_progress", DemoData.midPlan(mid), mid) { ProgressScreen(it, nav) }
     @Test fun b02_progressDark() = shot("14_progress_dark", DemoData.midPlan(mid, "dark"), mid) { ProgressScreen(it, nav) }
     @Test fun b03_area() = shot("15_category_accounting", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "accounting") }
-    /** The Python category's day-by-day block: yesterday and today, with their tasks and status. */
-    @Test fun b03b_areaPythonDays() = shot("20_category_python_days", DemoData.midPlan(mid), mid) { ui ->
-        androidx.compose.foundation.layout.Column(androidx.compose.ui.Modifier.padding(12.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
-            val c = ui.category("python")
-            listOf(mid - 1, mid).forEach { d ->
-                val list = ui.plan.tasks.filter { it.area == "python" && com.lakshman.roadmaplab.domain.TodayEngine.effectiveDay(it, ui.reducedWeeks) == d }
-                if (list.isNotEmpty()) DayBlock(ui, nav, "python", d, list, c?.days?.firstOrNull { it.day == d }?.status)
+    /** The Python category's dates: last weekend (done, with notes and evidence) and the coming Saturday. */
+    @Test fun b03b_areaPythonDays() {
+        val sat = mid - 5
+        val base = DemoData.midPlan(mid)
+        // Fictional notes for the screenshot only (demo data never reaches the app).
+        val s = base.copy(
+            events = base.events + ItemEvent(9_999_999, "T1103", sat, EventType.DONE, 15, true, "Wrote validate_pan() from a blank file", sat * 100_000 + 99_999),
+            dayLogs = base.dayLogs + (sat to (base.dayLogs[sat] ?: DayLog(sat)).copy(note = "Tired after go-live prep, still did the recap")),
+        )
+        shot("20_category_python_days", s, mid) { ui ->
+            val days = DayHistory.build(ui.plan, "python", ui.states, ui.s.evidence, ui.s.assessments, ui.s.ticks, ui.s.dayLogs,
+                ui.s.dayMeta, ui.reducedWeeks, ui.category("python"), ui.today)
+            val notes = DayHistory.taskNotes(ui.s.events)
+            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                days.filter { it.day in sat..mid + 2 }.forEach { DayBlock(ui, nav, it, notes) }
             }
         }
     }
+    @Test fun b03c_areaAbout() = shot("21_category_python_about", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "python", startTab = 1) }
+    @Test fun b03d_areaPython() = shot("22_category_python", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "python") }
     @Test fun b04_plan() = shot("16_plan_week4", DemoData.midPlan(mid), mid) { PlanScreen(it, NoActions, nav) }
     @Test fun b05_log() = shot("17_log", DemoData.midPlan(mid), mid) { LogScreen(it, NoActions, nav, BackupHooks()) }
     @Test fun b06_areaSap() = shot("18_category_sap", DemoData.midPlan(mid), mid) { AreaScreen(it, NoActions, nav, "sap") }
